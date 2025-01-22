@@ -2,6 +2,88 @@
 
 A cross-platform desktop application for browsing and managing S3 buckets and objects. Built with Electron and AWS SDK.
 
+## User Guide
+
+### Overview
+S3 Browser is a desktop application that allows you to:
+- Connect to multiple S3-compatible storage services
+- Browse and manage files and folders
+- Upload and download files
+- Preview various file types directly in the application
+- Manage multiple connection profiles
+
+### Getting Started
+
+1. **First Launch**
+   - When you first launch the application, you'll see an empty connections list
+   - Click "Add Connection" to set up your first S3 connection
+
+2. **Setting Up a Connection**
+![alt text](image.png)
+   - Click "Add Connection" in the sidebar
+   - Fill in the connection details:
+     * Connection Name: A friendly name for your connection
+     * Endpoint: Your S3 service endpoint (e.g., `s3.amazonaws.com`)
+     * Region: The S3 region (e.g., `us-east-1`)
+     * Access Key: Your S3 access key
+     * Secret Key: Your S3 secret key
+     * Default Bucket (Optional): Set a default bucket to open
+     * Default Prefix (Optional): Set a default folder path
+
+
+1. **Managing Files**
+
+![alt text](image-1.png) 
+   - **Browsing**:
+     * Click on buckets to view their contents
+     * Use the breadcrumb navigation to move between folders
+     * Use the search box to filter files by name
+   
+   - **Uploading**:
+     * Click "Upload" or drag files into the window
+     * Select single or multiple files to upload
+     * Files will be uploaded to the current folder
+   
+   - **Downloading**:
+     * Select files by checking their checkboxes
+     * Click "Download" to save selected files
+     * Choose a save location on your computer
+   
+   - **Deleting**:
+     * Select files or folders to delete
+     * Click "Delete" to remove selected items
+     * Confirm deletion when prompted
+
+1. **File Preview**
+   - Click the "Preview" button next to supported files:
+     * Images: jpg, jpeg, png, gif, webp, svg, bmp, ico, tiff, avif
+     * Text: txt, md, markdown, json, xml, yaml, yml, ini, csv, log
+     * Documents: pdf, doc, docx, xls, xlsx, ppt, pptx
+     * Web: html
+     * Video: mp4
+
+### Configuration File
+The application stores its settings in a configuration file:
+- Windows: `%APPDATA%/s3browser/config.json`
+- macOS: `~/Library/Application Support/s3browser/config.json`
+- Linux: `~/.config/s3browser/config.json`
+
+### Tips and Tricks
+1. **Efficient Navigation**:
+   - Use breadcrumb navigation for quick folder jumping
+   - Use the search box to quickly find files
+   - Double-click folders to navigate into them
+
+2. **File Operations**:
+   - Use checkboxes to select multiple files
+   - Drag and drop files for upload
+   - Use preview for quick file inspection
+
+3. **Connection Management**:
+   - Set default buckets for frequently accessed locations
+   - Use meaningful connection names for easy identification
+   - Store different credentials for different S3 services
+
 ## Features
 
 ### Connection Management
@@ -357,21 +439,6 @@ The application implements comprehensive error handling:
 - @aws-sdk/client-s3: AWS S3 operations
 - electron-store: Secure connection storage
 - electron-builder: Application packaging
-
-## User Interface
-1. add aws s3 connection profile
-![alt text](image.png)
-
-1. functions available
-- upload files
-- download files
-- delete files and folders
-- preview files (images, text, pdf, office, html, video,md)
-- create new folder
-- filter files
-- navigate through folders
-
-![alt text](image-1.png) 
 
 ## License
 
