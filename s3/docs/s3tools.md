@@ -36,7 +36,7 @@ Goofys是一个开源的使用Go编写的存储桶挂载工具，允许Linux和m
 ```shell
 brew install --cask osxfuse
 ==> Purging files for version 3.11.2 of Cask osxfuse
-Error: Failure while executing; `/usr/bin/sudo -u root -E LOGNAME=xiaowely USER=xiaowely USERNAME=xiaowely -- /usr/sbin/installer -pkg /opt/homebrew/Caskroom/osxfuse/3.11.2/Extras/FUSE\ for\ macOS\ 3.11.2.pkg -target /` exited with 1. Here's the output:
+Error: Failure while executing; `/usr/bin/sudo -u root -E LOGNAME=xxx USER=xxxx USERNAME=xxx -- /usr/sbin/installer -pkg /opt/homebrew/Caskroom/osxfuse/3.11.2/Extras/FUSE\ for\ macOS\ 3.11.2.pkg -target /` exited with 1. Here's the output:
 installer: Error - The FUSE for macOS installation package is not compatible with this version of macOS.
 
 咨询 claude 提示使用 macfuse 替代 osxfuse
