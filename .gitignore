@@ -7,3 +7,5 @@ __pycache__
 node_modules
 .vite
 cdk8s/dist/*.yaml
+s3/tools/s3browser/dist/*
+.DS_Store
