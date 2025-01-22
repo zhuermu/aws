@@ -358,6 +358,21 @@ The application implements comprehensive error handling:
 - electron-store: Secure connection storage
 - electron-builder: Application packaging
 
+## User Interface
+1. add aws s3 connection profile
+![alt text](image.png)
+
+1. functions available
+- upload files
+- download files
+- delete files and folders
+- preview files (images, text, pdf, office, html, video,md)
+- create new folder
+- filter files
+- navigate through folders
+
+![alt text](image-1.png) 
+
 ## License
 
 MIT License
