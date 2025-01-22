@@ -22,10 +22,10 @@ class MyChart(Chart):
                 spec=k8s.PodSpec(containers=[
                     k8s.Container(
                     env=[
-                        k8s.EnvVar(name='AGENT_SERVER_URL', value='http://ten-agent-build-service:8080'),
+                        k8s.EnvVar(name='AGENT_SERVER_URL', value=os.environ['AGENT_SERVER_URL']),
                     ],
-                    name='ten-agent-demo',
-                    image='767828766472.dkr.ecr.us-east-1.amazonaws.com/dev/ten_agent_demo:latest',
+                    name=os.environ['AGENT_NAME_DEMO'],
+                    image=os.environ['AGENT_DEMO_IMAGE'],
                     ports=[k8s.ContainerPort(container_port=3000)])]))))
         # read config.env as key:value pairs
         pairs = {}
@@ -49,8 +49,8 @@ class MyChart(Chart):
                         k8s.EnvVar(name=key, value=pairs[key])
                         for key in pairs.keys()
                     ],
-                    name='ten-agent-build',
-                    image='767828766472.dkr.ecr.us-east-1.amazonaws.com/dev/ten_agent_build:latest',
+                    name=os.environ['AGENT_NAME_SERVER'],
+                    image=os.environ['AGENT_SERVER_IMAGE'],
                     ports=[k8s.ContainerPort(container_port=8080)])]))))
         
 
