@@ -22,6 +22,12 @@ A cross-platform desktop application for browsing and managing S3 buckets and ob
   - Last modified timestamps
   - Storage class information
   - Owner information
+
+### Configuration
+- Configuration file location:
+  - Windows: `%APPDATA%/s3browser/config.json`
+  - macOS: `~/Library/Application Support/s3browser/config.json`
+  - Linux: `~/.config/s3browser/config.json`
 - Upload Operations
   - Upload single or multiple files
   - Create new folders
@@ -35,8 +41,12 @@ A cross-platform desktop application for browsing and managing S3 buckets and ob
   - Batch delete multiple files
   - Delete folders recursively
 - File Preview
-  - Image preview with zoom
-  - Text file content display
+  - Image preview with zoom (supports jpg, jpeg, png, gif, webp, svg, bmp, ico, tiff, avif)
+  - Text file preview with syntax highlighting (supports txt, md, markdown, json, xml, yaml, yml, ini, csv, log)
+  - PDF preview using Google Docs Viewer
+  - Microsoft Office files preview (doc, docx, xls, xlsx, ppt, pptx)
+  - HTML file preview
+  - Video preview (mp4)
   - File metadata display
 - Search and Filter
   - Real-time file filtering
