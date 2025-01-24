@@ -9,10 +9,16 @@
     "test": "jest"
   },
   "build": {
-    "appId": "com.s3browser.app",
+    "appId": "com.zhuermu.s3browser.app",
+    "productName": "s3browser",
     "mac": {
+      "identity": "Your Developer ID Application: Your name (xxxxxx)",
       "category": "public.app-category.utilities",
-      "icon": "s3icon.icns"
+      "icon": "s3icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist"
     },
     "win": {
       "target": "nsis",

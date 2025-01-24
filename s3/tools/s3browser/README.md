@@ -360,6 +360,9 @@ npm run build -- --win portable
 
 macOS:
 ```bash
+# sure to have the correct identity
+# security find-identity -v -p codesigning
+
 # Build DMG installer
 npm run build -- --mac
 # Output: dist/s3browser.dmg
