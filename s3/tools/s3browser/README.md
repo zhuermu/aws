@@ -367,9 +367,13 @@ macOS:
 npm run build -- --mac
 # Output: dist/s3browser.dmg
 
+# sign dmg
+# codesign --force --sign "Developer ID Application: Your Name (XXXXXXXXXX)" --options runtime "dist/YourApp.dmg"
+
 # Build for Mac App Store
 npm run build -- --mac mas
 # Output: dist/s3browser.pkg
+
 ```
 
 Linux:
