@@ -36,10 +36,7 @@ https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedro
                 "AWS": "arn:aws:iam::ACCOUNT_ID:user/YOUR_USERNAME"
             },
             "Action": [
-                "s3:GetObject",
-                "s3:ListBucket",
-                "s3:PutObject",
-                "s3:DeleteObject"
+                "s3:GetObject"
             ],
             "Resource": [
                 "arn:aws:s3:::your-bucket-name",
