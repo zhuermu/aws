@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class Converse {
 
-    public static String converse(String s3Uri) throws Exception {
+    public static String converse(String s3Uri, String bucketOwner) throws Exception {
         var client = BedrockRuntimeClient.builder()
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .region(Region.US_EAST_1)
@@ -26,7 +26,9 @@ public class Converse {
                         .source(source -> source
                                 .s3Location(s3 -> s3
                                         .uri(s3Uri)
+                                        .bucketOwner(bucketOwner)
                                         )))
+
                 .build();
 
         // Create text content block
@@ -60,11 +62,10 @@ public class Converse {
     }
 
     public static void main(String[] args) {
-        String s3Uri = "s3://bedrock-video-generation-us-east-1-pi8hu9/video-class/cb4198e065f64149b7ccdf7f9b78f1b9.mp4";
-        //String bucketOwner = "767828766472";
+        String s3Uri = "s3://testlixiaowei1/3665b7be40fb4d22bf77d998b099712a.mp4";
+        String bucketOwner = "730335448968";
         try {
-
-            converse(s3Uri);
+            converse(s3Uri, bucketOwner);
         } catch (Exception e) {
             e.printStackTrace();
         }

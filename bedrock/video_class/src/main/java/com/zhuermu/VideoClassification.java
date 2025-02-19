@@ -26,7 +26,7 @@ public class VideoClassification {
     private static final String FOLDER_NAME = System.getenv("AWS_S3_BUCKET_FOLDER_NAME");
     private static final String CSV_FILE = "classification-video.csv";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final int BATCH_SIZE = 5;
+    private static final int BATCH_SIZE = 1;
     private static final long BATCH_DELAY_MS = 5000; // 5 seconds delay between batches
     
     public static void main(String[] args) {

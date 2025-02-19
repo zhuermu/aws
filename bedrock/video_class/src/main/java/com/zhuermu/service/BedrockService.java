@@ -44,18 +44,20 @@ public class BedrockService {
     }
 
     public ClassificationResult classifyVideo(String s3Uri) {
-        var modelId = "us.amazon.nova-pro-v1:0";
+        var modelId = "us.amazon.nova-lite-v1:0";
 
         try {
             log.info("Starting video classification for: {}", s3Uri);       
             
+            String bucketOwner = System.getenv("AWS_S3_BUCKET_OWNER");
             // Create video content block
             var videoContent = ContentBlock.builder()
                     .video(video -> video
                             .format("mp4")
                             .source(source -> source
                                     .s3Location(s3 -> s3
-                                            .uri(s3Uri))))
+                                            .uri(s3Uri).bucketOwner(bucketOwner)
+                                            )))
                     .build();
 
             // Create text content block
@@ -71,8 +73,8 @@ public class BedrockService {
                     .modelId(modelId)
                     .messages(message)
                     .inferenceConfig(config -> config
-                            .maxTokens(4096)
-                            .temperature(0.5F)
+                            .maxTokens(512)
+                            .temperature(0.7F)
                             .topP(0.9F)));
 
             var responseText = response.output().message().content().get(0).text();
