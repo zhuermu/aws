@@ -1,22 +1,31 @@
 package com.zhuermu;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.core.internal.http.AmazonAsyncHttpClient;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 import software.amazon.awssdk.services.bedrockruntime.model.*;
-
 import java.io.File;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.util.Arrays;
+
 
 public class Converse {
 
     public static String converse(String s3Uri, String bucketOwner) throws Exception {
+        SdkHttpClient httpClient = ApacheHttpClient.builder()
+        .socketTimeout(Duration.ofMinutes(5))  // Increase socket timeout
+        .connectionTimeout(Duration.ofSeconds(30))
+        .build();
         var client = BedrockRuntimeClient.builder()
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .region(Region.US_EAST_1)
+                .httpClient(httpClient)
                 .build();
-
+        //client.wait(60000);
         var modelId = "amazon.nova-lite-v1:0";
 
         // Create video content block
@@ -26,7 +35,7 @@ public class Converse {
                         .source(source -> source
                                 .s3Location(s3 -> s3
                                         .uri(s3Uri)
-                                        .bucketOwner(bucketOwner)
+                                        //.bucketOwner(bucketOwner)
                                         )))
 
                 .build();
@@ -41,10 +50,10 @@ public class Converse {
                 .content(Arrays.asList(videoContent, textContent))
                 .role(ConversationRole.USER)
                 .build();
-
         try {
             ConverseResponse response = client.converse(request -> request
                     .modelId(modelId)
+                    .system(SystemContentBlock.builder().text("You are a helpful assistant.").build())
                     .messages(message)
                     .inferenceConfig(config -> config
                             .maxTokens(4096)
@@ -62,8 +71,8 @@ public class Converse {
     }
 
     public static void main(String[] args) {
-        String s3Uri = "s3://testlixiaowei1/3665b7be40fb4d22bf77d998b099712a.mp4";
-        String bucketOwner = "730335448968";
+        String s3Uri = "s3://bedrock-video-generation-us-east-1-pi8hu9/video-class/f81d2c02aa474179b4ead01df54bbd13.mp4";
+        String bucketOwner = "";
         try {
             converse(s3Uri, bucketOwner);
         } catch (Exception e) {

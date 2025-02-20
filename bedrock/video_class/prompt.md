@@ -433,4 +433,4 @@ The output sample in the following JSON format:
     ]
 }
 ```
-Remember just only output the JSON format, no other words.
+Remember just only output the JSON format, no other words. The classified information must be within the categories I provided. 

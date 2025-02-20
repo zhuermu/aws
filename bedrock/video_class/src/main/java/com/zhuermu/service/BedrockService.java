@@ -5,6 +5,8 @@ import com.zhuermu.model.ClassificationResult;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
@@ -15,6 +17,7 @@ import software.amazon.awssdk.services.bedrockruntime.model.Message;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Arrays;
 
 
@@ -35,9 +38,15 @@ public class BedrockService {
             region = Region.US_EAST_1.id();
         }
         var credentials = AwsBasicCredentials.create(accessKey, secretKey);
+        
+        SdkHttpClient httpClient = ApacheHttpClient.builder()
+            .socketTimeout(Duration.ofMinutes(5))  // Increase socket timeout
+            .connectionTimeout(Duration.ofSeconds(30))
+            .build();
         this.bedrockClient = BedrockRuntimeClient.builder()
         .credentialsProvider(StaticCredentialsProvider.create(credentials))
         .region(Region.of(region))
+        .httpClient(httpClient)
         .build();
         // Read prompt from file
         this.promptTemplate = Files.readString(Paths.get("prompt.md"));
