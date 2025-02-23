@@ -23,7 +23,7 @@ public class Converse {
         var client = BedrockRuntimeClient.builder()
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .region(Region.US_EAST_1)
-                .httpClient(httpClient)
+                //.httpClient(httpClient)
                 .build();
         //client.wait(60000);
         var modelId = "amazon.nova-lite-v1:0";
