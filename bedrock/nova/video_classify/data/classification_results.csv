@@ -1,0 +1,2 @@
+S3 URI,catetory, tags, result, new catetory, new tags, Input Tokens,Output Tokens
+"s3://video-classify/35740d6cf7dd4c63b0945377ef16f71d.mp4","[{""catetory1"": ""Lifestyle"", ""catetory2"": ""Vlog & Daily Life"", ""catetory3"": [""Cute Pets""], ""weight"": {""Lifestyle"": 80, ""Vlog & Daily Life"": 75, ""Cute Pets"": 70}}]","[{""tag"": ""cat"", ""scores"": 95}, {""tag"": ""beach"", ""scores"": 85}, {""tag"": ""walking"", ""scores"": 75}, {""tag"": ""sand"", ""scores"": 65}, {""tag"": ""adventure"", ""scores"": 60}]",11676,192
