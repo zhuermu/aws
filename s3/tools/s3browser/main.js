@@ -1,16 +1,10 @@
 const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
-const { 
-  S3Client, 
-  ListBucketsCommand,
-  ListObjectsV2Command,
-  PutObjectCommand,
-  GetObjectCommand,
-  DeleteObjectCommand,
-  DeleteObjectsCommand
-} = require('@aws-sdk/client-s3');
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const fs = require('fs');
+
+// Import storage client factory
+const StorageClientFactory = require('./storage-clients/StorageClientFactory');
 
 const store = new Store();
 
@@ -104,6 +98,23 @@ app.on('window-all-closed', function () {
   }
 });
 
+// Get storage client for a connection
+function getStorageClient(connectionId) {
+  const connection = store.get('connections', []).find(conn => conn.id === connectionId);
+  if (!connection) throw new Error('Connection not found');
+
+  // Map storage type from connection type
+  // Default to 'aws-s3' for backward compatibility with existing connections
+  const storageType = connection.type || 'aws-s3';
+  
+  return StorageClientFactory.createClient(storageType, connection);
+}
+
+// Get supported client types
+ipcMain.handle('get-supported-client-types', async () => {
+  return StorageClientFactory.getSupportedClientTypes();
+});
+
 // S3 Connection Management
 // Connection Management
 ipcMain.handle('save-connection', async (event, connection) => {
@@ -144,23 +155,11 @@ ipcMain.handle('show-open-dialog', async () => {
   return result.filePaths;
 });
 
-// S3 Operations
+// Storage Operations
 ipcMain.handle('list-buckets', async (event, connectionId) => {
-  const connection = store.get('connections', []).find(conn => conn.id === connectionId);
-  if (!connection) throw new Error('Connection not found');
-
-  const client = new S3Client({
-    endpoint: connection.endpoint,
-    region: connection.region,
-    credentials: {
-      accessKeyId: connection.accessKey,
-      secretAccessKey: connection.secretKey
-    }
-  });
-
   try {
-    const response = await client.send(new ListBucketsCommand({}));
-    return response.Buckets || [];
+    const client = getStorageClient(connectionId);
+    return await client.listBuckets();
   } catch (error) {
     console.error('Error listing buckets:', error);
     throw error;
@@ -168,53 +167,21 @@ ipcMain.handle('list-buckets', async (event, connectionId) => {
 });
 
 ipcMain.handle('list-objects', async (event, connectionId, bucket = null, prefix = '') => {
-  const connection = store.get('connections', []).find(conn => conn.id === connectionId);
-  if (!connection) throw new Error('Connection not found');
-
-  const client = new S3Client({
-    endpoint: connection.endpoint,
-    region: connection.region,
-    credentials: {
-      accessKeyId: connection.accessKey,
-      secretAccessKey: connection.secretKey
-    }
-  });
-
-  // If no bucket is specified, use the connection's default bucket if available
-  const targetBucket = bucket || connection.bucket;
-  if (!targetBucket) {
-    return { type: 'buckets', data: await client.send(new ListBucketsCommand({})).then(res => res.Buckets || []) };
-  }
-
-  const command = new ListObjectsV2Command({
-    Bucket: targetBucket,
-    Prefix: prefix,
-    Delimiter: '/'
-  });
-
   try {
-    const response = await client.send(command);
-    
-    // Process folders (CommonPrefixes)
-    const folders = (response.CommonPrefixes || []).map(prefix => ({
-      Key: prefix.Prefix,
-      isFolder: true,
-      LastModified: null,
-      Size: 0
-    }));
+    const connection = store.get('connections', []).find(conn => conn.id === connectionId);
+    if (!connection) throw new Error('Connection not found');
 
-    // Process files with additional metadata
-    const files = (response.Contents || []).map(obj => ({
-      ...obj,
-      isFolder: false,
-      ContentType: obj.Key.split('.').pop() || 'unknown',
-      StorageClass: obj.StorageClass || 'STANDARD'
-    }));
+    const client = getStorageClient(connectionId);
 
-    return { 
-      type: 'objects', 
-      data: [...folders, ...files].filter(item => item.Key !== prefix) // Remove current prefix from list
-    };
+    // If no bucket is specified, use the connection's default bucket if available
+    const targetBucket = bucket || connection.bucket;
+    if (!targetBucket) {
+      const buckets = await client.listBuckets();
+      return { type: 'buckets', data: buckets };
+    }
+
+    const response = await client.listObjects(targetBucket, prefix);
+    return response;
   } catch (error) {
     console.error('Error listing objects:', error);
     throw error;
@@ -222,30 +189,10 @@ ipcMain.handle('list-objects', async (event, connectionId, bucket = null, prefix
 });
 
 ipcMain.handle('upload-object', async (event, connectionId, filePath, key, bucket) => {
-  const connection = store.get('connections', []).find(conn => conn.id === connectionId);
-  if (!connection) throw new Error('Connection not found');
-
-  const fs = require('fs');
-
-  const client = new S3Client({
-    endpoint: connection.endpoint,
-    region: connection.region,
-    credentials: {
-      accessKeyId: connection.accessKey,
-      secretAccessKey: connection.secretKey
-    }
-  });
-
   try {
+    const client = getStorageClient(connectionId);
     const fileStream = fs.createReadStream(filePath);
-    const command = new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body: fileStream
-    });
-
-    await client.send(command);
-    return { success: true };
+    return await client.uploadObject(bucket, key, fileStream);
   } catch (error) {
     console.error('Error uploading object:', error);
     throw error;
@@ -253,28 +200,9 @@ ipcMain.handle('upload-object', async (event, connectionId, filePath, key, bucke
 });
 
 ipcMain.handle('create-folder', async (event, connectionId, bucket, folderPath) => {
-  const connection = store.get('connections', []).find(conn => conn.id === connectionId);
-  if (!connection) throw new Error('Connection not found');
-
-  const client = new S3Client({
-    endpoint: connection.endpoint,
-    region: connection.region,
-    credentials: {
-      accessKeyId: connection.accessKey,
-      secretAccessKey: connection.secretKey
-    }
-  });
-
   try {
-    // Create empty object with trailing slash to represent folder
-    const command = new PutObjectCommand({
-      Bucket: bucket,
-      Key: folderPath.endsWith('/') ? folderPath : `${folderPath}/`,
-      Body: ''
-    });
-
-    await client.send(command);
-    return { success: true };
+    const client = getStorageClient(connectionId);
+    return await client.createFolder(bucket, folderPath);
   } catch (error) {
     console.error('Error creating folder:', error);
     throw error;
@@ -282,35 +210,34 @@ ipcMain.handle('create-folder', async (event, connectionId, bucket, folderPath) 
 });
 
 ipcMain.handle('preview-object', async (event, connectionId, bucket, key) => {
-  const connection = store.get('connections', []).find(conn => conn.id === connectionId);
-  if (!connection) throw new Error('Connection not found');
-
-  const client = new S3Client({
-    endpoint: connection.endpoint,
-    region: connection.region,
-    credentials: {
-      accessKeyId: connection.accessKey,
-      secretAccessKey: connection.secretKey
-    }
-  });
-
   try {
-    const command = new GetObjectCommand({
-      Bucket: bucket,
-      Key: key
-    });
-
+    const client = getStorageClient(connectionId);
     const ext = key.split('.').pop()?.toLowerCase();
 
     // For text files, fetch and return content directly
-    if (ext.match(/^(txt|json|js|css|xml|md|markdown|yaml|yml|ini|csv|log)$/)) {
-      const response = await client.send(command);
-      const text = await response.Body.transformToString();
+    if (ext && ext.match(/^(txt|json|js|css|xml|md|markdown|yaml|yml|ini|csv|log)$/)) {
+      const response = await client.getObject(bucket, key);
+      let text;
+      
+      if (response.Body.transformToString) {
+        // AWS S3 SDK response
+        text = await response.Body.transformToString();
+      } else if (Buffer.isBuffer(response.Body)) {
+        // Buffer directly
+        text = response.Body.toString('utf-8');
+      } else if (response.Body.read) {
+        // Readable stream
+        text = await streamToString(response.Body);
+      } else {
+        // Handle other formats (e.g., Azure Blob)
+        text = await streamToString(response.Body);
+      }
+      
       return { type: 'text', content: text };
     }
 
     // For all other files, generate a signed URL that expires in 1 hour
-    const signedUrl = await getSignedUrl(client, command, { expiresIn: 3600 });
+    const signedUrl = await client.getSignedUrl(bucket, key, 3600);
     return { type: ext, content: signedUrl };
   } catch (error) {
     console.error('Error previewing object:', error);
@@ -318,29 +245,20 @@ ipcMain.handle('preview-object', async (event, connectionId, bucket, key) => {
   }
 });
 
-ipcMain.handle('download-object', async (event, connectionId, key, bucket) => {
-  const connection = store.get('connections', []).find(conn => conn.id === connectionId);
-  if (!connection) throw new Error('Connection not found');
-
-  const fs = require('fs');
-  const path = require('path');
-
-  const client = new S3Client({
-    endpoint: connection.endpoint,
-    region: connection.region,
-    credentials: {
-      accessKeyId: connection.accessKey,
-      secretAccessKey: connection.secretKey
-    }
+// Helper function to convert stream to string
+function streamToString(stream) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on('data', (chunk) => chunks.push(chunk));
+    stream.on('error', reject);
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
   });
+}
 
+ipcMain.handle('download-object', async (event, connectionId, key, bucket) => {
   try {
-    const command = new GetObjectCommand({
-      Bucket: bucket,
-      Key: key
-    });
-
-    const response = await client.send(command);
+    const client = getStorageClient(connectionId);
+    const response = await client.getObject(bucket, key);
     
     // Show save dialog with default filename
     const defaultPath = path.basename(key);
@@ -353,11 +271,20 @@ ipcMain.handle('download-object', async (event, connectionId, key, bucket) => {
 
     const writeStream = fs.createWriteStream(filePath);
     
-    await new Promise((resolve, reject) => {
-      response.Body.pipe(writeStream)
-        .on('finish', resolve)
-        .on('error', reject);
-    });
+    if (response.Body.pipe) {
+      // Handle stream response
+      await new Promise((resolve, reject) => {
+        response.Body.pipe(writeStream)
+          .on('finish', resolve)
+          .on('error', reject);
+      });
+    } else if (Buffer.isBuffer(response.Body)) {
+      // Handle buffer response
+      fs.writeFileSync(filePath, response.Body);
+    } else {
+      // Handle other types of response
+      throw new Error('Unsupported response type');
+    }
 
     return { success: true, path: filePath };
   } catch (error) {
@@ -367,19 +294,9 @@ ipcMain.handle('download-object', async (event, connectionId, key, bucket) => {
 });
 
 ipcMain.handle('delete-object', async (event, connectionId, key, bucket, isFolder = false) => {
-  const connection = store.get('connections', []).find(conn => conn.id === connectionId);
-  if (!connection) throw new Error('Connection not found');
-
-  const client = new S3Client({
-    endpoint: connection.endpoint,
-    region: connection.region,
-    credentials: {
-      accessKeyId: connection.accessKey,
-      secretAccessKey: connection.secretKey
-    }
-  });
-
   try {
+    const client = getStorageClient(connectionId);
+    
     if (isFolder) {
       let count = 0;
       
@@ -387,66 +304,23 @@ ipcMain.handle('delete-object', async (event, connectionId, key, bucket, isFolde
       const folderKey = key.endsWith('/') ? key : key + '/';
       console.log('Deleting folder:', folderKey);
 
-      // Recursive function to handle pagination
-      async function recursiveDelete(token) {
-        // List all objects in the folder
-        const listCommand = new ListObjectsV2Command({
-          Bucket: bucket,
-          Prefix: folderKey,
-          ContinuationToken: token
-        });
-
-        const list = await client.send(listCommand);
-        console.log('Found objects:', list.Contents?.length || 0);
-        
-        if (list.Contents && list.Contents.length > 0) {
-          // Delete all objects in this batch
-          const deleteCommand = new DeleteObjectsCommand({
-            Bucket: bucket,
-            Delete: {
-              Objects: list.Contents.map((item) => ({ Key: item.Key })),
-              Quiet: false
-            }
-          });
-
-          const deleted = await client.send(deleteCommand);
-          count += deleted.Deleted.length;
-          console.log(`Deleted ${deleted.Deleted.length} objects in this batch`);
-
-          // Log any errors
-          if (deleted.Errors && deleted.Errors.length > 0) {
-            deleted.Errors.forEach(error => {
-              console.error(`${error.Key} could not be deleted - ${error.Code}`);
-            });
-          }
-
-          // Continue if there are more files
-          if (list.NextContinuationToken) {
-            await recursiveDelete(list.NextContinuationToken);
-          }
-        }
-        return count;
+      // List all objects in the folder
+      const result = await client.listObjects(bucket, folderKey);
+      const objectsToDelete = result.data.map(item => item.Key);
+      
+      if (objectsToDelete.length > 0) {
+        // Delete all objects in batch
+        const deleteResult = await client.deleteObjects(bucket, objectsToDelete);
+        count = deleteResult.deleted ? deleteResult.deleted.length : objectsToDelete.length;
       }
 
-      // Start the recursive deletion
-      const deletedCount = await recursiveDelete();
-      console.log(`Deleted ${deletedCount} files from folder ${folderKey}`);
-
       // Delete the folder marker itself
-      const folderMarkerCommand = new DeleteObjectCommand({
-        Bucket: bucket,
-        Key: folderKey
-      });
-      await client.send(folderMarkerCommand);
+      await client.deleteObject(bucket, folderKey);
       console.log(`Deleted folder marker ${folderKey}`);
 
-      return { success: true, message: `${deletedCount} files and folder deleted.` };
+      return { success: true, message: `${count} files and folder deleted.` };
     } else {
-      const command = new DeleteObjectCommand({
-        Bucket: bucket,
-        Key: key
-      });
-      await client.send(command);
+      await client.deleteObject(bucket, key);
       return { success: true, message: 'File deleted.' };
     }
   } catch (error) {

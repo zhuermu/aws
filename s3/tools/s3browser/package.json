@@ -34,6 +34,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.0.0",
     "@aws-sdk/s3-request-presigner": "^3.732.0",
+    "@azure/storage-blob": "^12.14.0",
+    "ali-oss": "^6.17.1",
     "electron-store": "^8.1.0",
     "vue": "^3.3.0"
   },

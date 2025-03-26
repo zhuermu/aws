@@ -28,6 +28,74 @@ function hideButtonLoading(buttonId) {
   button.querySelector('.button-spinner').style.display = 'none';
 }
 
+// Add new function for cloud storage type handling
+function updateFormFields() {
+  const storageType = document.getElementById('storageType').value;
+  
+  // First, hide all conditional fields
+  document.querySelectorAll('.azure-blob-field, .aws-s3-field, .pcg-field, .aliyun-oss-field').forEach(field => {
+    field.classList.add('conditional-field');
+  });
+  
+  // Show relevant fields based on storage type
+  switch (storageType) {
+    case 'azure-blob':
+      document.querySelectorAll('.azure-blob-field').forEach(field => {
+        field.classList.remove('conditional-field');
+        field.querySelectorAll('input,select').forEach(input => {
+          input.required = true;
+        });
+      });
+      // Hide AWS/PCG specific fields
+      document.querySelectorAll('.aws-s3-field, .pcg-field, .aliyun-oss-field').forEach(field => {
+        field.querySelectorAll('input,select').forEach(input => {
+          input.required = false;
+        });
+      });
+      break;
+    case 'aws-s3':
+      document.querySelectorAll('.aws-s3-field').forEach(field => {
+        field.classList.remove('conditional-field');
+        field.querySelectorAll('input,select').forEach(input => {
+          input.required = true;
+        });
+      });
+      // Hide Azure specific fields
+      document.querySelectorAll('.azure-blob-field').forEach(field => {
+        field.querySelectorAll('input,select').forEach(input => {
+          input.required = false;
+        });
+      });
+      break;
+    case 'aliyun-oss':
+      document.querySelectorAll('.aliyun-oss-field').forEach(field => {
+        field.classList.remove('conditional-field');
+        field.querySelectorAll('input,select').forEach(input => {
+          input.required = true;
+        });
+      });
+      document.querySelectorAll('.azure-blob-field').forEach(field => {
+        field.querySelectorAll('input,select').forEach(input => {
+          input.required = false;
+        });
+      });
+      break;
+    case 'pcg':
+      document.querySelectorAll('.pcg-field').forEach(field => {
+        field.classList.remove('conditional-field');
+        field.querySelectorAll('input,select').forEach(input => {
+          input.required = true;
+        });
+      });
+      document.querySelectorAll('.azure-blob-field').forEach(field => {
+        field.querySelectorAll('input,select').forEach(input => {
+          input.required = false;
+        });
+      });
+      break;
+  }
+}
+
 // Connection Management
 async function loadConnections() {
   showLoading('Loading connections...');
@@ -42,7 +110,17 @@ async function loadConnections() {
       
       const nameDiv = document.createElement('div');
       nameDiv.className = 'connection-name';
-      nameDiv.textContent = conn.name;
+      
+      // Add connection type badge
+      const connType = conn.type || 'aws-s3'; // Default to aws-s3 for backward compatibility
+      const typeMap = {
+        'aws-s3': 'AWS S3',
+        'azure-blob': 'Azure Blob',
+        'aliyun-oss': 'Aliyun OSS',
+        'pcg': 'PCG'
+      };
+      
+      nameDiv.innerHTML = `${conn.name} <span class="connection-type-badge connection-type-${connType}">${typeMap[connType] || connType}</span>`;
       nameDiv.onclick = () => selectConnection(conn);
       
       const actionsDiv = document.createElement('div');
@@ -81,8 +159,9 @@ async function loadConnections() {
 
 function showNewConnectionModal() {
   isEditing = false;
-  document.getElementById('connectionModalTitle').textContent = 'New S3 Connection';
+  document.getElementById('connectionModalTitle').textContent = 'New Connection';
   document.getElementById('connectionForm').reset();
+  updateFormFields(); // Initialize visible form fields
   document.getElementById('connectionModal').style.display = 'block';
 }
 
@@ -93,16 +172,33 @@ function hideConnectionModal() {
 
 function editConnection(connection) {
   isEditing = true;
-  document.getElementById('connectionModalTitle').textContent = 'Edit S3 Connection';
+  document.getElementById('connectionModalTitle').textContent = 'Edit Connection';
   const form = document.getElementById('connectionForm');
   form.elements.id.value = connection.id;
   form.elements.name.value = connection.name;
-  form.elements.endpoint.value = connection.endpoint;
-  form.elements.region.value = connection.region;
-  form.elements.accessKey.value = connection.accessKey;
-  form.elements.secretKey.value = connection.secretKey;
+  
+  // Set storage type (default to aws-s3 for backward compatibility)
+  form.elements.type.value = connection.type || 'aws-s3';
+  
+  // Common fields
+  form.elements.endpoint.value = connection.endpoint || '';
+  form.elements.region.value = connection.region || '';
   form.elements.bucket.value = connection.bucket || '';
   form.elements.prefix.value = connection.prefix || '';
+
+  // Specific fields based on type
+  if (connection.type === 'azure-blob') {
+    form.elements.accountName.value = connection.accountName || '';
+    form.elements.accountKey.value = connection.accountKey || '';
+  } else {
+    // For AWS S3, PCG, Aliyun OSS, and default case
+    form.elements.accessKey.value = connection.accessKey || '';
+    form.elements.secretKey.value = connection.secretKey || '';
+  }
+  
+  // Update visible form fields
+  updateFormFields();
+  
   document.getElementById('connectionModal').style.display = 'block';
 }
 
@@ -112,16 +208,27 @@ document.getElementById('connectionForm').onsubmit = async (e) => {
   
   try {
     const formData = new FormData(e.target);
-    const connection = {
+    const storageType = formData.get('type');
+    
+    let connection = {
       id: formData.get('id') || Date.now().toString(),
       name: formData.get('name'),
+      type: storageType,
       endpoint: formData.get('endpoint'),
       region: formData.get('region'),
-      accessKey: formData.get('accessKey'),
-      secretKey: formData.get('secretKey'),
       bucket: formData.get('bucket') || null,
       prefix: formData.get('prefix') || ''
     };
+
+    // Add storage-specific fields
+    if (storageType === 'azure-blob') {
+      connection.accountName = formData.get('accountName');
+      connection.accountKey = formData.get('accountKey');
+    } else {
+      // AWS S3, PCG, Aliyun OSS
+      connection.accessKey = formData.get('accessKey');
+      connection.secretKey = formData.get('secretKey');
+    }
 
     if (isEditing) {
       const connections = await ipcRenderer.invoke('get-connections');
@@ -193,7 +300,7 @@ function getFileIcon(item) {
     case 'jpeg':
     case 'png':
     case 'gif':
-      return '[IMG]';
+      return '';
     case 'pdf':
       return '[PDF]';
     case 'txt':
