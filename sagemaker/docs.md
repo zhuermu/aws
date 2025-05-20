@@ -26,3 +26,4 @@ Amazon Mechanical Turk 文档：https://docs.aws.amazon.com/AWSMechTurk/latest/A
 Amazon Mechanical Turk
 
 提供了 Mechanical Turk 的使用方法和适用场景。
+
