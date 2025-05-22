@@ -100,8 +100,8 @@ def call_bedrock_llm(
         }
         
         # Sleep to avoid hitting API rate limits
-        logger.info(f"Sleeping for {sleep_time} seconds to avoid API rate limits")
-        time.sleep(sleep_time)
+        logger.info(f"Sleeping for 1 seconds to avoid API rate limits")
+        time.sleep(1)
         
         return response_text, token_usage
         
@@ -252,7 +252,7 @@ def calibrate_classification(
     category2: str, 
     category3: List[str], 
     categories_json: Dict[str, Any],
-    model_id: str = "amazon.titan-embed-text-v1",
+    model_id: str = "amazon.titan-embed-text-v2:0",
     region: str = "us-east-1"
 ) -> Dict[str, Any]:
     """

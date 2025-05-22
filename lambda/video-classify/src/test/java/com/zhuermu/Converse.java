@@ -71,7 +71,7 @@ public class Converse {
     }
 
     public static void main(String[] args) {
-        String s3Uri = "s3://bedrock-video-generation-us-east-1-pi8hu9/video-class/f81d2c02aa474179b4ead01df54bbd13.mp4";
+        String s3Uri = "s3://video-classify/204fcf5a-20f0-4746-9f84-e65d0acc5402.mp4";
         String bucketOwner = "";
         try {
             converse(s3Uri, bucketOwner);

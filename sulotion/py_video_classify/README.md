@@ -12,7 +12,10 @@
 
 1. LLM调用方法：调用 Bedrock 大模型，输入 S3 视频 URI、prompt、system 和模型 ID 等参数，输出模型理解的结果。
 2. 视频转文本方法：输入 S3 视频 URI，如果视频超过30秒，截取前30秒，返回视频中的音频文本。
-3. 分类结果校准方法：输入一、二、三级分类，根据分类级别读取三级分类对象，计算向量相似度最接近的词输出。
+3. 分类结果校准方法：输入一、二、三级分类，根据分类级别读取三级分类对象，使用 Amazon TiTan Embeddings 分类计算向量相似度最接近的词输出， 计算分类时对分类标签进行增强：
+ - 计算一级分类：使用1级分类和一级分类下的二级分类
+ - 计算二级分类：使用1、2级分类和2级分类下的三级分类
+ - 计算三级分类：使用1、2、3级分类
 4. JSON结果解析方法：从文本中提取 JSON 格式数据，如果格式不正确，调用 Nova Lite 修复。
 
 ### 视频分类模块
@@ -86,7 +89,7 @@ python video_classify.py process --method one_step --model-id amazon.nova-lite-v
 或者使用两步分类方法：
 
 ```bash
-python video_classify.py process --method two_step --model-id amazon.nova-lite-v1:0
+python video_classify.py process --method two_step --model-id amazon.nova-pro-v1:0
 ```
 
 结果文件将自动命名为 `data/classification_results_<method>_<model>.csv`，例如：
@@ -262,3 +265,148 @@ python trim_videos.py --input data/video-input.csv --output data/video-output.cs
 
 ## 使用lambda函数触发
 ![alt text](image.png)
+
+## 系统架构图
+
+```mermaid
+graph TD
+    S3[S3 视频存储] --> Lambda[Lambda 函数]
+    Lambda --> StepFunctions[Step Functions 状态机]
+    StepFunctions --> VideoProcess[视频处理模块]
+    StepFunctions --> ClassificationModule[分类模块]
+    StepFunctions --> ResultCalibration[结果校准模块]
+    StepFunctions --> ResultStorage[结果存储模块]
+    
+    VideoProcess --> |提取视频片段| S3Temp[S3 临时存储]
+    ClassificationModule --> |调用| Bedrock[Amazon Bedrock API]
+    Bedrock --> |返回分类结果| ClassificationModule
+    ClassificationModule --> |JSON结果| ResultCalibration
+    ResultCalibration --> |使用| TitanEmbeddings[Amazon Titan Embeddings]
+    ResultCalibration --> ResultStorage
+    ResultStorage --> DynamoDB[DynamoDB]
+    ResultStorage --> ResultsCSV[CSV结果文件]
+    
+    EventBridge[EventBridge] --> |定时触发批处理| Lambda
+    SQS[SQS队列] --> |失败重试| StepFunctions
+```
+```mermaid
+sequenceDiagram
+    participant Client as 客户端
+    participant Lambda as Lambda 触发器
+    participant StepFunc as Step Functions
+    participant S3 as S3 存储
+    participant Bedrock as Bedrock API
+    participant DynamoDB as DynamoDB
+    
+    Client->>S3: 上传视频
+    S3-->>Lambda: 触发处理事件
+    Lambda->>StepFunc: 启动状态机
+    StepFunc->>S3: 获取视频
+    StepFunc->>StepFunc: 截取前30秒(如需)
+    StepFunc->>Bedrock: 调用Nova Pro分类API
+    Bedrock-->>StepFunc: 返回分类结果
+    StepFunc->>StepFunc: 解析JSON结果
+    StepFunc->>StepFunc: 校准分类结果
+    StepFunc->>DynamoDB: 存储处理结果
+    StepFunc-->>Client: 通知处理完成ResultCalibration --> ResultStorage
+    ResultStorage --> DynamoDB[DynamoDB]
+    ResultStorage --> ResultsCSV[CSV结果文件]
+    
+    EventBridge[EventBridge] --> |定时触发批处理| Lambda
+    SQS[SQS队列] --> |失败重试| StepFunctions
+```
+```mermaid
+flowchart TD
+    Start[开始处理] --> CheckDuration[检查视频时长]
+    CheckDuration --> |>30秒| TrimVideo[截取前30秒]
+    CheckDuration --> |≤30秒| PrepareRequest[准备API请求]
+    TrimVideo --> PrepareRequest
+    
+    PrepareRequest --> LoadPrompt[加载提示词]
+    LoadPrompt --> OneStep{分类方法?}
+    
+    OneStep --> |一步分类| CallBedrock1[调用Bedrock一次]
+    OneStep --> |两步分类| FirstCall[第一步:内容理解]
+    
+    FirstCall --> SecondCall[第二步:分类]
+    SecondCall --> ParseResult2[解析结果]
+    
+    CallBedrock1 --> ParseResult1[解析结果]
+    ParseResult1 --> ValidateJSON{JSON格式有效?}
+    ParseResult2 --> ValidateJSON
+    
+    ValidateJSON --> |否| RepairJSON[使用Nova Lite修复]
+    ValidateJSON --> |是| CalibrateResults[校准分类结果]
+    RepairJSON --> CalibrateResults
+    
+    CalibrateResults --> SaveResults[保存结果]
+    SaveResults --> End[处理完成]
+```
+```mermaid
+stateDiagram-v2
+    [*] --> 等待处理
+    等待处理 --> 处理中: 启动处理
+    处理中 --> 成功: 处理完成
+    处理中 --> 临时失败: API错误(503, 424)
+    处理中 --> 永久失败: 错误超过重试次数
+    
+    临时失败 --> 等待重试: 放入SQS队列
+    等待重试 --> 处理中: 延时后重试
+    
+    成功 --> [*]
+    永久失败 --> 人工干预
+    人工干预 --> 等待处理: 手动重启
+    人工干预 --> [*]: 放弃处理neStep --> |一步分类| CallBedrock1[调用Bedrock一次]
+    OneStep --> |两步分类| FirstCall[第一步:内容理解]
+    
+    FirstCall --> SecondCall[第二步:分类]
+    SecondCall --> ParseResult2[解析结果]
+    
+    CallBedrock1 --> ParseResult1[解析结果]
+    ParseResult1 --> ValidateJSON{JSON格式有效?}
+    ParseResult2 --> ValidateJSON
+    
+    ValidateJSON --> |否| RepairJSON[使用Nova Lite修复]
+    ValidateJSON --> |是| CalibrateResults[校准分类结果]
+    RepairJSON --> CalibrateResults
+    
+    CalibrateResults --> SaveResults[保存结果]
+    SaveResults --> End[处理完成]
+
+```
+```mermaid
+graph LR
+    subgraph AWS["AWS Cloud"]
+        S3[(S3 存储)]
+        DDB[(DynamoDB)]
+        SQS[(SQS队列)]
+        
+        subgraph Compute["计算层"]
+            Lambda["Lambda函数"]
+            StepFunc["Step Functions"]
+        end
+        
+        subgraph AI["AI服务层"]
+            Bedrock["Amazon Bedrock"]
+            TitanEmb["Titan Embeddings"]
+        end
+        
+        subgraph Monitor["监控层"]
+            CloudWatch["CloudWatch"]
+            Alarm["警报系统"]
+        end
+    end
+    
+    Client[客户端] <--> S3
+    S3 <--> Lambda
+    Lambda <--> StepFunc
+    StepFunc <--> Bedrock
+    StepFunc <--> TitanEmb
+    StepFunc <--> SQS
+    StepFunc <--> DDB
+    
+    Compute <--> Monitor
+    AI <--> Monitor
+    Monitor --> Notification["通知系统"] --> SaveResults[保存结果]
+    SaveResults --> End[处理完成]
+```
