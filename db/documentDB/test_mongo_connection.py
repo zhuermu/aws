@@ -58,7 +58,7 @@ def get_connection_string(username, password, endpoint, port=27017, ssl=True):
 def test_connection():
     """测试MongoDB连接，使用读写分离"""
     # 获取DocumentDB密钥名称
-    secret_name = "rds!cluster-01626a18-8cc9-4bb4-9a92-5fb1b2eef724"
+    secret_name = "your-secret-name"
     region_name = "us-east-1"
     
     try:

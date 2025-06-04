@@ -325,7 +325,7 @@ class DocumentDBCRUD:
 # 使用示例
 if __name__ == "__main__":
     # 替换为您的Secret名称和区域
-    secret_name = "rds!cluster-01626a18-8cc9-4bb4-9a92-5fb1b2eef724"
+    secret_name = "your-secret-name"
     region_name = "us-east-1"
     
     # 初始化CRUD操作类
