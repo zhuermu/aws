@@ -122,10 +122,12 @@ async def generate_video_with_nova_reel(image_base64: str, prompt: str, duration
         raise HTTPException(status_code=500, detail="Bedrock 客户端未初始化")
     
     # 在函数开始就定义 bucket_name，确保在错误处理中可以访问
-    bucket_name = "nova-reel-20250701132554"
+    bucket_name = os.environ.get("BEDROCK_VIDEO_BUCKET", "bedrock-video-generation")
     
-    # 在函数开始就定义 bucket_name，确保在错误处理中可以访问
-    bucket_name = "nova-reel-20250701132554"
+    # 确保桶名称是唯一的，可以添加账户ID或随机字符串
+    import uuid
+    bucket_suffix = str(uuid.uuid4())[:8]
+    bucket_name = f"{bucket_name}-{bucket_suffix}"
     
     try:
         logger.info(f"开始调用 Nova Reel 异步作业，提示词长度: {len(prompt)}, 时长: {duration}秒")

@@ -81,25 +81,9 @@ def check_s3_permissions():
         print("✅ S3 权限正常")
         print(f"   - 可访问 {len(buckets)} 个 S3 桶")
         
-        # 尝试创建一个测试桶
-        test_bucket_name = f"nova-reel-test-{hash(str(buckets)) % 10000}"
-        
-        try:
-            s3_client.create_bucket(Bucket=test_bucket_name)
-            print(f"✅ S3 桶创建权限正常 (测试桶: {test_bucket_name})")
-            
-            # 清理测试桶
-            try:
-                s3_client.delete_bucket(Bucket=test_bucket_name)
-                print("✅ S3 桶删除权限正常")
-            except:
-                print(f"⚠️  测试桶 {test_bucket_name} 可能需要手动删除")
-                
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'BucketAlreadyExists':
-                print("✅ S3 桶创建权限正常 (桶名已存在)")
-            else:
-                print(f"⚠️  S3 桶创建可能有问题: {e.response['Error']['Code']}")
+        # 检查权限而不创建测试桶
+        print("✅ S3 列表权限正常")
+        print("💡 注意: 未执行桶创建测试，以避免创建不必要的资源")
         
         return True
         
