@@ -37,3 +37,56 @@
 
 启用后，您可以通过浏览器开发者工具的网络面板查看这些 Server-Timing 标头，它们提供了有关请
 求处理各个阶段的详细性能信息，有助于您分析和优化内容交付性能。
+
+
+命中：
+server-timing
+cdn-cache-hit,cdn-pop;desc="SFO5-P3",cdn-hit-layer;desc="REC",cdn-rid;desc="JlflyrFsU4HGbRo5cSjdjbWFvkLuhB-5eYyWOTBr-qjBaveXOLomeQ==",cdn-downstream-fbl=4
+
+不命中：
+server-timing
+cdn-upstream-layer;desc="REC",cdn-upstream-dns;dur=0,cdn-upstream-connect;dur=180,cdn-upstream-fbl;dur=404,cdn-cache-miss,cdn-pop;desc="SFO5-P3",cdn-rid;desc="T9ymQP6Mfc-cJdDVsD0Y-kCnxA4k290ASqILrCQwqfVly-Q6aZ6Ehw==",cdn-downstream-fbl=410
+
+我来解释一下 server-timing 参数中的信息，这些信息可以帮助您了解 CloudFront 的缓存状态和请
+求处理情况。
+
+## 缓存命中的 server-timing 信息解析
+
+server-timing
+cdn-cache-hit,cdn-pop;desc="SFO5-P3",cdn-hit-layer;desc="REC",cdn-rid;desc="JlflyrFsU4HGbRo5cSjdjbWFvkLuhB-5eYyWOTBr-qjBaveXOLomeQ==",cdn-downstream-fbl=4
+
+
+• cdn-cache-hit: 表示请求在 CloudFront 缓存中命中，无需向源站请求
+• cdn-pop;desc="SFO5-P3": 表示处理请求的 CloudFront 接入点(PoP)位于旧金山(SFO5-P3)
+• cdn-hit-layer;desc="REC": 表示缓存命中发生在区域边缘缓存(Regional Edge Cache, REC)层
+• cdn-rid: 请求的唯一标识符，用于故障排查
+• cdn-downstream-fbl=4: 表示从 CloudFront 到客户端的第一个字节延迟为 4 毫秒，非常快
+
+## 缓存未命中的 server-timing 信息解析
+
+server-timing
+cdn-upstream-layer;desc="REC",cdn-upstream-dns;dur=0,cdn-upstream-connect;dur=180,cdn-upstream-fbl;dur=404,cdn-cache-miss,cdn-pop;desc="SFO5-P3",cdn-rid;desc="T9ymQP6Mfc-cJdDVsD0Y-kCnxA4k290ASqILrCQwqfVly-Q6aZ6Ehw==",cdn-downstream-fbl=410
+
+
+• cdn-upstream-layer;desc="REC": 表示请求是从区域边缘缓存(REC)转发到源站的
+• cdn-upstream-dns;dur=0: DNS 解析源站域名所需时间为 0 毫秒
+• cdn-upstream-connect;dur=180: 连接到源站所需时间为 180 毫秒
+• cdn-upstream-fbl;dur=404: 从源站接收到第一个字节的延迟为 404 毫秒
+• cdn-cache-miss: 表示请求在 CloudFront 缓存中未命中，需要向源站请求
+• cdn-pop;desc="SFO5-P3": 同样是旧金山的接入点
+• cdn-rid: 请求的唯一标识符
+• cdn-downstream-fbl=410: 从 CloudFront 到客户端的第一个字节延迟为 410 毫秒
+
+## 比较分析
+
+通过比较这两个 server-timing 信息，我们可以看出：
+
+1. 缓存命中时，响应速度非常快（downstream-fbl 只有 4 毫秒）
+2. 缓存未命中时，需要向源站请求，总延迟明显增加（downstream-fbl 为 410 毫秒）
+3. 向源站请求的主要延迟来自连接时间（180 毫秒）和等待源站响应的时间（404 毫秒）
+
+这些信息对于分析 CloudFront 性能和排查问题非常有用。如果您看到大量的缓存未命中情况，可能需
+要检查您的缓存策略是否正确配置，特别是在处理带有查询参数（如 x-oss-process）的请求时。
+
+您可以通过这些信息确认我们之前讨论的缓存策略修改是否生效 - 如果修改后带有 x-oss-process 参
+数的请求能够命中缓存，您应该会看到 cdn-cache-hit 而不是 cdn-cache-miss。
