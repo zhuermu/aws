@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Reel 视频生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-input-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .file-input-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(116, 185, 255, 0.3);
+        }
+
+        .file-name {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .image-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .prompt-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1em;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s ease;
+        }
+
+        .prompt-input:focus {
+            outline: none;
+            border-color: #74b9ff;
+            box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+        }
+
+        .duration-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .duration-input:focus {
+            outline: none;
+            border-color: #74b9ff;
+            box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+        }
+
+        .generate-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #00b894, #00a085);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .generate-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3);
+        }
+
+        .generate-button:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #74b9ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            color: #155724;
+        }
+
+        .error {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            color: #721c24;
+        }
+
+        .download-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .download-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(253, 121, 168, 0.3);
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            color: #1565c0;
+        }
+
+        .info-box h3 {
+            margin-bottom: 10px;
+            color: #0d47a1;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+        }
+
+        .job-status {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            color: #856404;
+        }
+
+        .status-checking {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .status-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ffeaa7;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .completed-status {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .failed-status {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Nova Reel 视频生成器</h1>
+            <p>使用 Amazon Bedrock Nova Reel 将图片和提示词转换为精彩视频</p>
+        </div>
+
+        <div class="form-container">
+            <div class="info-box">
+                <h3>使用说明</h3>
+                <ul>
+                    <li>支持的图片格式：PNG, JPG, JPEG, GIF, BMP</li>
+                    <li>图片会自动调整为 1280x720 分辨率</li>
+                    <li>视频时长：5-10秒</li>
+                    <li>文件大小限制：16MB</li>
+                    <li><strong>重要：</strong>需要配置 S3 桶来存储生成的视频</li>
+                </ul>
+            </div>
+
+            <div class="info-box" style="background: #fff3cd; border-color: #ffeaa7; color: #856404;">
+                <h3>⚠️ S3 配置提醒</h3>
+                <p>Nova Reel 使用异步作业生成视频，需要 S3 桶来存储结果。</p>
+                <p>请确保已在 <code>app.py</code> 中配置了有效的 S3 桶 URI。</p>
+                <p>详细设置请参考 <a href="/static/SETUP.md" target="_blank">SETUP.md</a></p>
+            </div>
+
+            <form id="videoForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="image">选择图片：</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="image" name="image" class="file-input" accept="image/*" required>
+                        <button type="button" class="file-input-button" onclick="document.getElementById('image').click()">
+                            📁 点击选择图片文件
+                        </button>
+                    </div>
+                    <div id="fileName" class="file-name" style="display: none;"></div>
+                    <div id="imagePreview" class="image-preview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="prompt">视频描述提示词：</label>
+                    <textarea 
+                        id="prompt" 
+                        name="prompt" 
+                        class="prompt-input" 
+                        placeholder="请详细描述您希望生成的视频内容，例如：一只可爱的小猫在花园里玩耍，阳光明媚，微风轻拂..." 
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">视频时长（秒）：</label>
+                    <input 
+                        type="number" 
+                        id="duration" 
+                        name="duration" 
+                        class="duration-input" 
+                        min="5" 
+                        max="10" 
+                        value="7" 
+                        required
+                    >
+                </div>
+
+                <button type="submit" id="generateBtn" class="generate-button">
+                    🚀 生成视频
+                </button>
+            </form>
+
+            <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <p>正在生成视频，请稍候...</p>
+                <p><small>这可能需要几分钟时间</small></p>
+            </div>
+
+            <div id="jobStatus" class="job-status"></div>
+            
+            <div id="statusChecking" class="status-checking">
+                <div class="status-spinner"></div>
+                <p>正在检查作业状态...</p>
+            </div>
+
+            <div id="result" class="result"></div>
+            <div id="error" class="error"></div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量存储作业信息
+        let currentJobArn = null;
+        let statusCheckInterval = null;
+
+        // 文件选择处理
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileName = document.getElementById('fileName');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            if (file) {
+                fileName.textContent = `已选择: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                fileName.style.display = 'block';
+                
+                // 显示图片预览
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="预览图片">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileName.style.display = 'none';
+                imagePreview.innerHTML = '';
+            }
+        });
+
+        // 表单提交处理
+        document.getElementById('videoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const imageFile = document.getElementById('image').files[0];
+            const prompt = document.getElementById('prompt').value.trim();
+            const duration = document.getElementById('duration').value;
+            
+            // 验证输入
+            if (!imageFile) {
+                showError('请选择图片文件');
+                return;
+            }
+            
+            if (!prompt) {
+                showError('请输入视频描述提示词');
+                return;
+            }
+            
+            if (duration < 5 || duration > 10) {
+                showError('视频时长必须在5-10秒之间');
+                return;
+            }
+            
+            // 检查文件大小
+            if (imageFile.size > 16 * 1024 * 1024) {
+                showError('文件大小不能超过16MB');
+                return;
+            }
+            
+            formData.append('image', imageFile);
+            formData.append('prompt', prompt);
+            formData.append('duration', duration);
+            
+            // 显示加载状态
+            showLoading();
+            
+            try {
+                const response = await fetch('/generate_video', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    showJobStarted(result);
+                    // 开始检查作业状态
+                    if (result.invocation_arn) {
+                        currentJobArn = result.invocation_arn;
+                        startStatusChecking();
+                    }
+                } else {
+                    showError(result.detail || result.error || '启动视频生成作业失败');
+                }
+            } catch (error) {
+                showError('网络错误：' + error.message);
+            } finally {
+                hideLoading();
+            }
+        });
+        
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('jobStatus').style.display = 'none';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('generateBtn').disabled = false;
+        }
+        
+        function showJobStarted(result) {
+            const jobStatusDiv = document.getElementById('jobStatus');
+            jobStatusDiv.innerHTML = `
+                <h3>🚀 视频生成作业已启动</h3>
+                <p><strong>作业 ARN:</strong> ${result.invocation_arn}</p>
+                <p><strong>提示词:</strong> ${result.prompt}</p>
+                <p><strong>时长:</strong> ${result.duration}秒</p>
+                <p><strong>状态:</strong> <span id="currentStatus">启动中...</span></p>
+                <p><em>视频生成通常需要几分钟时间，请耐心等待</em></p>
+            `;
+            jobStatusDiv.style.display = 'block';
+        }
+        
+        function startStatusChecking() {
+            if (!currentJobArn) return;
+            
+            // 立即检查一次
+            checkJobStatus();
+            
+            // 每15秒检查一次状态
+            statusCheckInterval = setInterval(checkJobStatus, 15000);
+        }
+        
+        async function checkJobStatus() {
+            if (!currentJobArn) return;
+            
+            try {
+                document.getElementById('statusChecking').style.display = 'block';
+                
+                const response = await fetch(`/check_job/${encodeURIComponent(currentJobArn)}`);
+                const result = await response.json();
+                
+                const statusSpan = document.getElementById('currentStatus');
+                const jobStatusDiv = document.getElementById('jobStatus');
+                
+                if (result.status === 'Completed') {
+                    // 作业完成
+                    statusSpan.textContent = '✅ 完成';
+                    jobStatusDiv.className = 'job-status completed-status';
+                    
+                    if (result.video_url) {
+                        jobStatusDiv.innerHTML += `
+                            <p><strong>视频已生成!</strong></p>
+                            <p><strong>S3 位置:</strong> ${result.video_url}</p>
+                            <a href="${result.video_url}" target="_blank" class="download-button">
+                                🎥 查看视频 (S3)
+                            </a>
+                        `;
+                    }
+                    
+                    // 停止状态检查
+                    if (statusCheckInterval) {
+                        clearInterval(statusCheckInterval);
+                        statusCheckInterval = null;
+                    }
+                    
+                } else if (result.status === 'Failed') {
+                    // 作业失败
+                    statusSpan.textContent = '❌ 失败';
+                    jobStatusDiv.className = 'job-status failed-status';
+                    jobStatusDiv.innerHTML += `<p><strong>错误:</strong> ${result.error || '未知错误'}</p>`;
+                    
+                    // 停止状态检查
+                    if (statusCheckInterval) {
+                        clearInterval(statusCheckInterval);
+                        statusCheckInterval = null;
+                    }
+                    
+                } else if (result.status === 'InProgress') {
+                    // 作业进行中
+                    statusSpan.textContent = '🔄 进行中';
+                    
+                } else {
+                    // 其他状态
+                    statusSpan.textContent = result.status || '未知';
+                }
+                
+            } catch (error) {
+                console.error('检查作业状态失败:', error);
+            } finally {
+                document.getElementById('statusChecking').style.display = 'none';
+            }
+        }
+        
+        function showResult(result) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <h3>✅ ${result.message}</h3>
+                <p><strong>提示词：</strong>${result.prompt}</p>
+                <p><strong>时长：</strong>${result.duration}秒</p>
+                <a href="${result.video_url}" class="download-button" download="${result.video_filename}">
+                    📥 下载结果
+                </a>
+            `;
+            resultDiv.style.display = 'block';
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = '❌ ' + message;
+            errorDiv.style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('jobStatus').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

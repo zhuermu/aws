@@ -285,12 +285,12 @@ class TwoStepVideoClassifier(VideoClassifier):
                 s3_uri=s3_uri,
                 prompt=self.first_prompt,
                 temperature=0.0,
-                top_p=0.9,
-                max_tokens=512,
+                top_p=0.5,
+                max_tokens=300,
                 system="You are a video content analyst. Describe the video content in sample text.",
                 model_id=self.model_id,
                 region=self.region,
-                sleep_time=40.0
+                sleep_time=60.0
             )
             
             logger.info(f"First step response: {first_response_text}")
@@ -308,7 +308,7 @@ class TwoStepVideoClassifier(VideoClassifier):
                 system=self.system_prompt,
                 model_id=self.model_id,
                 region=self.region,
-                sleep_time=20
+                sleep_time=40
             )
             
             logger.info(f"Second step response: {second_response_text}")

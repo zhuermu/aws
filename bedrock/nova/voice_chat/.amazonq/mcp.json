@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "get_time": {
+      "command": "http://127.0.0.1:8000/mcp",
+      "args": [],
+      "env": {},
+      "timeout": 120000
+    },
+    "AWSDocMCPServer": {
+      "command": "uvx",
+      "timeout": 120000,
+      "args": [
+        "awslabs.aws-documentation-mcp-server@latest"
+      ]
+    }
+  }
+}
