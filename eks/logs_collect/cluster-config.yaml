@@ -1,0 +1,71 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: logs-collect-cluster
+  region: us-east-1
+  version: "1.33"
+
+# 托管节点组配置
+managedNodeGroups:
+  - name: logs-collect-workers
+    instanceTypes: ["t3.medium", "t3.large"]
+    minSize: 1
+    maxSize: 4
+    desiredCapacity: 2
+    volumeSize: 20
+    volumeType: gp3
+    amiFamily: AmazonLinux2023
+    iam:
+      attachPolicyARNs:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+    tags:
+      Environment: logs-collect
+      Project: eks-logs-system
+
+# VPC配置
+vpc:
+  autoAllocateIPv6: false
+  nat:
+    gateway: Single
+
+# 集群日志记录
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+    logRetentionInDays: 30
+
+# OIDC身份提供商
+iam:
+  withOIDC: true
+  serviceAccounts:
+    - metadata:
+        name: aws-load-balancer-controller
+        namespace: kube-system
+      wellKnownPolicies:
+        awsLoadBalancerController: true
+    - metadata:
+        name: fluent-bit
+        namespace: amazon-cloudwatch
+      attachPolicyARNs:
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+
+# 必要的插件
+addons:
+  - name: vpc-cni
+    version: latest
+    resolveConflicts: overwrite
+  - name: coredns
+    version: latest
+    resolveConflicts: overwrite
+  - name: kube-proxy
+    version: latest
+    resolveConflicts: overwrite
+  - name: aws-ebs-csi-driver
+    version: latest
+    resolveConflicts: overwrite
+    wellKnownPolicies:
+      ebsCSIController: true
