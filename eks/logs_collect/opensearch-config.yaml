@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-config
+  namespace: logs-collect
+data:
+  # OpenSearch 域基本配置
+  domain-name: "logs-collect-domain"
+  engine-version: "OpenSearch_2.19"  # 最新版本
+  
+  # 集群配置 - 1个数据节点，无待机功能的1个可用区
+  instance-type: "r7g.large.search"  # ARM-based Graviton3 实例
+  instance-count: "1"                 # 1个数据节点
+  dedicated-master-enabled: "false"   # 不使用专用主节点
+  zone-awareness-enabled: "false"     # 无待机功能的1个可用区
+  
+  # EBS 存储配置 - GP3 50 GiB
+  volume-type: "gp3"
+  volume-size: "50"                  # 50 GiB
+  volume-iops: "3000"                 # GP3 默认 IOPS
+  volume-throughput: "125"            # GP3 默认吞吐量
+  
+  # 网络配置 - Public access, IPv4
+  ip-address-type: "ipv4"
+  enforce-https: "true"               # HTTPS 用于所有到域的流量
+  tls-security-policy: "Policy-Min-TLS-1-2-2019-07"
+  
+  # 加密配置
+  encryption-at-rest-enabled: "true"  # 启用静态数据的加密
+  node-to-node-encryption-enabled: "true"  # 节点到节点加密
+  
+  # 精细访问控制 - 启用用户名密码认证
+  advanced-security-enabled: "true"   # 启用精细访问控制
+  internal-user-database-enabled: "true"  # 启用内部用户数据库
+  anonymous-auth-enabled: "false"     # 禁用匿名访问
+  
+  # 主用户配置
+  master-user-name: "admin"
+  master-user-password: "${OPENSEARCH_PASSWORD}"
+  
+  # 访问策略 - 公网访问但需要认证
+  access-policy: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*"
+          },
+          "Action": "es:*",
+          "Resource": "arn:aws:opensearch:us-east-1:${AWS_ACCOUNT_ID}:domain/logs-collect-domain-v2/*"
+        }
+      ]
+    }
+  
+  # 高级选项
+  advanced-options: |
+    {
+      "override_main_response_version": "false",
+      "rest.action.multi.allow_explicit_index": "true"
+    }
+  
+  # 快照配置
+  automated-snapshot-start-hour: "0"
+  
+  # 自动调优
+  auto-tune-enabled: "false"
+  
+  # 软件更新
+  auto-software-update-enabled: "false"
+  
+  # 标签
+  tags: |
+    {
+      "Environment": "production",
+      "Project": "logs-collect",
+      "Version": "v2",
+      "ManagedBy": "kubernetes",
+      "AuthType": "username-password"
+    }

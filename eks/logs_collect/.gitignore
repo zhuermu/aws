@@ -1,0 +1,33 @@
+# 环境变量文件
+.env
+*.env
+
+# AWS临时文件
+iam_policy.json
+*.pem
+*.key
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 备份文件
+*.bak
+*.backup
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS文件
+.DS_Store
+
+# 敏感信息
+*secret*
+*credential*
+*password*

@@ -1,3 +1,4 @@
+package com.zhuermu;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +24,6 @@ public class ChatClient {
 
             // 使用UTF-8编码的Scanner读取控制台输入
             Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8.name());
-
             // 消息接收线程（仅显示消息）
             new Thread(() -> {
                 try {
@@ -39,11 +39,16 @@ public class ChatClient {
                     System.out.println("[System] Connection to the server has been lost.");
                 }
             }).start(); // 启动线程
+
             System.out.println("Welcome to the Chat Room!");
-
+            try {
+                // 等待1秒钟，确保线程启动完成
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println("[System] Error while waiting for the thread to start.");
+            }
             // 主线程处理所有输入操作
-            while (true) {
-
+            while (true ) {
                 if (needUsername) {
                     System.out.print("Please enter your username: ");
                     // 先输出提示信息
