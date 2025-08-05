@@ -18,7 +18,7 @@ agentcore_demo/
 ├── my_agent.py              # 主要的代理实现
 ├── my_memory.py             # 记忆管理示例
 ├── my_identify.py           # 身份认证服务示例
-├── test_my_agent.py         # 代理测试脚本
+├── test_comprehensive.py       # 综合测试脚本
 ├── requirements.txt         # Python 依赖
 ├── Dockerfile              # Docker 构建文件
 ├── .dockerignore           # Docker 忽略文件
@@ -81,7 +81,7 @@ nano .env
 python my_agent.py
 
 # 测试代理
-python test_my_agent.py
+python test_comprehensive.py
 ```
 
 ### 4. Docker 构建
@@ -187,7 +187,7 @@ bedrock-agentcore deploy
 3. **验证部署**
 ```bash
 # 测试代理端点
-python test_my_agent.py
+python test_comprehensive.py
 ```
 
 ### CodeBuild 集成
@@ -238,8 +238,8 @@ SYSTEM_PROMPT = """
 
 ### 单元测试
 ```bash
-# 运行基本测试
-python test_my_agent.py
+# 运行综合测试
+python test_comprehensive.py
 ```
 
 ### 集成测试
