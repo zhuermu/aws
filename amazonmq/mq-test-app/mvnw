@@ -1,0 +1,13 @@
+#!/bin/sh
+# Maven Wrapper Script
+
+MAVEN_OPTS="${MAVEN_OPTS:-}"
+MAVEN_PROJECTBASEDIR="${MAVEN_BASEDIR:-$(dirname "$0")}"
+
+# Use system Maven if available, otherwise download
+if command -v mvn >/dev/null 2>&1; then
+    exec mvn "$@"
+else
+    echo "Maven not found. Please install Maven or use Docker build."
+    exit 1
+fi

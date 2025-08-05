@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mq-test-app
+  rabbitmq:
+    host: <your-amazonmq-broker-endpoint>
+    port: 5671
+    username: <username>
+    password: <password>
+    ssl:
+      enabled: true
+      verify-hostname: false
+    connection-timeout: 30000
+    virtual-host: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.example: DEBUG
+    org.springframework.amqp: DEBUG
+    com.rabbitmq: DEBUG
