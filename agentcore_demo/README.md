@@ -67,10 +67,12 @@ nano .env
 
 需要配置的主要环境变量：
 - `AWS_REGION`: AWS 区域
-- `AWS_ACCOUNT_ID`: AWS 账户 ID
-- `AGENT_RUNTIME_ARN`: 代理运行时 ARN
-- `EXECUTION_ROLE_ARN`: 执行角色 ARN
-- `ECR_REPOSITORY`: ECR 仓库地址
+- `AGENT_RUNTIME_ARN`: 代理运行时 ARN（用于测试，部署后自动生成）
+- `GOOGLE_CLIENT_ID`: Google OAuth2 客户端 ID（可选）
+- `GOOGLE_CLIENT_SECRET`: Google OAuth2 客户端密钥（可选）
+- `PERPLEXITY_API_KEY`: Perplexity AI API 密钥（可选）
+
+**注意**: `.bedrock_agentcore.yaml` 是自动生成的配置文件，包含部署相关的配置信息，不需要手动配置环境变量。
 
 ### 3. 本地开发
 
