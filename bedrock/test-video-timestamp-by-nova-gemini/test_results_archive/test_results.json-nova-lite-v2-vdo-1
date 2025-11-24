@@ -1,0 +1,15 @@
+{
+  "test_date": "2025-11-17T13:08:25.940790",
+  "results": [
+    {
+      "model": "amazon.nova-2-lite-v1:0 (reasoning=low)",
+      "video": "video-1-person",
+      "success": true,
+      "response": "```json\n{\n  \"segments\": [\n    {\"start\": \"00:00\", \"end\": \"00:04\", \"reason\": \"smash winner\"},\n    {\"start\": \"00:05\", \"end\": \"00:08\", \"reason\": \"shuttlecock lands on correct side\"},\n    {\"start\": \"00:09\", \"end\": \"00:14\", \"reason\": \"shuttlecock lands on correct side\"},\n    {\"start\": \"00:15\", \"end\": \"00:23\", \"reason\": \"net fault\"},\n    {\"start\": \"00:23\", \"end\": \"00:28\", \"reason\": \"smash winner\"},\n    {\"start\": \"00:34\", \"end\": \"00:40\", \"reason\": \"shuttlecock lands on correct side\"},\n    {\"start\": \"00:41\", \"end\": \"00:46\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:47\", \"end\": \"00:51\", \"reason\": \"drop shot winner\"},\n    {\"start\": \"00:51\", \"end\": \"00:56\", \"reason\": \"shuttlecock lands on correct side\"},\n    {\"start\": \"00:56\", \"end\": \"01:02\", \"reason\": \"smash winner\"},\n    {\"start\": \"02:28\", \"end\": \"02:30\", \"reason\": \"unforced error\"},\n    {\"start\": \"02:30\", \"end\": \"02:36\", \"reason\": \"smash winner\"},\n    {\"start\": \"02:36\", \"end\": \"02:41\", \"reason\": \"shuttlecock lands on correct side\"},\n    {\"start\": \"02:41\", \"end\": \"02:46\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:46\", \"end\": \"02:51\", \"reason\": \"smash winner\"},\n    {\"start\": \"02:51\", \"end\": \"02:56\", \"reason\": \"shuttlecock lands on correct side\"},\n    {\"start\": \"02:56\", \"end\": \"03:02\", \"reason\": \"smash winner\"}\n  ]\n}\n```",
+      "elapsed_time": 117.06938290596008,
+      "input_tokens": 76236,
+      "output_tokens": 5585,
+      "reasoning": "[REDACTED]."
+    }
+  ]
+}

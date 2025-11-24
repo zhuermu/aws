@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频分析测试系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 50px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 50px;
+            font-size: 1.1em;
+        }
+        
+        .test-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+        
+        .card-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .card-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .card-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #999;
+            font-size: 0.9em;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏸 羽毛球视频分析测试系统</h1>
+        <p class="subtitle">多模型视频理解能力评估平台</p>
+        
+        <div class="test-cards">
+            <a href="./tests/badminton-timeline/test_results_visualization.html" target="_blank">
+                <div class="card">
+                    <div class="card-title">📊 羽毛球时间线测试</div>
+                    <div class="card-desc">
+                        对比 Amazon Nova 和 Google Gemini 多个模型版本的羽毛球视频时间线识别能力
+                    </div>
+                    <div class="card-meta">
+                        <span class="meta-item">6 个模型</span>
+                        <span class="meta-item">2 个视频</span>
+                        <span class="meta-item">性能分析</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="./tests/content-audit/audit_results_visualization_v2.html" target="_blank">
+                <div class="card">
+                    <div class="card-title">🎯 视频内容审核测试</div>
+                    <div class="card-desc">
+                        详细的视频内容审核测试，包含多个视频片段的深度分析
+                    </div>
+                    <div class="card-meta">
+                        <span class="meta-item">4 个视频</span>
+                        <span class="meta-item">详细审核</span>
+                        <span class="meta-item">准确性验证</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>Amazon Bedrock & Google Gemini 视频理解能力测试</p>
+            <p style="margin-top: 5px;">版本 2.0.0 | 2024-11-24</p>
+        </div>
+    </div>
+</body>
+</html>

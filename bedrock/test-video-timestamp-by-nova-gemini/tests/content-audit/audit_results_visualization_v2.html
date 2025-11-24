@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频内容审核测试结果可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 40px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 2.5em;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+.section-title {
+    font-size: 1.8em;
+    color: #333;
+    margin: 30px 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #667eea;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.summary-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.summary-card h3 {
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin-bottom: 10px;
+}
+
+.summary-card .value {
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+.video-section {
+    margin: 40px 0;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.video-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.video-card h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.video-info {
+    text-align: left;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.video-info p {
+    margin: 8px 0;
+    color: #555;
+    font-size: 0.95em;
+}
+
+.video-info strong {
+    color: #333;
+}
+
+.chart-container {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.chart-title {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+canvas {
+    max-height: 500px;
+}
+
+.video-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tab-button {
+    padding: 12px 24px;
+    background: #f8f9fa;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.tab-button:hover {
+    background: #e9ecef;
+    border-color: #667eea;
+}
+
+.tab-button.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.video-content {
+    display: none;
+}
+
+.video-content.active {
+    display: block;
+}
+
+.expected-info {
+    background: #e7f3ff;
+    border: 2px solid #b3d9ff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.expected-info h4 {
+    color: #0066cc;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.expected-info ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.expected-info li {
+    padding: 8px 0;
+    color: #333;
+    font-size: 1em;
+}
+
+.model-comparison {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.model-card {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 25px;
+    transition: all 0.3s;
+}
+
+.model-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    border-color: #667eea;
+}
+
+.model-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #667eea;
+}
+
+.accuracy-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 1em;
+    font-weight: 600;
+    margin: 15px 0;
+}
+
+.accuracy-high {
+    background: #d4edda;
+    color: #155724;
+}
+
+.accuracy-medium {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.accuracy-low {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.audit-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #ddd;
+}
+
+.step-item.match {
+    border-left-color: #28a745;
+    background: #d4edda;
+}
+
+.step-item.mismatch {
+    border-left-color: #dc3545;
+    background: #f8d7da;
+}
+
+.step-icon {
+    font-size: 1.3em;
+    min-width: 28px;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.step-details {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+.step-expected {
+    color: #0066cc;
+}
+
+.step-actual {
+    color: #333;
+    font-weight: 500;
+}
+
+.model-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.metric-label {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.metric-value {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+}
+
+.response-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.response-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.response-title:hover {
+    color: #667eea;
+}
+
+.response-content {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+}
+
+.response-content.show {
+    display: block;
+}
+
+.toggle-icon {
+    transition: transform 0.3s;
+}
+
+.toggle-icon.rotated {
+    transform: rotate(90deg);
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 视频内容审核测试结果</h1>
+        <p class="subtitle">多模型视频理解能力对比分析</p>
+        
+        <!-- 提示词展示区 -->
+        <div style="background: #f8f9fa; border-radius: 12px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #667eea;">
+            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.3em;">📝 测试提示词 (ANALYSIS_PROMPT)</h3>
+            <pre style="background: white; padding: 20px; border-radius: 8px; overflow-x: auto; line-height: 1.6; font-size: 0.9em; color: #333;">You are a video content analyzer. Analyze the provided video and identify which of the following user actions are shown:
+
+1. Keyword Search: Check if the keywords entered by the user starts with "explore slot super win trick" or similar words 80%.
+2. Found Target Video - Title Verification: Check if the title of the video played by the user starts with "Explore Slot Super Win Trick" or similar words 80%.
+3. Found Target Video - Creator Verification: Check if the creator of the video played by the user contains "Shiv_Storm" or similar words 80%. The creator is below the video title, to the right of the avatar.
+4. Watched for 1 minute: User has watched the video for 1 minute.
+5. Watched for 2 minute: User has watched the video for 2 minute.
+6. Watched for 3 minute: User has watched the video for 3 minute.
+
+**Output Format:**
+{
+  "auditDetails": [
+    {
+      "stepNo": 1,
+      "stepName": "Keyword Search",
+      "status": "(COMPLETED/NOT_COMPLETED)",
+      "expected": "explore slot super win trick",
+      "actual": "(Keywords actually searched by the user)"
+    },
+    {
+      "stepNo": 2,
+      "stepName": "Found Target Video - Title Verification",
+      "status": "(COMPLETED/NOT_COMPLETED)",
+      "expected": "Explore Slot Super Win Trick",
+      "actual": "(Title of the video being played)"
+    },
+    {
+      "stepNo": 3,
+      "stepName": "Found Target Video - Creator Verification",
+      "status": "(COMPLETED/NOT_COMPLETED)",
+      "expected": "Shiv_Storm",
+      "actual": "(Creator of the video being played)"
+    },
+    {
+      "stepNo": 4,
+      "stepName": "Watched for 1 minute",
+      "status": "(COMPLETED/NOT_COMPLETED)"
+    },
+    {
+      "stepNo": 5,
+      "stepName": "Watched for 2 minute",
+      "status": "(COMPLETED/NOT_COMPLETED)"
+    },
+    {
+      "stepNo": 6,
+      "stepName": "Watched for 3 minute",
+      "status": "(COMPLETED/NOT_COMPLETED)"
+    }
+  ]
+}</pre>
+        </div>
+        
+        <div class="summary-cards" id="summaryCards"></div>
+        
+        <!-- 视频展示区 -->
+        <div class="video-section">
+            <h2 class="section-title">📹 测试视频</h2>
+            <div class="video-grid" id="videoGrid"></div>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="chart-title">模型准确率对比（基于期望值匹配）</h2>
+            <canvas id="accuracyChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="chart-title">响应时间对比</h2>
+            <canvas id="timeChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="chart-title">Token 使用量对比</h2>
+            <canvas id="tokenChart"></canvas>
+        </div>
+        
+        <h2 class="section-title" style="margin-top: 40px;">详细测试结果</h2>
+        <div class="video-tabs" id="videoTabs"></div>
+        <div id="videoContents"></div>
+    </div>
+
+    <script>
+// 视频配置信息
+const VIDEO_INFO = {
+    'video-1': {
+        s3_uri: 's3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/6b80e970-67e6-4ee4-a51e-8ceb660e9c54-1000012057.mp4',
+        description: '用户观看视频，标题和作者匹配'
+    },
+    'video-2': {
+        s3_uri: 's3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/09211f8f-8d39-4038-ae0b-568b4e25bb26-FunPlay1.mp4',
+        description: '用户未观看视频'
+    },
+    'video-3': {
+        s3_uri: 's3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/20251111-110712-caijian.mp4',
+        description: '用户搜索并观看完整视频'
+    },
+    'video-4': {
+        s3_uri: 's3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/ee51c5a7-a44f-4f0b-82d2-772736aa36f3-Screenrecorder20251107140342212.mp4',
+        description: '用户观看视频，标题和作者不匹配'
+    }
+};
+
+// 加载测试数据
+// 嵌入的测试数据
+const embeddedData = {
+    "test_date": "2025-11-18T11:31:22.179687",
+    "results": [
+        {
+            "model": "amazon.nova-lite-v1:0",
+            "video": "video-1",
+            "success": true,
+            "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"The video does not provide information on the keywords entered by the user.\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"The title of the video being played is 'Explore Slot Super Win Trick Explore'.\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"The creator of the video being played is 'Shiv_Storm'.\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}",
+            "elapsed_time": 28.09795904159546,
+            "input_tokens": 37763,
+            "output_tokens": 299,
+            "expected": {
+                "search_keyword": null,
+                "title": "Explore Slot Super Win Trick",
+                "creator": "Shiv_Storm",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "COMPLETED",
+                "stepNo3": "COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-2-lite-v1:0",
+            "video": "video-1",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"(Not shown in the video)\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick | Explore Slot Jackpot Trick || Got 1000000s Sup...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Shiv_Storm\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 30.352617025375366,
+            "input_tokens": 30686,
+            "output_tokens": 285,
+            "expected": {
+                "search_keyword": null,
+                "title": "Explore Slot Super Win Trick",
+                "creator": "Shiv_Storm",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "COMPLETED",
+                "stepNo3": "COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-2-lite-v1:0 (reasoning=low)",
+            "video": "video-1",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick | Explore Slot Jackpot Trick || Got 1000000s Sup...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Shiv_Storm\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 22.275491952896118,
+            "input_tokens": 30736,
+            "output_tokens": 867,
+            "expected": {
+                "search_keyword": null,
+                "title": "Explore Slot Super Win Trick",
+                "creator": "Shiv_Storm",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "COMPLETED",
+                "stepNo3": "COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-pro-v1:0",
+            "video": "video-1",
+            "success": true,
+            "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"explore slot super win trick\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Not visible in the video\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}",
+            "elapsed_time": 26.06188702583313,
+            "input_tokens": 37180,
+            "output_tokens": 271,
+            "expected": {
+                "search_keyword": null,
+                "title": "Explore Slot Super Win Trick",
+                "creator": "Shiv_Storm",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "COMPLETED",
+                "stepNo3": "COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "gemini-2.5-flash",
+            "video": "video-1",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"Not shown\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick | Explore Slot Jackpot Trick | I Got 100000Rs Sup...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Shiv_Storm\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 47.037956953048706,
+            "expected": {
+                "search_keyword": null,
+                "title": "Explore Slot Super Win Trick",
+                "creator": "Shiv_Storm",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "COMPLETED",
+                "stepNo3": "COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "gemini-2.5-flash-lite",
+            "video": "video-1",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": null\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick | Explore Slot Jackpot Trick | I Got 100000Rs Sup...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Shiv_Storm\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\",\n      \"actual\": null\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\",\n      \"actual\": null\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\",\n      \"actual\": null\n    }\n  ]\n}\n```",
+            "elapsed_time": 12.511630058288574,
+            "expected": {
+                "search_keyword": null,
+                "title": "Explore Slot Super Win Trick",
+                "creator": "Shiv_Storm",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "COMPLETED",
+                "stepNo3": "COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-lite-v1:0",
+            "video": "video-2",
+            "success": true,
+            "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"No keyword search was observed in the video.\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"No video was played in the video.\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"No video was played in the video.\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}",
+            "elapsed_time": 3.8855648040771484,
+            "input_tokens": 4575,
+            "output_tokens": 288,
+            "expected": {
+                "search_keyword": null,
+                "title": null,
+                "creator": null,
+                "watch_duration": 0,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "NOT_COMPLETED",
+                "stepNo5": "NOT_COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-2-lite-v1:0",
+            "video": "video-2",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"teen patti master loss recover tricks\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 2.7101571559906006,
+            "input_tokens": 3646,
+            "output_tokens": 266,
+            "expected": {
+                "search_keyword": null,
+                "title": null,
+                "creator": null,
+                "watch_duration": 0,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "NOT_COMPLETED",
+                "stepNo5": "NOT_COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-2-lite-v1:0 (reasoning=low)",
+            "video": "video-2",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"teen patti master loss recover tracks\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 6.761983156204224,
+            "input_tokens": 3696,
+            "output_tokens": 804,
+            "expected": {
+                "search_keyword": null,
+                "title": null,
+                "creator": null,
+                "watch_duration": 0,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "NOT_COMPLETED",
+                "stepNo5": "NOT_COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-pro-v1:0",
+            "video": "video-2",
+            "success": true,
+            "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"No keywords entered by the user were shown.\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"No video title was shown.\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"No video creator was shown.\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}",
+            "elapsed_time": 5.621778964996338,
+            "input_tokens": 4575,
+            "output_tokens": 284,
+            "expected": {
+                "search_keyword": null,
+                "title": null,
+                "creator": null,
+                "watch_duration": 0,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "NOT_COMPLETED",
+                "stepNo5": "NOT_COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "gemini-2.5-flash",
+            "video": "video-2",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"teen patti master loss recover tricks\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"No video played\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"No video played\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 22.789318799972534,
+            "expected": {
+                "search_keyword": null,
+                "title": null,
+                "creator": null,
+                "watch_duration": 0,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "NOT_COMPLETED",
+                "stepNo5": "NOT_COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "gemini-2.5-flash-lite",
+            "video": "video-2",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"teen patti master loss recover tricks\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"null\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"null\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 6.8970627784729,
+            "expected": {
+                "search_keyword": null,
+                "title": null,
+                "creator": null,
+                "watch_duration": 0,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "NOT_COMPLETED",
+                "stepNo5": "NOT_COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-lite-v1:0",
+            "video": "video-3",
+            "success": true,
+            "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"explore slot super win trick\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Shiv_Storm\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}",
+            "elapsed_time": 22.223301887512207,
+            "input_tokens": 76098,
+            "output_tokens": 268,
+            "expected": {
+                "search_keyword": "Slots Game Tricks Revealed",
+                "title": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed",
+                "creator": "K_Mater_Gaming",
+                "watch_duration": 3,
+                "stepNo1": "COMPLETED/NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-2-lite-v1:0",
+            "video": "video-3",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"Slots Game Tricks Revealed\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"K_Mater_Gaming\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 25.74965810775757,
+            "input_tokens": 63186,
+            "output_tokens": 279,
+            "expected": {
+                "search_keyword": "Slots Game Tricks Revealed",
+                "title": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed",
+                "creator": "K_Mater_Gaming",
+                "watch_duration": 3,
+                "stepNo1": "COMPLETED/NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-2-lite-v1:0 (reasoning=low)",
+            "video": "video-3",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"slots game tricks revealed\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"K_Mater_Gaming\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 43.609013080596924,
+            "input_tokens": 63236,
+            "output_tokens": 3236,
+            "expected": {
+                "search_keyword": "Slots Game Tricks Revealed",
+                "title": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed",
+                "creator": "K_Mater_Gaming",
+                "watch_duration": 3,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-pro-v1:0",
+            "video": "video-3",
+            "success": true,
+            "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"explore slot super win trick\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Teen Patti Explorer\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}",
+            "elapsed_time": 28.252389192581177,
+            "input_tokens": 75515,
+            "output_tokens": 269,
+            "expected": {
+                "search_keyword": "Slots Game Tricks Revealed",
+                "title": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed",
+                "creator": "K_Mater_Gaming",
+                "watch_duration": 3,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "COMPLETED"
+            }
+        },
+        {
+            "model": "gemini-2.5-flash",
+            "video": "video-3",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"slots game tricks revealed\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed ✨|explorer slots jitn...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"K_Mater_Gaming\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 71.10791206359863,
+            "expected": {
+                "search_keyword": "Slots Game Tricks Revealed",
+                "title": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed",
+                "creator": "K_Mater_Gaming",
+                "watch_duration": 3,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "COMPLETED"
+            }
+        },
+        {
+            "model": "gemini-2.5-flash-lite",
+            "video": "video-3",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"Slots Game Tricks Revealed\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"K_Mater_Gaming\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": null,\n      \"actual\": null\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": null,\n      \"actual\": null\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": null,\n      \"actual\": null\n    }\n  ]\n}\n```",
+            "elapsed_time": 17.948209762573242,
+            "expected": {
+                "search_keyword": "Slots Game Tricks Revealed",
+                "title": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed",
+                "creator": "K_Mater_Gaming",
+                "watch_duration": 3,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-lite-v1:0",
+            "video": "video-4",
+            "success": true,
+            "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"The video does not provide information on the keywords entered by the user.\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"The video does not provide information on the title of the video being played.\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"The video does not provide information on the creator of the video being played.\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}",
+            "elapsed_time": 58.86979103088379,
+            "input_tokens": 41261,
+            "output_tokens": 301,
+            "expected": {
+                "search_keyword": null,
+                "title": "STOP Losing Money! TeenPatti Explorer Slo..",
+                "creator": "@KGaming24",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-2-lite-v1:0",
+            "video": "video-4",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Sloo...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"@KGaming24\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 42.066421031951904,
+            "input_tokens": 33026,
+            "output_tokens": 271,
+            "expected": {
+                "search_keyword": null,
+                "title": "STOP Losing Money! TeenPatti Explorer Slo..",
+                "creator": "@KGaming24",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-2-lite-v1:0 (reasoning=low)",
+            "video": "video-4",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Sloo...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Aman Khurana Viogs\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 58.582070112228394,
+            "input_tokens": 33076,
+            "output_tokens": 3007,
+            "expected": {
+                "search_keyword": null,
+                "title": "STOP Losing Money! TeenPatti Explorer Slo..",
+                "creator": "@KGaming24",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "amazon.nova-pro-v1:0",
+            "video": "video-4",
+            "success": true,
+            "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"No keywords entered by the user are shown\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"The video title does not start with 'Explore Slot Super Win Trick'\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"The creator of the video is not shown\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}",
+            "elapsed_time": 54.2145619392395,
+            "input_tokens": 40095,
+            "output_tokens": 289,
+            "expected": {
+                "search_keyword": null,
+                "title": "STOP Losing Money! TeenPatti Explorer Slo..",
+                "creator": "@KGaming24",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "gemini-2.5-flash",
+            "video": "video-4",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"No keyword search shown\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Slo...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"@Kgaming-x8f\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 100.84699606895447,
+            "expected": {
+                "search_keyword": null,
+                "title": "STOP Losing Money! TeenPatti Explorer Slo..",
+                "creator": "@KGaming24",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        },
+        {
+            "model": "gemini-2.5-flash-lite",
+            "video": "video-4",
+            "success": true,
+            "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"None\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Slo...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Kgaming-x8f\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+            "elapsed_time": 10.960349082946777,
+            "expected": {
+                "search_keyword": null,
+                "title": "STOP Losing Money! TeenPatti Explorer Slo..",
+                "creator": "@KGaming24",
+                "watch_duration": 2,
+                "stepNo1": "NOT_COMPLETED",
+                "stepNo2": "NOT_COMPLETED",
+                "stepNo3": "NOT_COMPLETED",
+                "stepNo4": "COMPLETED",
+                "stepNo5": "COMPLETED",
+                "stepNo6": "NOT_COMPLETED"
+            }
+        }
+    ]
+};
+
+// 直接使用嵌入的数据
+initializeDashboard(embeddedData);
+
+function initializeDashboard(data) {
+    const results = data.results;
+    
+    generateSummaryCards(results);
+    generateVideoGrid(results);
+    generateAccuracyChart(results);
+    generateTimeChart(results);
+    generateTokenChart(results);
+    generateDetailedResults(results);
+}
+
+function generateSummaryCards(results) {
+    const container = document.getElementById('summaryCards');
+    
+    const totalTests = results.length;
+    const uniqueModels = [...new Set(results.map(r => r.model))].length;
+    const uniqueVideos = [...new Set(results.map(r => r.video))].length;
+    const avgTime = (results.reduce((sum, r) => sum + r.elapsed_time, 0) / results.length).toFixed(2);
+    
+    // 计算平均准确率
+    let totalAccuracy = 0;
+    let validResults = 0;
+    results.forEach(r => {
+        const acc = calculateAccuracy(r);
+        if (acc !== null) {
+            totalAccuracy += acc;
+            validResults++;
+        }
+    });
+    const avgAccuracy = validResults > 0 ? (totalAccuracy / validResults).toFixed(0) : 0;
+    
+    const cards = [
+        { title: '总测试数', value: totalTests },
+        { title: '平均准确率', value: `${avgAccuracy}%` },
+        { title: '测试模型', value: uniqueModels },
+        { title: '测试视频', value: uniqueVideos },
+        { title: '平均响应时间', value: `${avgTime}s` }
+    ];
+    
+    container.innerHTML = cards.map(card => `
+        <div class="summary-card">
+            <h3>${card.title}</h3>
+            <div class="value">${card.value}</div>
+        </div>
+    `).join('');
+}
+
+function generateVideoGrid(results) {
+    const container = document.getElementById('videoGrid');
+    const videoGroups = {};
+    
+    results.forEach(r => {
+        if (!videoGroups[r.video]) {
+            videoGroups[r.video] = r.expected;
+        }
+    });
+    
+    container.innerHTML = Object.keys(videoGroups).sort().map(videoKey => {
+        const expected = videoGroups[videoKey];
+        const info = VIDEO_INFO[videoKey] || {};
+        const videoFile = `${videoKey}.mp4`;
+        
+        return `
+            <div class="video-card">
+                <h3>${videoKey.toUpperCase()}</h3>
+                <video controls width="100%" style="border-radius: 8px; margin-bottom: 15px;">
+                    <source src="${videoFile}" type="video/mp4">
+                    您的浏览器不支持视频播放
+                </video>
+                <div class="video-info">
+                    <p><strong>描述:</strong> ${info.description || 'N/A'}</p>
+                    <p><strong>S3 URI:</strong><br><small>${info.s3_uri || 'N/A'}</small></p>
+                    ${expected ? `
+                        <p><strong>期望搜索:</strong> ${expected.search_keyword || '无'}</p>
+                        <p><strong>期望标题:</strong> ${expected.title || '无'}</p>
+                        <p><strong>期望作者:</strong> ${expected.creator || '无'}</p>
+                        <p><strong>期望时长:</strong> ${expected.watch_duration}分钟</p>
+                        <p><strong>期望步骤状态:</strong></p>
+                        <ul style="margin-left: 20px; font-size: 0.9em;">
+                            ${[1,2,3,4,5,6].map(i => `
+                                <li>Step ${i}: ${expected['stepNo'+i] || 'N/A'}</li>
+                            `).join('')}
+                        </ul>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function calculateAccuracy(result) {
+    if (!result.success || !result.response || !result.expected) return null;
+    
+    try {
+        let jsonStr = result.response;
+        if (jsonStr.includes('```json')) {
+            jsonStr = jsonStr.split('```json')[1].split('```')[0];
+        }
+        const auditData = JSON.parse(jsonStr.trim());
+        const steps = auditData.auditDetails || [];
+        const expected = result.expected;
+        
+        let matches = 0;
+        let total = 0;
+        
+        steps.forEach(step => {
+            total++;
+            const isMatch = checkStepMatch(step, expected);
+            if (isMatch) matches++;
+        });
+        
+        return total > 0 ? (matches / total * 100) : 0;
+    } catch (e) {
+        return null;
+    }
+}
+
+function checkStepMatch(step, expected) {
+    const stepNo = step.stepNo;
+    const status = step.status;
+    
+    // 直接使用 expected 中的 stepNo1-6 字段
+    const expectedStatus = expected[`stepNo${stepNo}`];
+    
+    // 如果有明确的期望状态，直接比较
+    if (expectedStatus) {
+        return status === expectedStatus;
+    }
+    
+    // 兼容旧逻辑（如果没有 stepNo 字段）
+    const actual = (step.actual || '').toLowerCase().trim();
+    
+    // Step 1: 关键词搜索
+    if (stepNo === 1) {
+        if (!expected.search_keyword) {
+            return status === 'NOT_COMPLETED';
+        } else {
+            return status === 'COMPLETED' && actual.includes(expected.search_keyword.toLowerCase());
+        }
+    }
+    
+    // Step 2: 视频标题
+    if (stepNo === 2) {
+        if (!expected.title) {
+            return status === 'NOT_COMPLETED';
+        } else {
+            const titleMatch = actual.includes(expected.title.toLowerCase().substring(0, 15));
+            return status === 'COMPLETED' && titleMatch;
+        }
+    }
+    
+    // Step 3: 作者
+    if (stepNo === 3) {
+        if (!expected.creator) {
+            return status === 'NOT_COMPLETED';
+        } else {
+            const creatorMatch = actual.includes(expected.creator.toLowerCase());
+            return status === 'COMPLETED' && creatorMatch;
+        }
+    }
+    
+    // Step 4-6: 观看时长
+    if (stepNo >= 4 && stepNo <= 6) {
+        const requiredMinutes = stepNo - 3;
+        if (expected.watch_duration >= requiredMinutes) {
+            return status === 'COMPLETED';
+        } else {
+            return status === 'NOT_COMPLETED';
+        }
+    }
+    
+    return false;
+}
+
+function generateAccuracyChart(results) {
+    const ctx = document.getElementById('accuracyChart').getContext('2d');
+    
+    const modelAccuracy = {};
+    results.forEach(r => {
+        const acc = calculateAccuracy(r);
+        if (acc !== null) {
+            if (!modelAccuracy[r.model]) {
+                modelAccuracy[r.model] = [];
+            }
+            modelAccuracy[r.model].push(acc);
+        }
+    });
+    
+    const labels = Object.keys(modelAccuracy);
+    const avgAccuracy = labels.map(model => {
+        const accs = modelAccuracy[model];
+        return (accs.reduce((a, b) => a + b, 0) / accs.length).toFixed(1);
+    });
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels.map(l => l.replace('amazon.', '').replace('gemini-', '')),
+            datasets: [{
+                label: '平均准确率 (%)',
+                data: avgAccuracy,
+                backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                borderColor: 'rgba(40, 167, 69, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+function generateTimeChart(results) {
+    const ctx = document.getElementById('timeChart').getContext('2d');
+    
+    const modelTimes = {};
+    results.forEach(r => {
+        if (!modelTimes[r.model]) {
+            modelTimes[r.model] = [];
+        }
+        modelTimes[r.model].push(r.elapsed_time);
+    });
+    
+    const labels = Object.keys(modelTimes);
+    const avgTimes = labels.map(model => {
+        const times = modelTimes[model];
+        return (times.reduce((a, b) => a + b, 0) / times.length).toFixed(2);
+    });
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels.map(l => l.replace('amazon.', '').replace('gemini-', '')),
+            datasets: [{
+                label: '平均响应时间 (秒)',
+                data: avgTimes,
+                backgroundColor: 'rgba(255, 159, 64, 0.8)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: { beginAtZero: true }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+function generateTokenChart(results) {
+    const ctx = document.getElementById('tokenChart').getContext('2d');
+    
+    const modelTokens = {};
+    results.forEach(r => {
+        if (!r.input_tokens) return;
+        if (!modelTokens[r.model]) {
+            modelTokens[r.model] = { input: [], output: [] };
+        }
+        modelTokens[r.model].input.push(r.input_tokens);
+        modelTokens[r.model].output.push(r.output_tokens);
+    });
+    
+    const labels = Object.keys(modelTokens);
+    const avgInputTokens = labels.map(model => {
+        const tokens = modelTokens[model].input;
+        return Math.round(tokens.reduce((a, b) => a + b, 0) / tokens.length);
+    });
+    const avgOutputTokens = labels.map(model => {
+        const tokens = modelTokens[model].output;
+        return Math.round(tokens.reduce((a, b) => a + b, 0) / tokens.length);
+    });
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels.map(l => l.replace('amazon.', '').replace('gemini-', '')),
+            datasets: [
+                {
+                    label: '平均输入 Token',
+                    data: avgInputTokens,
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2
+                },
+                {
+                    label: '平均输出 Token',
+                    data: avgOutputTokens,
+                    backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
+
+function generateDetailedResults(results) {
+    const videoGroups = {};
+    results.forEach(r => {
+        if (!videoGroups[r.video]) {
+            videoGroups[r.video] = [];
+        }
+        videoGroups[r.video].push(r);
+    });
+    
+    const tabsContainer = document.getElementById('videoTabs');
+    const contentsContainer = document.getElementById('videoContents');
+    
+    const videos = Object.keys(videoGroups).sort();
+    
+    // 生成标签
+    tabsContainer.innerHTML = videos.map((video, index) => `
+        <button class="tab-button ${index === 0 ? 'active' : ''}" 
+                onclick="switchTab('${video}')">
+            ${video.toUpperCase()}
+        </button>
+    `).join('');
+    
+    // 生成内容
+    contentsContainer.innerHTML = videos.map((video, index) => {
+        const videoResults = videoGroups[video];
+        const expected = videoResults[0].expected;
+        
+        return `
+            <div class="video-content ${index === 0 ? 'active' : ''}" id="content-${video}">
+                ${expected ? `
+                    <div class="expected-info">
+                        <h4>📋 期望值</h4>
+                        <ul>
+                            <li><strong>搜索关键词:</strong> ${expected.search_keyword || '无搜索动作'}</li>
+                            <li><strong>视频标题:</strong> ${expected.title || '没观看视频'}</li>
+                            <li><strong>作者:</strong> ${expected.creator || '无作者'}</li>
+                            <li><strong>观看时长:</strong> ${expected.watch_duration}分钟</li>
+                        </ul>
+                    </div>
+                ` : ''}
+                
+                <div class="model-comparison">
+                    ${videoResults.map(r => generateModelCard(r)).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function generateModelCard(result) {
+    if (!result.success) {
+        return `
+            <div class="model-card">
+                <div class="model-name">${result.model.replace('amazon.', '').replace('gemini-', '')}</div>
+                <div style="color: #dc3545; padding: 20px; text-align: center;">
+                    ❌ 测试失败<br>
+                    <small>${result.error || 'Unknown error'}</small>
+                </div>
+            </div>
+        `;
+    }
+    
+    let auditDetails = [];
+    let accuracy = 0;
+    
+    try {
+        let jsonStr = result.response;
+        if (jsonStr.includes('```json')) {
+            jsonStr = jsonStr.split('```json')[1].split('```')[0];
+        }
+        const auditData = JSON.parse(jsonStr.trim());
+        auditDetails = auditData.auditDetails || [];
+        
+        const matches = auditDetails.filter(s => checkStepMatch(s, result.expected)).length;
+        accuracy = (matches / auditDetails.length * 100).toFixed(0);
+    } catch (e) {
+        console.error('Error parsing response:', e);
+    }
+    
+    const accuracyClass = accuracy >= 70 ? 'accuracy-high' : accuracy >= 40 ? 'accuracy-medium' : 'accuracy-low';
+    const cardId = `card-${result.video}-${result.model.replace(/[^a-zA-Z0-9]/g, '-')}`;
+    
+    return `
+        <div class="model-card">
+            <div class="model-name">${result.model.replace('amazon.', '').replace('gemini-', '')}</div>
+            
+            <div class="accuracy-badge ${accuracyClass}">
+                准确率: ${accuracy}%
+            </div>
+            
+            <div class="audit-steps">
+                ${auditDetails.map(step => {
+                    const isMatch = checkStepMatch(step, result.expected);
+                    return `
+                        <div class="step-item ${isMatch ? 'match' : 'mismatch'}">
+                            <span class="step-icon">${isMatch ? '✅' : '❌'}</span>
+                            <div class="step-content">
+                                <div class="step-name">${step.stepName}</div>
+                                <div class="step-details">
+                                    <div class="step-expected">期望: ${step.expected || 'N/A'}</div>
+                                    <div class="step-actual">实际: ${step.actual || 'N/A'}</div>
+                                    <div>状态: ${step.status}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            <div class="model-metrics">
+                <div class="metric">
+                    <span class="metric-label">响应时间</span>
+                    <span class="metric-value">${result.elapsed_time.toFixed(2)}s</span>
+                </div>
+                ${result.input_tokens ? `
+                    <div class="metric">
+                        <span class="metric-label">输入 Token</span>
+                        <span class="metric-value">${result.input_tokens.toLocaleString()}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">输出 Token</span>
+                        <span class="metric-value">${result.output_tokens.toLocaleString()}</span>
+                    </div>
+                ` : ''}
+            </div>
+            
+            <div class="response-section">
+                <div class="response-title" onclick="toggleResponse('${cardId}')">
+                    <span class="toggle-icon" id="icon-${cardId}">▶</span>
+                    <span>查看完整响应</span>
+                </div>
+                <div class="response-content" id="response-${cardId}">${result.response}</div>
+            </div>
+        </div>
+    `;
+}
+
+function switchTab(videoId) {
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    document.querySelectorAll('.video-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(`content-${videoId}`).classList.add('active');
+}
+
+function toggleResponse(cardId) {
+    const responseDiv = document.getElementById(`response-${cardId}`);
+    const icon = document.getElementById(`icon-${cardId}`);
+    
+    if (responseDiv.classList.contains('show')) {
+        responseDiv.classList.remove('show');
+        icon.classList.remove('rotated');
+    } else {
+        responseDiv.classList.add('show');
+        icon.classList.add('rotated');
+    }
+}
+
+    </script>
+</body>
+</html>

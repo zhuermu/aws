@@ -1,0 +1,25 @@
+# 视频文件
+*.mp4
+*.mov
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# 测试结果备份
+*_bak
+*_bak*
+*.json_bak*
+
+# 临时文件
+.claude/
+.amazonq/
+.kiro/
