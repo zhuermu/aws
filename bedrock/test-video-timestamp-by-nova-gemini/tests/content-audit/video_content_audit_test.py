@@ -181,6 +181,7 @@ class VideoContentAuditTest:
         
         # Reasoning 模式需要更多 tokens
         max_tokens = 65535 if use_reasoning else 4096
+        temperature = 0.0 if use_reasoning else 0.1
         
         request_body = {
             "messages": [
@@ -199,7 +200,8 @@ class VideoContentAuditTest:
             ],
             "inferenceConfig": {
                 "maxTokens": max_tokens,
-                "temperature": 0.1
+                "temperature": temperature,
+                "topP": 1.0
             }
         }
         
@@ -450,10 +452,10 @@ class VideoContentAuditTest:
             s3_uri = video_config["s3_uri"]
             local_path = video_config["local_path"]
             
-            # Amazon Nova Lite v1
-            result = self.test_nova_lite_v1(s3_uri, video_key)
-            result["expected"] = video_config["expected"]
-            all_results.append(result)
+            # # Amazon Nova Lite v1
+            # result = self.test_nova_lite_v1(s3_uri, video_key)
+            # result["expected"] = video_config["expected"]
+            # all_results.append(result)
             
             # Amazon Nova 2 Lite - Standard 模式
             result = self.test_nova_2_lite(s3_uri, video_key, use_reasoning=False)
@@ -466,25 +468,25 @@ class VideoContentAuditTest:
             all_results.append(result)
             
             # Amazon Nova Pro v1
-            result = self.test_nova_pro_v1(s3_uri, video_key)
-            result["expected"] = video_config["expected"]
-            all_results.append(result)
+            # result = self.test_nova_pro_v1(s3_uri, video_key)
+            # result["expected"] = video_config["expected"]
+            # all_results.append(result)
             
             # Google Gemini 模型（如果提供了 API key）
-            if gemini_api_key:
-                print(f"\n{'=' * 80}")
-                print(f"测试 {video_key} - Google Gemini 模型")
-                print(f"{'=' * 80}")
+            # if gemini_api_key:
+            #     print(f"\n{'=' * 80}")
+            #     print(f"测试 {video_key} - Google Gemini 模型")
+            #     print(f"{'=' * 80}")
                 
-                # Gemini 2.5 Flash
-                result = self.test_gemini_2_5_flash(local_path, video_key, gemini_api_key)
-                result["expected"] = video_config["expected"]
-                all_results.append(result)
+            #     # Gemini 2.5 Flash
+            #     result = self.test_gemini_2_5_flash(local_path, video_key, gemini_api_key)
+            #     result["expected"] = video_config["expected"]
+            #     all_results.append(result)
                 
-                # Gemini 2.5 Flash Lite
-                result = self.test_gemini_2_5_flash_lite(local_path, video_key, gemini_api_key)
-                result["expected"] = video_config["expected"]
-                all_results.append(result)
+            #     # Gemini 2.5 Flash Lite
+            #     result = self.test_gemini_2_5_flash_lite(local_path, video_key, gemini_api_key)
+            #     result["expected"] = video_config["expected"]
+            #     all_results.append(result)
         
         self.results = all_results
         return all_results

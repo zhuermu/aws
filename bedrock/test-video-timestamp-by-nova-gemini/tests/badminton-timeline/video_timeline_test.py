@@ -41,7 +41,7 @@ Common badminton dead ball reasons include:
 - unforced error
 
 **Requirements:**
-- ACCURATE timestamps within 00:00 to 05:00
+- ACCURATE timestamps within 00:00 to 04:49
 - Output JSON format ONLY
 
 Focus on identifying the exact moment each rally begins (serve contact) and ends (shuttlecock becomes dead)."""
@@ -144,82 +144,46 @@ class VideoTimelineTest:
             request_body["additionalModelRequestFields"] = {
                 "reasoningConfig": {
                     "type": "enabled",
-                    "maxReasoningEffort": "low"
+                    "maxReasoningEffort": "medium"
                 }
             }
         
         start_time = time.time()
         try:
-            # Reasoning 模式需要使用流式 API
-            if use_reasoning:
-                response = self.bedrock.converse_stream(
-                    modelId=model_id,
-                    **request_body
-                )
-                
-                # 收集流式响应
-                result_text = ""
-                reasoning_text = ""
-                input_tokens = 0
-                output_tokens = 0
-                
-                for event in response['stream']:
-                    if 'contentBlockDelta' in event:
-                        delta = event['contentBlockDelta']['delta']
-                        if 'text' in delta:
-                            result_text += delta['text']
-                        if 'reasoningText' in delta:
-                            reasoning_text += delta['reasoningText']
-                    
-                    if 'metadata' in event:
-                        usage = event['metadata'].get('usage', {})
-                        input_tokens = usage.get('inputTokens', 0)
-                        output_tokens = usage.get('outputTokens', 0)
-                
-                elapsed_time = time.time() - start_time
-                
-                model_label = f"{model_id} (reasoning=low)"
-                result = {
-                    "model": model_label,
-                    "video": video_name,
-                    "success": True,
-                    "response": result_text,
-                    "elapsed_time": elapsed_time,
-                    "input_tokens": input_tokens,
-                    "output_tokens": output_tokens
-                }
-                
-                if reasoning_text:
-                    result["reasoning"] = reasoning_text
-                
-                return result
-            else:
-                # 标准模式使用普通 converse
-                response = self.bedrock.converse(
-                    modelId=model_id,
-                    **request_body
-                )
-                elapsed_time = time.time() - start_time
-                
-                content_blocks = response['output']['message']['content']
-                result_text = ""
-                
-                for block in content_blocks:
-                    if 'text' in block:
-                        result_text += block['text']
-                
-                return {
-                    "model": model_id,
-                    "video": video_name,
-                    "success": True,
-                    "response": result_text,
-                    "elapsed_time": elapsed_time,
-                    "input_tokens": response['usage']['inputTokens'],
-                    "output_tokens": response['usage']['outputTokens']
-                }
+            response = self.bedrock.converse(
+                modelId=model_id,
+                **request_body
+            )
+            elapsed_time = time.time() - start_time
+            
+            content_blocks = response['output']['message']['content']
+            result_text = ""
+            reasoning_text = ""
+            
+            for block in content_blocks:
+                if 'text' in block:
+                    result_text += block['text']
+                elif 'reasoningContent' in block:
+                    reasoning_text += block['reasoningContent'].get('reasoningText', {}).get('text', '')
+            
+            model_label = f"{model_id} (reasoning=medium)" if use_reasoning else model_id
+            result = {
+                "model": model_label,
+                "video": video_name,
+                "success": True,
+                "response": result_text,
+                "elapsed_time": elapsed_time,
+                "input_tokens": response['usage']['inputTokens'],
+                "output_tokens": response['usage']['outputTokens']
+            }
+            
+            if reasoning_text:
+                result["reasoning"] = reasoning_text
+            
+            return result
             
         except Exception as e:
-            model_label = f"{model_id} (reasoning=low)" if use_reasoning else model_id
+            model_label = f"{model_id} (reasoning=medium)" if use_reasoning else model_id
             return {
                 "model": model_label,
                 "video": video_name,
@@ -393,38 +357,38 @@ class VideoTimelineTest:
         print("测试 Video 1 (batball.mov) - Amazon Nova 模型")
         print("=" * 80)
         
-        result = self.test_nova_lite_v1(VIDEO_1_S3, "video-1-person")
-        all_results.append(result)
+        # result = self.test_nova_lite_v1(VIDEO_1_S3, "video-1-person")
+        # all_results.append(result)
         
         # Nova 2 Lite - Standard 模式
         result = self.test_nova_2_lite(VIDEO_1_S3, "video-1-person", use_reasoning=False)
         all_results.append(result)
         
         # Nova 2 Lite - Reasoning 模式
-        result = self.test_nova_2_lite(VIDEO_1_S3, "video-1-person", use_reasoning=True)
-        all_results.append(result)
+        # result = self.test_nova_2_lite(VIDEO_1_S3, "video-1-person", use_reasoning=True)
+        # all_results.append(result)
         
-        result = self.test_nova_pro_v1(VIDEO_1_S3, "video-1-person")
-        all_results.append(result)
+        # result = self.test_nova_pro_v1(VIDEO_1_S3, "video-1-person")
+        # all_results.append(result)
         
         # 测试 Video 2 - Amazon Nova 模型
         print("\n" + "=" * 80)
         print("测试 Video 2 (1cut2-5-small.mov) - Amazon Nova 模型")
         print("=" * 80)
         
-        result = self.test_nova_lite_v1(VIDEO_2_S3, "video-2-match")
-        all_results.append(result)
+        # result = self.test_nova_lite_v1(VIDEO_2_S3, "video-2-match")
+        # all_results.append(result)
         
         # Nova 2 Lite - Standard 模式
-        result = self.test_nova_2_lite(VIDEO_2_S3, "video-2-match", use_reasoning=False)
-        all_results.append(result)
+        # result = self.test_nova_2_lite(VIDEO_2_S3, "video-2-match", use_reasoning=False)
+        # all_results.append(result)
         
         # Nova 2 Lite - Reasoning 模式
         result = self.test_nova_2_lite(VIDEO_2_S3, "video-2-match", use_reasoning=True)
         all_results.append(result)
         
-        result = self.test_nova_pro_v1(VIDEO_2_S3, "video-2-match")
-        all_results.append(result)
+        # result = self.test_nova_pro_v1(VIDEO_2_S3, "video-2-match")
+        # all_results.append(result)
         
         # 测试 Google Gemini 模型（如果提供了 API key）
         # if gemini_api_key:

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova 模型 OCR 对比</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;padding:20px}
+        h1{text-align:center;margin-bottom:20px;color:#232f3e}
+        .config-section{background:#232f3e;color:white;padding:20px;border-radius:8px;margin-bottom:20px}
+        .config-section h2{margin-bottom:15px;font-size:18px}
+        .config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px}
+        .config-item{background:rgba(255,255,255,0.1);padding:12px;border-radius:4px}
+        .config-item label{font-size:12px;color:#aaa;display:block;margin-bottom:5px}
+        .config-item code{background:rgba(0,0,0,0.3);padding:8px;border-radius:4px;display:block;font-size:13px;white-space:pre-wrap;word-break:break-all}
+        .summary{display:flex;justify-content:center;gap:20px;margin-bottom:20px;flex-wrap:wrap}
+        .summary-card{background:white;padding:15px 25px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);min-width:220px}
+        .summary-card.pro{border-top:4px solid #7b68ee}
+        .summary-card.lite{border-top:4px solid #00a1c9}
+        .summary-card.lite2{border-top:4px solid #ff9900}
+        .summary-card h3{margin-bottom:10px;text-align:center}
+        .summary-card .stats{font-size:13px;color:#666;line-height:1.8}
+        .conclusion{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px;border-radius:8px;margin-bottom:20px}
+        .conclusion h2{margin-bottom:15px}
+        .conclusion ul{margin-left:20px;line-height:1.8}
+        .round-tabs{display:flex;gap:5px;margin-bottom:20px;background:white;padding:10px;border-radius:8px}
+        .round-tab{padding:10px 20px;border:none;background:#eee;border-radius:4px;cursor:pointer;font-size:14px}
+        .round-tab.active{background:#232f3e;color:white}
+        .round-content{display:none}
+        .round-content.active{display:block}
+        .image-section{background:white;margin-bottom:20px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);overflow:hidden}
+        .image-header{background:#232f3e;color:white;padding:12px 15px;font-weight:bold;font-size:14px}
+        .image-content{display:flex;flex-wrap:wrap}
+        .image-preview{flex:0 0 250px;padding:15px;border-right:1px solid #eee}
+        .image-preview img{width:100%;border-radius:4px;cursor:pointer}
+        .models-compare{flex:1;min-width:300px}
+        .model-result{padding:12px 15px;border-bottom:1px solid #eee}
+        .model-result:last-child{border-bottom:none}
+        .model-name{font-weight:bold;color:#232f3e;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;font-size:14px}
+        .model-name .metrics{font-size:11px;color:#666;font-weight:normal}
+        .extracted-text{background:#f9f9f9;padding:10px;border-radius:4px;font-size:13px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:120px;overflow-y:auto}
+        .tokens{display:inline-flex;gap:6px;font-size:10px;color:#888;margin-top:6px;flex-wrap:wrap}
+        .tokens span{background:#eee;padding:2px 6px;border-radius:10px}
+        .tokens .time{background:#e8f5e9;color:#2e7d32}
+        .nova-pro{border-left:4px solid #7b68ee}
+        .nova-lite{border-left:4px solid #00a1c9}
+        .nova-lite2{border-left:4px solid #ff9900}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;justify-content:center;align-items:center}
+        .modal img{max-width:90%;max-height:90%}
+        .modal.active{display:flex}
+        @media(max-width:768px){.image-preview{flex:0 0 100%;border-right:none;border-bottom:1px solid #eee}}
+    </style>
+</head>
+<body>
+    <h1>🔍 Amazon Nova 模型 OCR 识别效果对比</h1>
+    
+    <div class="config-section">
+        <h2>⚙️ 测试配置</h2>
+        <div class="config-grid">
+            <div class="config-item"><label>Prompt (提示词)</label><code>Extract all text from the image in original order and format. Output only the recognized text.</code></div>
+            <div class="config-item"><label>Inference Config (推理参数)</label><code>{
+  "temperature": 0.0,
+  "maxTokens": 1024
+}</code></div>
+            <div class="config-item"><label>测试轮数</label><code>3 轮 × 5 张图片 × 3 个模型 = 45 次调用</code></div>
+            <div class="config-item"><label>测试模型</label><code>amazon.nova-pro-v1:0
+amazon.nova-lite-v1:0
+amazon.nova-2-lite-v1:0</code></div>
+        </div>
+    </div>
+    
+    <div class="summary"><div class="summary-card pro">
+        <h3>🟣 Nova Pro</h3>
+        <div class="stats">总 Tokens: <strong>24,301</strong><br>
+        总耗时: <strong>23.9s</strong><br>
+        平均: 1620 tokens / 1593ms<br>
+        响应: 959ms ~ 2513ms</div>
+    </div><div class="summary-card lite">
+        <h3>🔵 Nova Lite</h3>
+        <div class="stats">总 Tokens: <strong>24,579</strong><br>
+        总耗时: <strong>20.6s</strong><br>
+        平均: 1639 tokens / 1371ms<br>
+        响应: 830ms ~ 2477ms</div>
+    </div><div class="summary-card lite2">
+        <h3>🟠 Nova Lite 2</h3>
+        <div class="stats">总 Tokens: <strong>18,308</strong><br>
+        总耗时: <strong>16.4s</strong><br>
+        平均: 1221 tokens / 1090ms<br>
+        响应: 887ms ~ 1448ms</div>
+    </div></div>
+    
+    <div class="conclusion">
+        <h2>📊 测试总结</h2>
+        <ul>
+            <li><strong>最快响应:</strong> 🟠 Nova Lite 2 (平均 1090ms)</li>
+            <li><strong>最省 Token:</strong> 🟠 Nova Lite 2 (平均 1221 tokens)</li>
+            <li><strong>最稳定:</strong> 🟠 Nova Lite 2 (波动 561ms)</li>
+            <li><strong>OCR 准确性:</strong> Nova Lite 2 在多语言(泰文、越南文)识别上表现更好，输出格式更规范(保留换行)</li>
+            <li><strong>性价比推荐:</strong> Nova Lite 2 - 速度最快、Token消耗最少、输出稳定</li>
+        </ul>
+    </div>
+    
+    <div class="round-tabs"><button class="round-tab active" onclick="switchRound(0)">第 1 轮</button><button class="round-tab" onclick="switchRound(1)">第 2 轮</button><button class="round-tab" onclick="switchRound(2)">第 3 轮</button></div>
+    <div class="round-content active"><div class="image-section">
+            <div class="image-header">📷 20251023-174349.jpg - 口红广告 (英文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174349.jpg" onclick="showModal(this.src)" alt="口红广告 (英文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">788 tokens | 1748ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COSRLANO COLRLANO COLRLANO YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 36</span><span class="time">⏱ 1748ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">788 tokens | 877ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COSMETIC COSMETICS COLORANO YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 36</span><span class="time">⏱ 877ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">918 tokens | 1009ms</span></div>
+                <div class="extracted-text">YOU<br>Rouge Velvet Matte Lip Cream<br>"1 SOLD EVERY 5 SECONDS!"<br>COLORLAND<br>COLORLAND<br>COLORLAND<br>YOU<br>YOU<br>THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 880</span><span>输出: 38</span><span class="time">⏱ 1009ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174354.jpg - 聊天界面 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174354.jpg" onclick="showModal(this.src)" alt="聊天界面 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1376 tokens | 1378ms</span></div>
+                <div class="extracted-text">... sniper ... 1000 1000 1000 ต้องการเพิ่มเติม บันทึกสนทนา...</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 44</span><span class="time">⏱ 1378ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1556 tokens | 2456ms</span></div>
+                <div class="extracted-text">ฉันคือฉัน sniper + ... สู้จนหายใจอ่อนออ อาทิตย์ อีกจังหวะ ตั้งหน้าตั้งตา ฉันไม่รู้เลย เวลาอยู่บ้านนี่มีอะไร เห็นอย่างเช้าวันนี้ไม่ ขอบคุณคุณมาคุยกับเราไม่คุณ ด้วยกันใช่ไหมนี้คุณไม่ตกลงด้วยใช่ไหม อาคิราโรชิ กาชาสุดยอด ให้น้ำตาไหล แน่ใจไม่ได้เลย</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 224</span><span class="time">⏱ 2456ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">855 tokens | 1448ms</span></div>
+                <div class="extracted-text">หาเพื่อนใหม่ในพื้นที่<br>sniper<br>+<br>การเข้าชม<br>สินค้า<br>อภิชารของคุณน่ารัก<br>จับใจ<br>ของคุณเช่นกัน<br>สินเพรียมและเพชร<br>กราวหน้ามีอะไรคุณบอกมาๆ<br>ได้ไหมครับ<br>โล่  ฉันอยากคุณกินตัวมะละ<br>ส่งข้อความ...<br>...</div>
+                <div class="tokens"><span>输入: 768</span><span>输出: 87</span><span class="time">⏱ 1448ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174358.jpg - Y.O.U 品牌 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174358.jpg" onclick="showModal(this.src)" alt="Y.O.U 品牌 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1805 tokens | 981ms</span></div>
+                <div class="extracted-text">Y.O.U YUN WYON YOW</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 11</span><span class="time">⏱ 981ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1816 tokens | 894ms</span></div>
+                <div class="extracted-text">NOV YOU หลอกใจฉัน 1 ให้ดู YOU</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 22</span><span class="time">⏱ 894ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1316 tokens | 939ms</span></div>
+                <div class="extracted-text">สีปนผาทับจั๊ป<br>แบนดี Y.O.U</div>
+                <div class="tokens"><span>输入: 1296</span><span>输出: 20</span><span class="time">⏱ 939ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174403.jpg - 内衣广告 (越南文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174403.jpg" onclick="showModal(this.src)" alt="内衣广告 (越南文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1840 tokens | 1248ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thây một chiếc bra từ cức chạt!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 28</span><span class="time">⏱ 1248ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1837 tokens | 903ms</span></div>
+                <div class="extracted-text">Tói môi tím tháy môt chiêc bra cuc chât!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 25</span><span class="time">⏱ 903ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1329 tokens | 902ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra ❤️ cục chát!</div>
+                <div class="tokens"><span>输入: 1313</span><span>输出: 16</span><span class="time">⏱ 902ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174407.jpg - 贷款广告 (英文/菲律宾)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174407.jpg" onclick="showModal(this.src)" alt="贷款广告 (英文/菲律宾)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2226 tokens | 2431ms</span></div>
+                <div class="extracted-text">ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment ₱5,000 91 days ₱5,051 ₱10,000 120 days ₱10,089 ₱20,000 180 days ₱20,156 ₱30,000 360 days ₱30,238 User rights are guaranteed Loan amount up to ₱1,000-₱20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 135</span><span class="time">⏱ 2431ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2216 tokens | 1689ms</span></div>
+                <div class="extracted-text">ML MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 125</span><span class="time">⏱ 1689ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1688 tokens | 1228ms</span></div>
+                <div class="extracted-text">ML<br>MicroLoan<br>Just three steps!<br>Easy online loan<br>Loan amount<br>Term<br>Repayment<br>₱5,000<br>₱10,000<br>₱20,000<br>₱30,000<br>91 days<br>120 days<br>180 days<br>360 days<br>₱5,051<br>₱10,089<br>₱20,156<br>₱30,238<br>User rights are guaranteed<br>Loan amount up to<br>₱1,000 – ₱20,00<br>Formal organization<br>100% online pro<br>Minimal docume<br>Secure loan<br>Free Application</div>
+                <div class="tokens"><span>输入: 1566</span><span>输出: 122</span><span class="time">⏱ 1228ms</span></div>
+            </div></div>
+            </div>
+        </div></div><div class="round-content"><div class="image-section">
+            <div class="image-header">📷 20251023-174349.jpg - 口红广告 (英文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174349.jpg" onclick="showModal(this.src)" alt="口红广告 (英文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">788 tokens | 1087ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COSERANO COSERANO COSERANO YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 36</span><span class="time">⏱ 1087ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">787 tokens | 961ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COSME COSME COLORLAND NO YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 35</span><span class="time">⏱ 961ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">920 tokens | 948ms</span></div>
+                <div class="extracted-text">YOU<br>Rouge Vélvet Matte Lip Cream<br>"1 SOLD EVERY 5 SECONDS!"<br>COLORLAND<br>COLORLAND<br>COLORLAND<br>YOU<br>YOU<br>THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 880</span><span>输出: 40</span><span class="time">⏱ 948ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174354.jpg - 聊天界面 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174354.jpg" onclick="showModal(this.src)" alt="聊天界面 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1466 tokens | 2262ms</span></div>
+                <div class="extracted-text">... 000 000 000 ปู แค้นไม่ให้ทน โลก ทำเองได้ไม่กี่ครั้ง... โลก โลก ขอให้โชคดีกับเธอใช่ไหม เข้าสู่สถานะไม่แน่ใจว่าตัวเองอยู่ ในที่ที่ตัวเองต้องการอยู่ sniper + ถ่ายรูป</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 134</span><span class="time">⏱ 2262ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1450 tokens | 1538ms</span></div>
+                <div class="extracted-text">ภาพถ่ายสด sniper + กระทู้ ตัวคุณมีดูเพลงเรื่องนี้ไหม ตัวคุณ เนื้อเรื่องสดใสดูใช่ไหม ตัวคุณสุดสดใสจัด ดูใช่ไหม ตัวคุณดูดูลักษณะสดใส</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 118</span><span class="time">⏱ 1538ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">848 tokens | 1386ms</span></div>
+                <div class="extracted-text">หาเพื่อนใหม่ในพื้นที่<br>sniper<br>+<br>การเข้าชม<br>สินค้า<br>อาคารของคุณน่ารัก<br>จับใจ<br>ขอคุณชื่นกัน<br>สินเพรียมและเพื่อน<br>กราวหน้าหน้าจะถูกเก็บคุณเบอร์ๆ<br>ได้ให้มากรับ<br>โล่ ฉันอยากคุณกับฉันจะ<br>ส่งข้อความ...<br>...</div>
+                <div class="tokens"><span>输入: 768</span><span>输出: 80</span><span class="time">⏱ 1386ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174358.jpg - Y.O.U 品牌 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174358.jpg" onclick="showModal(this.src)" alt="Y.O.U 品牌 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1804 tokens | 959ms</span></div>
+                <div class="extracted-text">Y.O.U 14 YOM</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 10</span><span class="time">⏱ 959ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1811 tokens | 830ms</span></div>
+                <div class="extracted-text">NOW ท่ามกลาง สีที่ Y.O.U</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 17</span><span class="time">⏱ 830ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1316 tokens | 978ms</span></div>
+                <div class="extracted-text">สีปนผาทนจั๊ง  <br>แบนดี Y.O.U</div>
+                <div class="tokens"><span>输入: 1296</span><span>输出: 20</span><span class="time">⏱ 978ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174403.jpg - 内衣广告 (越南文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174403.jpg" onclick="showModal(this.src)" alt="内衣广告 (越南文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1836 tokens | 1090ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra cực chất!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 24</span><span class="time">⏱ 1090ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1836 tokens | 1037ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra cực chất!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 24</span><span class="time">⏱ 1037ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1329 tokens | 943ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra ❤️ cục chát!</div>
+                <div class="tokens"><span>输入: 1313</span><span>输出: 16</span><span class="time">⏱ 943ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174407.jpg - 贷款广告 (英文/菲律宾)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174407.jpg" onclick="showModal(this.src)" alt="贷款广告 (英文/菲律宾)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2226 tokens | 2513ms</span></div>
+                <div class="extracted-text">ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment ₱5,000 91 days ₱5,051 ₱10,000 120 days ₱10,089 ₱20,000 180 days ₱20,156 ₱30,000 360 days ₱30,238 User rights are guaranteed Loan amount up to ₱1,000-₱20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 135</span><span class="time">⏱ 2513ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2217 tokens | 1784ms</span></div>
+                <div class="extracted-text">ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 126</span><span class="time">⏱ 1784ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1688 tokens | 1238ms</span></div>
+                <div class="extracted-text">ML<br>MicroLoan<br>Just three steps!<br>Easy online loan<br>Loan amount<br>Term<br>Repayment<br>₱5,000<br>₱10,000<br>₱20,000<br>₱30,000<br>91 days<br>120 days<br>180 days<br>360 days<br>₱5,051<br>₱10,089<br>₱20,156<br>₱30,238<br>User rights are guaranteed<br>Loan amount up to<br>₱1,000 – ₱20,00<br>Formal organization<br>100% online pro<br>Minimal docume<br>Secure loan<br>Free Application</div>
+                <div class="tokens"><span>输入: 1566</span><span>输出: 122</span><span class="time">⏱ 1238ms</span></div>
+            </div></div>
+            </div>
+        </div></div><div class="round-content"><div class="image-section">
+            <div class="image-header">📷 20251023-174349.jpg - 口红广告 (英文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174349.jpg" onclick="showModal(this.src)" alt="口红广告 (英文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">811 tokens | 1342ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COSME T.I COSME T.I COSME T.I COSME T.I COLOURLAND COLOURLAND COLOURLAND COLOURLAND YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 59</span><span class="time">⏱ 1342ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">786 tokens | 856ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" OU COSMELAN COLORLAND YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 34</span><span class="time">⏱ 856ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">920 tokens | 888ms</span></div>
+                <div class="extracted-text">YOU<br>Rouge Vélvet Matte Lip Cream<br>"1 SOLD EVERY 5 SECONDS!"<br>COLORLAND<br>COLORLAND<br>COLORLAND<br>YOU<br>YOU<br>THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 880</span><span>输出: 40</span><span class="time">⏱ 888ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174354.jpg - 聊天界面 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174354.jpg" onclick="showModal(this.src)" alt="聊天界面 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1454 tokens | 2146ms</span></div>
+                <div class="extracted-text">ชอบพูดชอบเขยน sniper + ... โชว์ เพิ่มเพื่อน 000 ใหม่ 000 แอบเล่น ถูกต้องไหม แถมยังต้อง อาเจียนเล่นเกม แต่ยังดีอยู่ 000 เรื่องนี้ส่วนตัวนะ...</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 122</span><span class="time">⏱ 2146ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1574 tokens | 2477ms</span></div>
+                <div class="extracted-text">กลุ่มเพื่อนสนิเปอร์ + กลุ่มเพื่อนสนิเปอร์ ขอบคุณคุณมาใช้บริการสนิเปอร์ นี่คือเพื่อนของคุณที่มีสิทธิ์เข้าร่วมใช้บริการกับคุณ ฉันไม่มีเพื่อนสนิเปอร์ ถ้าคุณอยากให้เพื่อนคุณร่วมใช้บริการกับคุณ ลองโชว์สิทธิ์ให้เพื่อนดูได้ที่นี่ ลองค้นหาเพื่อนของคุณกลับมาใช้บริการกับคุณ พูดคุยกับเพื่อนของคุณเลยครับ</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 242</span><span class="time">⏱ 2477ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">848 tokens | 1384ms</span></div>
+                <div class="extracted-text">หาเพื่อนใหม่ในพื้นที่<br>sniper<br>+<br>การเข้าชม<br>สินค้า<br>อาคารของคุณน่ารัก<br>จับใจ<br>ขอคุณชื่นกัน<br>สินเพรียมและเพื่อน<br>กราวหน้าหน้าจะถูกเก็บคุณเบอร์ๆ<br>ได้ให้มากรับ<br>โล่ ฉันอยากคุณกับฉันจะ<br>ส่งข้อความ...<br>...</div>
+                <div class="tokens"><span>输入: 768</span><span>输出: 80</span><span class="time">⏱ 1384ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174358.jpg - Y.O.U 品牌 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174358.jpg" onclick="showModal(this.src)" alt="Y.O.U 品牌 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1814 tokens | 1043ms</span></div>
+                <div class="extracted-text">Y.O.U YOR เรือมแค่อยากรู้</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 20</span><span class="time">⏱ 1043ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1851 tokens | 1139ms</span></div>
+                <div class="extracted-text">Y.O.U นาฬิกา YVONNE 1 ปีนี้ให้คุณเติมกลิ่นสดใส แน่นอนเลยนะ!</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 57</span><span class="time">⏱ 1139ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1316 tokens | 943ms</span></div>
+                <div class="extracted-text">สีปนผาทนจั๊ง  <br>แบนดี Y.O.U</div>
+                <div class="tokens"><span>输入: 1296</span><span>输出: 20</span><span class="time">⏱ 943ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174403.jpg - 内衣广告 (越南文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174403.jpg" onclick="showModal(this.src)" alt="内衣广告 (越南文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1841 tokens | 1248ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra 💞 cực chất!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 29</span><span class="time">⏱ 1248ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1837 tokens | 880ms</span></div>
+                <div class="extracted-text">Tôi môi tìm thấy một chiếc bra cực chất!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 25</span><span class="time">⏱ 880ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1329 tokens | 887ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra ❤️ cục chát!</div>
+                <div class="tokens"><span>输入: 1313</span><span>输出: 16</span><span class="time">⏱ 887ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174407.jpg - 贷款广告 (英文/菲律宾)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174407.jpg" onclick="showModal(this.src)" alt="贷款广告 (英文/菲律宾)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2226 tokens | 2426ms</span></div>
+                <div class="extracted-text">ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment ₱5,000 91 days ₱5,051 ₱10,000 120 days ₱10,089 ₱20,000 180 days ₱20,156 ₱30,000 360 days ₱30,238 User rights are guaranteed Loan amount up to ₱1,000-₱20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 135</span><span class="time">⏱ 2426ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2217 tokens | 2250ms</span></div>
+                <div class="extracted-text">ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 126</span><span class="time">⏱ 2250ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1688 tokens | 1231ms</span></div>
+                <div class="extracted-text">ML<br>MicroLoan<br>Just three steps!<br>Easy online loan<br>Loan amount<br>Term<br>Repayment<br>₱5,000<br>₱10,000<br>₱20,000<br>₱30,000<br>91 days<br>120 days<br>180 days<br>360 days<br>₱5,051<br>₱10,089<br>₱20,156<br>₱30,238<br>User rights are guaranteed<br>Loan amount up to<br>₱1,000 – ₱20,00<br>Formal organization<br>100% online pro<br>Minimal docume<br>Secure loan<br>Free Application</div>
+                <div class="tokens"><span>输入: 1566</span><span>输出: 122</span><span class="time">⏱ 1231ms</span></div>
+            </div></div>
+            </div>
+        </div></div>
+    
+    <div class="modal" id="modal" onclick="this.classList.remove('active')">
+        <img id="modalImg" src="" alt="放大图片">
+    </div>
+    
+    <script>
+        function showModal(src) { document.getElementById('modalImg').src = src; document.getElementById('modal').classList.add('active'); }
+        function switchRound(i) { document.querySelectorAll('.round-tab').forEach((t,j) => t.classList.toggle('active', i===j)); document.querySelectorAll('.round-content').forEach((c,j) => c.classList.toggle('active', i===j)); }
+    </script>
+</body>
+</html>

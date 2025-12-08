@@ -367,6 +367,39 @@
         <h1>🏸 羽毛球视频分析模型测试结果</h1>
         <p class="subtitle">测试日期: <span id="testDate"></span></p>
         
+        <div class="chart-container" style="margin-bottom: 30px;">
+            <div class="chart-title">📝 测试提示词 (Prompt)</div>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
+                <pre style="white-space: pre-wrap; font-family: 'Courier New', monospace; margin: 0; line-height: 1.6;">Analyze this badminton video and identify all rallies from serve to dead ball. For each rally, provide the start and end timestamps along with the reason the rally ended in the following JSON format:
+
+{"segments": [
+{"start": "00:05", "end": "00:12", "reason": "shuttlecock out of bounds"},
+{"start": "00:15", "end": "00:23", "reason": "net fault"}
+...
+]}
+
+Process the entire video from beginning to end. Use MM:SS format for timestamps. This video is a 5-minute long video.
+
+Common badminton dead ball reasons include:
+- shuttlecock out of bounds
+- net fault (shuttlecock hits net)
+- shuttlecock lands on wrong side
+- double hit
+- smash winner
+- drop shot winner
+- clear out of bounds
+- service fault
+- let (replay point)
+- unforced error
+
+**Requirements:**
+- ACCURATE timestamps within 00:00 to 04:49
+- Output JSON format ONLY
+
+Focus on identifying the exact moment each rally begins (serve contact) and ends (shuttlecock becomes dead).</pre>
+            </div>
+        </div>
+        
         <div class="video-section">
             <div class="video-card">
                 <div class="video-title">Video 1 - 单人练习</div>
@@ -428,30 +461,6 @@
             <div class="chart-title">模型 Segments 详细数据</div>
             <div class="tabs-header" id="tabsHeader"></div>
             <div id="tabsContent"></div>
-        </div>
-        
-        <div class="chart-container" style="margin-top: 30px;">
-            <div class="chart-title">📝 测试提示词 (Prompt)</div>
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
-                <pre style="white-space: pre-wrap; font-family: 'Courier New', monospace; margin: 0; line-height: 1.6;">Analyze this badminton video and identify all rallies from serve to dead ball. For each rally, provide the start and end timestamps along with the reason the rally ended in the following JSON format:
-
-{"segments": [
-  {"start": "MM:SS", "end": "MM:SS", "reason": "description"},
-  ...
-]}
-
-Possible reasons include:
-- shuttlecock out of bounds
-- net fault
-- shuttlecock lands on wrong side
-- double hit
-- smash winner
-- drop shot winner
-- clear out of bounds
-- service fault
-- let (replay point)
-- unforced error</pre>
-            </div>
         </div>
         
         <div class="chart-container" style="margin-top: 30px;">

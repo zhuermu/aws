@@ -30,6 +30,24 @@ const testData = {
       "reasoning": "[REDACTED]."
     },
     {
+      "model": "amazon.nova-2-lite-v1:0-ga",
+      "video": "video-1-person",
+      "success": true,
+      "response": "{\"segments\": []}",
+      "elapsed_time": 26.511990070343018,
+      "input_tokens": 76315,
+      "output_tokens": 8
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0 (reasoning=low)-ga",
+      "video": "video-1-person",
+      "success": true,
+      "response": "```json\n{\"segments\": [\n{\"start\": \"00:00\", \"end\": \"00:05\", \"reason\": \"smash winner\"},\n{\"start\": \"00:10\", \"end\": \"00:12\", \"reason\": \"net fault\"},\n{\"start\": \"00:12\", \"end\": \"00:35\", \"reason\": \"smash winner\"},\n{\"start\": \"00:35\", \"end\": \"00:42\", \"reason\": \"smash winner\"}\n]}\n```",
+      "elapsed_time": 61.94172191619873,
+      "input_tokens": 76365,
+      "output_tokens": 6888
+    },
+    {
       "model": "amazon.nova-pro-v1:0",
       "video": "video-1-person",
       "success": true,
@@ -64,6 +82,44 @@ const testData = {
       "elapsed_time": 117.06938290596008,
       "input_tokens": 76236,
       "output_tokens": 5585,
+      "reasoning": "[REDACTED]."
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0-ga",
+      "video": "video-2-match",
+      "success": true,
+      "response": "{\"segments\": [\n    {\"start\": \"00:05\", \"end\": \"00:12\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:15\", \"end\": \"00:23\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:25\", \"end\": \"00:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:35\", \"end\": \"00:43\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:45\", \"end\": \"00:53\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:55\", \"end\": \"01:03\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"01:05\", \"end\": \"01:13\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"01:15\", \"end\": \"01:23\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"01:25\", \"end\": \"01:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"01:35\", \"end\": \"01:43\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"01:45\", \"end\": \"01:53\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"01:55\", \"end\": \"02:03\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:05\", \"end\": \"02:13\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:15\", \"end\": \"02:23\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:25\", \"end\": \"02:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:35\", \"end\": \"02:43\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:45\", \"end\": \"02:53\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:55\", \"end\": \"03:03\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:05\", \"end\": \"03:13\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:15\", \"end\": \"03:23\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:25\", \"end\": \"03:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:35\", \"end\": \"03:43\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:45\", \"end\": \"03:53\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:55\", \"end\": \"04:03\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"04:05\", \"end\": \"04:13\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"04:15\", \"end\": \"04:23\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"04:25\", \"end\": \"04:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"04:35\", \"end\": \"04:43\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"04:45\", \"end\": \"04:53\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"04:55\", \"end\": \"05:03\", \"reason\": \"shuttlecock out of bounds\"}\n]}",
+      "elapsed_time": 28.80305814743042,
+      "input_tokens": 76571,
+      "output_tokens": 848
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0 (reasoning=low)-ga",
+      "video": "video-2-match",
+      "success": true,
+      "response": "```json\n{\n  \"segments\": [\n    {\"start\": \"00:00\", \"end\": \"00:12\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:15\", \"end\": \"00:23\", \"reason\": \"smash winner\"},\n    {\"start\": \"00:25\", \"end\": \"00:33\", \"reason\": \"net fault\"},\n    {\"start\": \"00:35\", \"end\": \"00:47\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:50\", \"end\": \"01:08\", \"reason\": \"unforced error\"},\n    {\"start\": \"01:10\", \"end\": \"01:27\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"01:30\", \"end\": \"01:48\", \"reason\": \"net fault\"},\n    {\"start\": \"01:50\", \"end\": \"02:08\", \"reason\": \"smash winner\"},\n    {\"start\": \"02:10\", \"end\": \"02:27\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:30\", \"end\": \"02:48\", \"reason\": \"unforced error\"},\n    {\"start\": \"02:50\", \"end\": \"03:07\", \"reason\": \"net fault\"},\n    {\"start\": \"03:10\", \"end\": \"03:28\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:30\", \"end\": \"03:47\", \"reason\": \"smash winner\"},\n    {\"start\": \"03:50\", \"end\": \"04:08\", \"reason\": \"unforced error\"},\n    {\"start\": \"04:10\", \"end\": \"04:27\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"04:30\", \"end\": \"04:47\", \"reason\": \"net fault\"},\n    {\"start\": \"04:50\", \"end\": \"04:57\", \"reason\": \"smash winner\"}\n  ]\n}\n```",
+      "elapsed_time": 36.0977349281311,
+      "input_tokens": 76621,
+      "output_tokens": 1797
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0 (reasoning=medium)-ga",
+      "video": "video-1-person",
+      "success": true,
+      "response": "```json\n{\n  \"segments\": [\n    {\"start\": \"00:00\", \"end\": \"00:05\", \"reason\": \"smash winner\"},\n    {\"start\": \"00:10\", \"end\": \"00:16\", \"reason\": \"smash winner\"},\n    {\"start\": \"00:16\", \"end\": \"00:35\", \"reason\": \"smash winner\"},\n    {\"start\": \"00:47\", \"end\": \"00:53\", \"reason\": \"smash winner\"},\n    {\"start\": \"01:06\", \"end\": \"01:26\", \"reason\": \"unforced error\"},\n    {\"start\": \"01:26\", \"end\": \"01:32\", \"reason\": \"smash winner\"},\n    {\"start\": \"02:13\", \"end\": \"02:27\", \"reason\": \"smash winner\"},\n    {\"start\": \"02:46\", \"end\": \"03:11\", \"reason\": \"smash winner\"},\n    {\"start\": \"03:30\", \"end\": \"03:46\", \"reason\": \"smash winner\"},\n    {\"start\": \"04:06\", \"end\": \"04:09\", \"reason\": \"smash winner\"}\n  ]\n}\n```",
+      "elapsed_time": 44.20123791694641,
+      "input_tokens": 76350,
+      "output_tokens": 4736,
+      "reasoning": "[REDACTED]."
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0 (reasoning=medium)-ga",
+      "video": "video-2-match",
+      "success": true,
+      "response": "```json\n{\n  \"segments\": [\n    {\"start\": \"00:00\", \"end\": \"00:12\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:12\", \"end\": \"00:23\", \"reason\": \"net fault\"},\n    {\"start\": \"00:23\", \"end\": \"00:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:33\", \"end\": \"00:43\", \"reason\": \"smash winner\"},\n    {\"start\": \"00:43\", \"end\": \"00:53\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"00:53\", \"end\": \"01:03\", \"reason\": \"net fault\"},\n    {\"start\": \"01:03\", \"end\": \"01:13\", \"reason\": \"shuttlecock lands on wrong side\"},\n    {\"start\": \"01:13\", \"end\": \"01:23\", \"reason\": \"net fault\"},\n    {\"start\": \"01:23\", \"end\": \"01:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"01:33\", \"end\": \"01:43\", \"reason\": \"smash winner\"},\n    {\"start\": \"01:43\", \"end\": \"01:53\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"01:53\", \"end\": \"02:03\", \"reason\": \"net fault\"},\n    {\"start\": \"02:03\", \"end\": \"02:13\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:13\", \"end\": \"02:23\", \"reason\": \"smash winner\"},\n    {\"start\": \"02:23\", \"end\": \"02:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:33\", \"end\": \"02:43\", \"reason\": \"net fault\"},\n    {\"start\": \"02:43\", \"end\": \"02:53\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"02:53\", \"end\": \"03:03\", \"reason\": \"smash winner\"},\n    {\"start\": \"03:03\", \"end\": \"03:13\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:13\", \"end\": \"03:23\", \"reason\": \"net fault\"},\n    {\"start\": \"03:23\", \"end\": \"03:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:33\", \"end\": \"03:43\", \"reason\": \"smash winner\"},\n    {\"start\": \"03:43\", \"end\": \"03:53\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"03:53\", \"end\": \"04:03\", \"reason\": \"net fault\"},\n    {\"start\": \"04:03\", \"end\": \"04:13\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"04:13\", \"end\": \"04:23\", \"reason\": \"smash winner\"},\n    {\"start\": \"04:23\", \"end\": \"04:33\", \"reason\": \"shuttlecock out of bounds\"},\n    {\"start\": \"04:33\", \"end\": \"04:43\", \"reason\": \"net fault\"},\n    {\"start\": \"04:43\", \"end\": \"04:49\", \"reason\": \"shuttlecock out of bounds\"}\n  ]\n}\n```",
+      "elapsed_time": 35.118321895599365,
+      "input_tokens": 76606,
+      "output_tokens": 3456,
       "reasoning": "[REDACTED]."
     },
     {
