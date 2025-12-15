@@ -1,0 +1,125 @@
+{
+  "test_date": "2025-12-03T09:57:33.938636",
+  "results": [
+    {
+      "model": "amazon.nova-2-lite-v1:0-ga",
+      "video": "video-1",
+      "success": true,
+      "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"(Keywords actually searched by the user)\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick | Explore Slot Jackpot Trick || Got 1000000 Sup...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Shiv_Storm\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+      "elapsed_time": 20.6429660320282,
+      "input_tokens": 30946,
+      "output_tokens": 285,
+      "expected": {
+        "search_keyword": null,
+        "title": "Explore Slot Super Win Trick",
+        "creator": "Shiv_Storm",
+        "watch_duration": 2
+      }
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0 (reasoning=low)-ga",
+      "video": "video-1",
+      "success": true,
+      "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"(Not visible in the screenshot; no search bar or query displayed)\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick | Explore Slot Jackpot Trick || Got 1000000s Sup...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Shiv_Storm\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+      "elapsed_time": 21.97352409362793,
+      "input_tokens": 30996,
+      "output_tokens": 1106,
+      "expected": {
+        "search_keyword": null,
+        "title": "Explore Slot Super Win Trick",
+        "creator": "Shiv_Storm",
+        "watch_duration": 2
+      }
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0-ga",
+      "video": "video-2",
+      "success": true,
+      "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"teen patti master loss recovery tricks\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"teen patti master loss recovery tricks\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Not visible in the provided frames\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+      "elapsed_time": 2.617814779281616,
+      "input_tokens": 3816,
+      "output_tokens": 281,
+      "expected": {
+        "search_keyword": null,
+        "title": null,
+        "creator": null,
+        "watch_duration": 0
+      }
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0 (reasoning=low-ga)",
+      "video": "video-2",
+      "success": true,
+      "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"teen patti master loss recovery tricks\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Video not played - only search interface shown\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Video not played - only search interface shown\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}",
+      "elapsed_time": 4.011152029037476,
+      "input_tokens": 3866,
+      "output_tokens": 601,
+      "expected": {
+        "search_keyword": null,
+        "title": null,
+        "creator": null,
+        "watch_duration": 0
+      }
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0-ga",
+      "video": "video-3",
+      "success": true,
+      "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+      "elapsed_time": 19.2972571849823,
+      "input_tokens": 63478,
+      "output_tokens": 256,
+      "expected": {
+        "search_keyword": "Slots Game Tricks Revealed",
+        "title": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed",
+        "creator": "K_Mater_Gaming",
+        "watch_duration": 3
+      }
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0 (reasoning=low)-ga",
+      "video": "video-3",
+      "success": true,
+      "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"Slots Game Tricks Revealed\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"K_Mater_Gaming\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}",
+      "elapsed_time": 20.828620195388794,
+      "input_tokens": 63528,
+      "output_tokens": 564,
+      "expected": {
+        "search_keyword": "Slots Game Tricks Revealed",
+        "title": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed",
+        "creator": "K_Mater_Gaming",
+        "watch_duration": 3
+      }
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0-ga",
+      "video": "video-4",
+      "success": true,
+      "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Sloo...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"@KGaming24\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+      "elapsed_time": 43.96769690513611,
+      "input_tokens": 33286,
+      "output_tokens": 271,
+      "expected": {
+        "search_keyword": null,
+        "title": "STOP Losing Money! TeenPatti Explorer Slo..",
+        "creator": "@KGaming24",
+        "watch_duration": 2
+      }
+    },
+    {
+      "model": "amazon.nova-2-lite-v1:0 (reasoning=low)-ga",
+      "video": "video-4",
+      "success": true,
+      "response": "{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"No visible search bar or keyword entry in the screenshot\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Sloo...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"@KGaming24\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}",
+      "elapsed_time": 49.65553569793701,
+      "input_tokens": 33336,
+      "output_tokens": 2621,
+      "expected": {
+        "search_keyword": null,
+        "title": "STOP Losing Money! TeenPatti Explorer Slo..",
+        "creator": "@KGaming24",
+        "watch_duration": 2
+      }
+    }
+  ]
+}

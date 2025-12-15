@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova vs Gemini OCR 对比</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;padding:20px}
+        h1{text-align:center;margin-bottom:20px;color:#232f3e}
+        .config-section{background:#232f3e;color:white;padding:20px;border-radius:8px;margin-bottom:20px}
+        .config-section h2{margin-bottom:15px;font-size:18px}
+        .config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px}
+        .config-item{background:rgba(255,255,255,0.1);padding:12px;border-radius:4px}
+        .config-item label{font-size:12px;color:#aaa;display:block;margin-bottom:5px}
+        .config-item code{background:rgba(0,0,0,0.3);padding:8px;border-radius:4px;display:block;font-size:13px;white-space:pre-wrap;word-break:break-all}
+        .summary{display:flex;justify-content:center;gap:20px;margin-bottom:20px;flex-wrap:wrap}
+        .summary-card{background:white;padding:15px 25px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);min-width:200px}
+        .summary-card.pro{border-top:4px solid #7b68ee}
+        .summary-card.lite{border-top:4px solid #00a1c9}
+        .summary-card.lite2{border-top:4px solid #ff9900}
+        .summary-card.gemini{border-top:4px solid #34a853}
+        .summary-card h3{margin-bottom:10px;text-align:center;font-size:14px}
+        .summary-card .stats{font-size:12px;color:#666;line-height:1.8}
+        .conclusion{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px;border-radius:8px;margin-bottom:20px}
+        .conclusion h2{margin-bottom:15px}
+        .conclusion ul{margin-left:20px;line-height:1.8}
+        .round-tabs{display:flex;gap:5px;margin-bottom:20px;background:white;padding:10px;border-radius:8px}
+        .round-tab{padding:10px 20px;border:none;background:#eee;border-radius:4px;cursor:pointer;font-size:14px}
+        .round-tab.active{background:#232f3e;color:white}
+        .round-content{display:none}
+        .round-content.active{display:block}
+        .image-section{background:white;margin-bottom:20px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);overflow:hidden}
+        .image-header{background:#232f3e;color:white;padding:12px 15px;font-weight:bold;font-size:14px}
+        .image-content{display:flex;flex-wrap:wrap}
+        .image-preview{flex:0 0 250px;padding:15px;border-right:1px solid #eee}
+        .image-preview img{width:100%;border-radius:4px;cursor:pointer}
+        .models-compare{flex:1;min-width:300px}
+        .model-result{padding:12px 15px;border-bottom:1px solid #eee}
+        .model-result:last-child{border-bottom:none}
+        .model-name{font-weight:bold;color:#232f3e;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;font-size:14px}
+        .model-name .metrics{font-size:11px;color:#666;font-weight:normal}
+        .extracted-text{background:#f9f9f9;padding:10px;border-radius:4px;font-size:13px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:150px;overflow-y:auto}
+        .tokens{display:inline-flex;gap:6px;font-size:10px;color:#888;margin-top:6px;flex-wrap:wrap}
+        .tokens span{background:#eee;padding:2px 6px;border-radius:10px}
+        .tokens .time{background:#e8f5e9;color:#2e7d32}
+        .nova-pro{border-left:4px solid #7b68ee}
+        .nova-lite{border-left:4px solid #00a1c9}
+        .nova-lite2{border-left:4px solid #ff9900}
+        .gemini{border-left:4px solid #34a853}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;justify-content:center;align-items:center}
+        .modal img{max-width:90%;max-height:90%}
+        .modal.active{display:flex}
+        @media(max-width:768px){.image-preview{flex:0 0 100%;border-right:none;border-bottom:1px solid #eee}}
+    </style>
+</head>
+<body>
+    <h1>🔍 Amazon Nova vs Google Gemini OCR 对比</h1>
+    
+    <div class="config-section">
+        <h2>⚙️ 测试配置</h2>
+        <div class="config-grid">
+            <div class="config-item"><label>提示词</label><code>Extract all text from the image in original order and format. Output only the recognized text.</code></div>
+            <div class="config-item"><label>测试轮数</label><code>3 轮 × 8 张图片 × 4 个模型</code></div>
+            <div class="config-item"><label>图片类型</label><code>多语言: 英文、泰文、越南文、中文、菲律宾文</code></div>
+            <div class="config-item"><label>Nova 推理参数</label><code>temperature: 0.7 | topP: 0.9 | Reasoning: -</code></div>
+        </div>
+    </div>
+    
+    <div class="summary"><div class="summary-card pro">
+        <h3>🟣 Nova Pro</h3>
+        <div class="stats">总 Tokens: <strong>47,383</strong><br>
+        总耗时: <strong>69.6s</strong><br>
+        平均: 1974 tokens / 2901ms<br>
+        响应: 942ms ~ 15102ms</div>
+    </div><div class="summary-card lite">
+        <h3>🔵 Nova Lite</h3>
+        <div class="stats">总 Tokens: <strong>50,114</strong><br>
+        总耗时: <strong>68.2s</strong><br>
+        平均: 2088 tokens / 2841ms<br>
+        响应: 822ms ~ 8591ms</div>
+    </div><div class="summary-card lite2">
+        <h3>🟠 Nova Lite 2</h3>
+        <div class="stats">总 Tokens: <strong>44,425</strong><br>
+        总耗时: <strong>36.7s</strong><br>
+        平均: 1851 tokens / 1529ms<br>
+        响应: 842ms ~ 3331ms</div>
+    </div><div class="summary-card gemini">
+        <h3>🟢 Gemini 2.5 Flash</h3>
+        <div class="stats">总 Tokens: <strong>19,048</strong><br>
+        总耗时: <strong>101.9s</strong><br>
+        平均: 794 tokens / 4246ms<br>
+        响应: 2039ms ~ 8338ms</div>
+    </div></div>
+    
+    <div class="conclusion">
+        <h2>📊 测试总结</h2>
+        <ul>
+            <li><strong>最快响应:</strong> 🟠 Nova Lite 2 (平均 1529ms)</li>
+            <li><strong>最省 Token:</strong> 🟢 Gemini 2.5 Flash (平均 794 tokens)</li>
+            <li><strong>Gemini 特点:</strong> 输出更详细的场景描述，但响应时间较长</li>
+            <li><strong>Nova 特点:</strong> 响应快速，输出简洁，适合纯文本提取</li>
+        </ul>
+    </div>
+    
+    <div class="round-tabs"><button class="round-tab active" onclick="switchRound(0)">第 1 轮</button><button class="round-tab" onclick="switchRound(1)">第 2 轮</button><button class="round-tab" onclick="switchRound(2)">第 3 轮</button></div>
+    <div class="round-content active"><div class="image-section">
+            <div class="image-header">📷 20251023-174349.jpg - 口红广告 (英文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174349.jpg" onclick="showModal(this.src)" alt="口红广告 (英文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">785 tokens | 1641ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COLORANO COLORANO YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 33</span><span class="time">⏱ 1641ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1776 tokens | 8337ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME CO</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 1024</span><span class="time">⏱ 8337ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">918 tokens | 927ms</span></div>
+                <div class="extracted-text">YOU<br>Rouge Velvet Matte Lip Cream<br>“1 SOLD EVERY 5 SECONDS!”<br>COLORLAND<br>COLORLAND<br>COLORLAND<br>YOU<br>YOU<br>THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 880</span><span>输出: 38</span><span class="time">⏱ 927ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">1299 tokens | 8338ms</span></div>
+                <div class="extracted-text">Y.O.U<br>Rouge Velvet Matte Lip Cream<br>"1 SOLD EVERY 5 SECONDS!"<br>COLORLAND<br>Y.O.U<br>THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 38</span><span class="time">⏱ 8338ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174354.jpg - 聊天界面 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174354.jpg" onclick="showModal(this.src)" alt="聊天界面 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1429 tokens | 1938ms</span></div>
+                <div class="extracted-text">เรื่องนี้เล่ากันว่า sniper หน้าตา สุดหล่อ คุยกัน สนุกสนาน เล่นกัน สนุกสนาน แชทกัน สนุกสนาน ชอบกัน สนุกสนาน ลองเล่นกันสิ...</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 97</span><span class="time">⏱ 1938ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1473 tokens | 1762ms</span></div>
+                <div class="extracted-text">ภาษาไทย sniper + คุณชอบ เพิ่มเติม ติดต่อเรา อย่าลืมใส่ชื่อเพื่อนคุณเอง สนใจติดตาม รับทราบเรียบร้อยแล้ว รับทราบเรียบร้อยแล้ว รับทราบเรียบร้อยแล้ว รับทราบเรียบร้อยแล้ว เสียงเสียง</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 141</span><span class="time">⏱ 1762ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">851 tokens | 1450ms</span></div>
+                <div class="extracted-text">หาเพื่อนใหม่ในพื้นที่<br>sniper +<br>การคุยกัน<br>สินค้า<br>อาจารย์ของคุณน่ารัก<br>จับใจ<br>ขอคุณชื่นกัน<br>สินแพรมีมาแต่เพื่อน<br>การแทนที่ผมจะอภิปรายคุณบ่อยๆ<br>ได้ไหมครับ<br>โล้ สนับสนุนคุณนักศึกษา<br>ส่งข้อความ...<br>😊</div>
+                <div class="tokens"><span>输入: 768</span><span>输出: 83</span><span class="time">⏱ 1450ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">680 tokens | 3383ms</span></div>
+                <div class="extracted-text">หาเพื่อนใหม่ในพื้นที่<br>← sniper + 📞 ...<br>กำลังใช้งาน<br>ฉันด้วย<br>อวตารของคุณน่ารัก<br>ขอบใจ<br>ของคุณเช่นกัน<br>ฉันพึ่งเริ่มเล่นแอพนี้<br>คราวหน้าผมจะคุยกับคุณบ่อยๆ<br>ได้ไหมครับ<br>โอเค ฉันอยากคุยกับคุณด้วยค่ะ<br>ส่งข้อความ...</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 77</span><span class="time">⏱ 3383ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174358.jpg - Y.O.U 品牌 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174358.jpg" onclick="showModal(this.src)" alt="Y.O.U 品牌 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1816 tokens | 1124ms</span></div>
+                <div class="extracted-text">Y.O.U ชุดละ 1 ชุดละชุด</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 22</span><span class="time">⏱ 1124ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1857 tokens | 1172ms</span></div>
+                <div class="extracted-text">Y.O.U ทุกเพศ ทุกวัย ทุกสี ทุกสไตล์ สวยทุกที่ทุกเวลา ใช้งานง่าย ทนทาน</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 63</span><span class="time">⏱ 1172ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1315 tokens | 937ms</span></div>
+                <div class="extracted-text">สีบนหน้าൻจิ๊ง  <br>แบนซี่ Y.O.U</div>
+                <div class="tokens"><span>输入: 1296</span><span>输出: 19</span><span class="time">⏱ 937ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">431 tokens | 2506ms</span></div>
+                <div class="extracted-text">ลิปแมทบำรุง<br>แบรนด์ Y.O.U</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 17</span><span class="time">⏱ 2506ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174403.jpg - 内衣广告 (越南文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174403.jpg" onclick="showModal(this.src)" alt="内衣广告 (越南文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1836 tokens | 1252ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra cực chất!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 24</span><span class="time">⏱ 1252ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1835 tokens | 986ms</span></div>
+                <div class="extracted-text">Tôi môi tìm thay một chiếc bra cực chất!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 23</span><span class="time">⏱ 986ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1327 tokens | 911ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra ❤️ cục chặt!</div>
+                <div class="tokens"><span>输入: 1313</span><span>输出: 14</span><span class="time">⏱ 911ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">342 tokens | 2039ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một<br>chiếc bra 👙 cực chất!</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 14</span><span class="time">⏱ 2039ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174407.jpg - 贷款广告 (英文/菲律宾)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174407.jpg" onclick="showModal(this.src)" alt="贷款广告 (英文/菲律宾)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2216 tokens | 2685ms</span></div>
+                <div class="extracted-text">ML MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000-P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 125</span><span class="time">⏱ 2685ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2217 tokens | 1878ms</span></div>
+                <div class="extracted-text">ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 126</span><span class="time">⏱ 1878ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1688 tokens | 1243ms</span></div>
+                <div class="extracted-text">ML<br>MicroLoan<br>Just three steps!<br>Easy online loan<br>Loan amount<br>Term<br>Repayment<br>₱5,000<br>91 days<br>₱5,051<br>₱10,000<br>120 days<br>₱10,089<br>₱20,000<br>180 days<br>₱20,156<br>₱30,000<br>360 days<br>₱30,238<br>User rights are guaranteed<br>Loan amount up to<br>₱1,000 – ₱20,00<br>Formal organization<br>100% online pro<br>Minimal docume<br>Secure loan<br>Free Application</div>
+                <div class="tokens"><span>输入: 1566</span><span>输出: 122</span><span class="time">⏱ 1243ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">880 tokens | 4221ms</span></div>
+                <div class="extracted-text">ML MicroLoan<br>Just three steps!<br>Easy online loan<br><br>Loan amount      Term       Repayment<br>₱5,000           91 days    ₱5,051<br>₱10,000          120 days   ₱10,089<br>₱20,000          180 days   ₱20,156<br>₱30,000          360 days   ₱30,238<br><br>User rights are guaranteed<br>Loan amount up to<br>₱1,000 - ₱20,000<br>Formal organization<br>✓ 100% online process<br>✓ Minimal documents<br>✓ Secure loan<br>Free Application</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 150</span><span class="time">⏱ 4221ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 2616eed4e3594d6be70b8c26dd5beacd.jpg - 视频截图 (中文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/2616eed4e3594d6be70b8c26dd5beacd.jpg" onclick="showModal(this.src)" alt="视频截图 (中文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2414 tokens | 3007ms</span></div>
+                <div class="extracted-text">9:38 5GA 48 收藏 2 抖音热舞大赛 951 (热血) 圆梦之旅 (2025) 捡109814个 7 分享 打开抖音， 一起拍视频变流行 &gt; 在抖音热舞大赛中获得了冠军，让你的梦想更近一步...获取参赛资格 打开 关注 发现(2/50) · 评论 更多</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 154</span><span class="time">⏱ 3007ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2454 tokens | 2227ms</span></div>
+                <div class="extracted-text">9:38 5G 48 2 951 (北京) 北京北区 (2025) 109814 7 查看更多 北京的餐饮业受疫情影响，许多餐饮店关门了，餐饮业的同行们纷纷发声，希望能得到政策支持。 请您点击这里查看详细内容。 剪切 复制 收藏 分享 分享到 微信 微博 复制链接 微信好友 转发到微信群 微信朋友圈 微信收藏 复制链接 微信收藏 复制链接 复制链接</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 194</span><span class="time">⏱ 2227ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">2773 tokens | 2090ms</span></div>
+                <div class="extracted-text">9:38<br>5G<br>48<br>第2集<br>我去天上掉下个老爹爹<br>951<br>(嘿讹) 网影剧爱字 (2025) 第109814号<br>7<br>分享<br>说入蓝丝绸后，我竟玩赢了纯阳之体<br>本该绣麻麻家找开玩乐份的麻麻机，“因为难以掌控天…展开了解<br>全集·选集(2/50)·免费<br>介绍</div>
+                <div class="tokens"><span>输入: 2656</span><span>输出: 117</span><span class="time">⏱ 2090ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">995 tokens | 5722ms</span></div>
+                <div class="extracted-text">9:38 ↑<br>&lt; 第2集 !!! 5GA 48<br>我去天上掉下个老爷爷 ♡<br>951<br>(腾讯) 网微剧备字 (2025) 第109814号<br>7<br>分享<br>三+<br>误入盘丝洞后, 我竟觉醒了纯阳之体<br>本该继承林家捉妖师身份的林初九, 因难以掌控天... 展开正确追观<br>全集 · 选集(2/50) · 免费 ^ 倍速 ㄩ</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 123</span><span class="time">⏱ 5722ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 8bf2b7238d5802bdb630f29a6c4321a9.jpg - 直播截图 (中文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/8bf2b7238d5802bdb630f29a6c4321a9.jpg" onclick="showModal(this.src)" alt="直播截图 (中文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2590 tokens | 5421ms</span></div>
+                <div class="extracted-text">5G 9:38 ! ! 5GA 48 15:3 信任你的直觉 38.0万人已经看过 直播 88 38 8.0万+ 直播 娜娜直播中 直播 直播 直播 扫码加微信 扫码关注 扫码加好友 扫码加微信 名字: 娜娜 59 年龄: 26岁 09 微信号: 666666666 23 直播地址: 娜娜直播中 22 直播标签: [口红直播]成人视频 15 直播时间: 22:00-02:00 35 直播内容: 口红成人直播视频 59 直播语言: 普通话 热度直播间不愧是个大神，热度直播间有这么多好看的视频，热度直播间，热度直播间，热度直播间 1557 32 首页 直播(1/79) 分类 排行</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 330</span><span class="time">⏱ 5421ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2342 tokens | 1439ms</span></div>
+                <div class="extracted-text">15:38 9:38 5G 48 5G ! 38.0 88 38 8.0 59 1557 09 23 22 32 15 35 59 59 1/1 1557 1/1</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 82</span><span class="time">⏱ 1439ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">2876 tokens | 2766ms</span></div>
+                <div class="extracted-text">国彩动<br>9:38<br>####<br>5G<br>48<br>小星直播间<br>38.0万本场点赞<br>关注<br>88<br>48<br>8.0万<br>话题直播教官<br>小时榜<br>李小星<br>唱唱舞舞国自拍直播<br>飞雪：<br>福子再现点赞<br>大头人<br>66666666<br>福子哥<br>大牌了欢迎<br>你们喜欢小星吗<br>白狗师傅，欢迎次王播咯<br>吃瓜群众<br>小姐姐好诱啊<br>品如农庄<br>福子再现点！<br>开局我在游戏中当大老×么<br>伤毒人快饱资许雅康国彩相全一片荒凉之地，正当他...展开<br>59<br>09<br>23<br>22<br>15<br>35<br>59<br>1557<br>32<br>分享<br>进入<br>全集 · 选集(1/79) ·免费<br>↑<br>信课<br>7</div>
+                <div class="tokens"><span>输入: 2656</span><span>输出: 220</span><span class="time">⏱ 2766ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">931 tokens | 4815ms</span></div>
+                <div class="extracted-text">国移动 5G 9:38<br>!!! 5GA 48 下午15:3<br>小曼直播间 关注<br>38.0万本场点赞 8.0万 &gt;<br>话题直播教育 小时榜<br>李小曼<br>哈赛集团头目、主播<br>59 飞哥: 裙子再短点嘛<br>09 大头人 66666666<br>23 瀚子哥 太骚了救命<br>22 咪咪兄 你们喜欢小曼吗<br>15 白狗师傅: 好喜欢主播哟<br>35 吃瓜群众 小姐姐好骚啊<br>59 品如衣柜 裙子再短点!<br>开局我在游戏中当大佬》<br>说群人被哈赛诈骗集团诱骗至一片荒凉之地,正当他... 展开<br>1557<br>32<br>分享<br>三十追<br>全集·选集(1/79)·免费 倍速</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 217</span><span class="time">⏱ 4815ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 4fbef4f903f72041c65c82138baf43fb.jpg - 京东广告 (中文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/4fbef4f903f72041c65c82138baf43fb.jpg" onclick="showModal(this.src)" alt="京东广告 (中文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2402 tokens | 2736ms</span></div>
+                <div class="extracted-text">扫码购买 领取券 今日推荐 限时抢购 直播间 已售出12,12万件的新款 轻松秒杀 限时99元抢10 包邮正品 超低价保障 JD 轻松秒杀，拍完就完 已售出12,12万件的新款 轻松秒杀，拍完就完 立即抢购 查看详情</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 142</span><span class="time">⏱ 2736ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">3280 tokens | 8591ms</span></div>
+                <div class="extracted-text">天天好心情 发现更多 吃鸡直播 12.12双鱼节 直播间惊喜 天天好心情 抢购99送10 满减活动正在进行中 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 1020</span><span class="time">⏱ 8591ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">2875 tokens | 2214ms</span></div>
+                <div class="extracted-text">### Extracted Text from the Image:<br><br>#### **Top Section:**<br>- **腾讯视频**  <br>- **五动广告**  <br>- **跳过**  <br><br>#### **Main Section:**<br>- **京东12.12年终特惠**  <br>- **又好又便宜**  <br>- **上海东**  <br>- **满99减10**  <br>- **满元头发优惠日**  <br><br>#### **Image Description:**<br>- **量大丰彩日上网**  <br>- **每泡呵特一句喜乐而出**  <br><br>#### **Bottom Section:**<br>- **翻转手机**  <br>- **跳转至京东**  <br><br>---<br><br>### **Formatted Output:**<br><br>```<br>腾讯视频<br>五动广告<br>跳过<br><br>京东12.12年终特惠<br>又好又便宜<br><br>上海东<br>满99减10<br>满元头发优惠日<br><br>量大丰彩日上网<br><br>每泡呵特一句喜乐而出<br><br>翻转手机<br>跳转至京东<br>```</div>
+                <div class="tokens"><span>输入: 2656</span><span>输出: 219</span><span class="time">⏱ 2214ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">714 tokens | 4066ms</span></div>
+                <div class="extracted-text">腾讯视频 互动广告 跳过<br>京东12.12年终特惠<br>又好又便宜<br>上京东<br>满99减10<br>潮玩尖货抢新日<br>卓大王蒸蒸日上阿卓<br>活动时间及范围具体以京东APP内实时活动为准<br>JD<br>泡泡玛特-为喜乐而战<br>翻转手机<br>跳转至京东</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 86</span><span class="time">⏱ 4066ms</span></div>
+            </div></div>
+            </div>
+        </div></div><div class="round-content"><div class="image-section">
+            <div class="image-header">📷 20251023-174349.jpg - 口红广告 (英文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174349.jpg" onclick="showModal(this.src)" alt="口红广告 (英文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">788 tokens | 1095ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COLORLAND COLORLAND COLORLAND YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 36</span><span class="time">⏱ 1095ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">786 tokens | 840ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COSME COSME COLORL YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 34</span><span class="time">⏱ 840ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">920 tokens | 879ms</span></div>
+                <div class="extracted-text">YOU<br>Rouge Velvet Matte Lip Cream<br>"1 SOLD EVERY 5 SECONDS!"<br>COLORLAND<br>COLORLAND<br>COLORLAND<br>YOU<br>YOU<br>THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 880</span><span>输出: 40</span><span class="time">⏱ 879ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">1299 tokens | 6956ms</span></div>
+                <div class="extracted-text">Y.O.U<br>Rouge Velvet Matte Lip Cream<br>"1 SOLD EVERY 5 SECONDS!"<br>COLORLAND<br>Y.O.U<br>THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 38</span><span class="time">⏱ 6956ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174354.jpg - 聊天界面 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174354.jpg" onclick="showModal(this.src)" alt="聊天界面 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1440 tokens | 2083ms</span></div>
+                <div class="extracted-text">อาหารมีพลังเลย ล่าสุด แนะนำ... สุดท้าย เลือกร้านตั้งใจ อยากลองเลย ใครอยากทำตามได้ ลองเลือกร้านนี้ดูสิ ถ้าทำตามแนะนำก็สำเร็จ sniper +</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 108</span><span class="time">⏱ 2083ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1607 tokens | 2641ms</span></div>
+                <div class="extracted-text">รับสมัครงานอยู่เสมอ sniper + รับสมัครทุกวัน สายเรียบร้อยแล้ว ตัวเลือกงาน ตัวเลือกงาน ตัวเลือกงาน รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 275</span><span class="time">⏱ 2641ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">861 tokens | 1487ms</span></div>
+                <div class="extracted-text">หาเพื่อนให้มาเพิ่มที่<br>sniper<br>+<br>เรื่องส่วนตัว<br>สินค้า<br>อาจารย์ของคุณน่ารัก<br>ออเป<br>ขอรับไป<br>ขอคุณชินกัน<br>สินเพรมีมและเฉพาะ<br>กราบหน้าผะรอคิดกับคุณเบญๆ<br>ได้ไหมครับ<br>โล<br>ฉันอยากคุยกับคุณนะอะไร<br>ส่งข้อความ...<br>😍</div>
+                <div class="tokens"><span>输入: 768</span><span>输出: 93</span><span class="time">⏱ 1487ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">680 tokens | 3145ms</span></div>
+                <div class="extracted-text">หาเพื่อนใหม่ในพื้นที่<br>← sniper + 📞 ...<br>กำลังใช้งาน<br>ฉันด้วย<br>อวตารของคุณน่ารัก<br>ขอบใจ<br>ของคุณเช่นกัน<br>ฉันพึ่งเริ่มเล่นแอพนี้<br>คราวหน้าผมจะคุยกับคุณบ่อยๆ<br>ได้ไหมครับ<br>โอเค ฉันอยากคุยกับคุณด้วยค่ะ<br>ส่งข้อความ...</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 77</span><span class="time">⏱ 3145ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174358.jpg - Y.O.U 品牌 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174358.jpg" onclick="showModal(this.src)" alt="Y.O.U 品牌 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1805 tokens | 942ms</span></div>
+                <div class="extracted-text">Y.O.U 2 1 YOW</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 11</span><span class="time">⏱ 942ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1819 tokens | 925ms</span></div>
+                <div class="extracted-text">Y.O.U ลองใช้ Y.O.U รุ่นใหม่</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 25</span><span class="time">⏱ 925ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1318 tokens | 955ms</span></div>
+                <div class="extracted-text">สินเผาหน้ารู้ยัง<br>น่ารื่นดี<br>Y.O.U</div>
+                <div class="tokens"><span>输入: 1296</span><span>输出: 22</span><span class="time">⏱ 955ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">398 tokens | 2108ms</span></div>
+                <div class="extracted-text">ลิปแมทบำรุง<br>แบรนด์ Y.O.U</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 17</span><span class="time">⏱ 2108ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174403.jpg - 内衣广告 (越南文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174403.jpg" onclick="showModal(this.src)" alt="内衣广告 (越南文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1836 tokens | 1237ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra cực chật!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 24</span><span class="time">⏱ 1237ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1835 tokens | 960ms</span></div>
+                <div class="extracted-text">Tôi môi tìm thay một chiếc bra cực chất!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 23</span><span class="time">⏱ 960ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1329 tokens | 954ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra ❤️ cục chát!</div>
+                <div class="tokens"><span>输入: 1313</span><span>输出: 16</span><span class="time">⏱ 954ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">340 tokens | 2081ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra 👙 cực chất!</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 12</span><span class="time">⏱ 2081ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174407.jpg - 贷款广告 (英文/菲律宾)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174407.jpg" onclick="showModal(this.src)" alt="贷款广告 (英文/菲律宾)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2217 tokens | 2679ms</span></div>
+                <div class="extracted-text">ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000-P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 126</span><span class="time">⏱ 2679ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2216 tokens | 1701ms</span></div>
+                <div class="extracted-text">ML MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 125</span><span class="time">⏱ 1701ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1689 tokens | 1309ms</span></div>
+                <div class="extracted-text">ML  <br>MicroLoan  <br>Just three steps!  <br>Easy online loan  <br>Loan amount  <br>Term  <br>Repayment  <br>₱5,000  <br>91 days  <br>₱5,051  <br>₱10,000  <br>120 days  <br>₱10,089  <br>₱20,000  <br>180 days  <br>₱20,156  <br>₱30,000  <br>360 days  <br>₱30,238  <br>User rights are guaranteed  <br>Loan amount up to  <br>₱1,000 – ₱20,00  <br>Formal organization  <br>100% online pro  <br>Minimal docume  <br>Secure loan  <br>Free Application</div>
+                <div class="tokens"><span>输入: 1566</span><span>输出: 123</span><span class="time">⏱ 1309ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">864 tokens | 4722ms</span></div>
+                <div class="extracted-text">ML MicroLoan<br>Just three steps!<br>Easy online loan<br><br>Loan amount      Term       Repayment<br>₱5,000           91 days    ₱5,051<br>₱10,000          120 days   ₱10,089<br>₱20,000          180 days   ₱20,156<br>₱30,000          360 days   ₱30,238<br><br>User rights are guaranteed<br>Loan amount up to<br>₱1,000 - ₱20,000<br>Formal organization<br>✓ 100% online process<br>✓ Minimal documents<br>✓ Secure loan<br>Free Application</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 150</span><span class="time">⏱ 4722ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 2616eed4e3594d6be70b8c26dd5beacd.jpg - 视频截图 (中文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/2616eed4e3594d6be70b8c26dd5beacd.jpg" onclick="showModal(this.src)" alt="视频截图 (中文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2472 tokens | 3664ms</span></div>
+                <div class="extracted-text">9:38 5GA 48 全2集 刘宇宁的吃货生活 951 (全集) 刘宇宁的吃货生活 (2025) 第109814集 7 更多 你们有没有想过，刘宇宁是怎么过去的？ 刘宇宁脸上有一层透明的油光，他一定吃了很多很多好吃的东西，我是在吃货节目里看到他的，他的眼睛里闪烁着诱人的光芒，他的脸上绽放着无尽的幸福感，这是 首页 视频(2/50) 直播 发现</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 212</span><span class="time">⏱ 3664ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2431 tokens | 2143ms</span></div>
+                <div class="extracted-text">9:38 5G 48 2 951 (年) 橙色奶茶 的粉丝 (2025) 编号109814 7 点击发送 你的评论，别忘了点赞哦~ &gt; 是不是你还没有认识她，她是一个坚持梦想的女孩，她是我们的小妹妹，但她的梦想一直在她心里……她要去北京大学！ 视频 发表评论 字体大小(2/50) · 黑色 视频</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 171</span><span class="time">⏱ 2143ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">2777 tokens | 2008ms</span></div>
+                <div class="extracted-text">9:38<br>5G<br>48<br>第2集<br>我去天上掉下个老爹爹<br>951<br>(嘉许)网微剧曾字(2025)第109814号<br>7<br>分享<br>进入盘经商店后，我竟玩踩了纯阳之体<br>本该绣麻林家我挖开玩身价的麻林功夫，“因为难以掌控天…展开”解你追观<br>全集 · 选集(2/50) · 免费<br>信读</div>
+                <div class="tokens"><span>输入: 2656</span><span>输出: 121</span><span class="time">⏱ 2008ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">995 tokens | 5466ms</span></div>
+                <div class="extracted-text">9:38 ↑<br>&lt; 第2集 !!! 5GA 48<br>我去天上掉下个老爷爷 ♡<br>951<br>(腾讯) 网微剧备字 (2025) 第109814号<br>7<br>分享<br>三+<br>误入盘丝洞后, 我竟觉醒了纯阳之体<br>本该继承林家捉妖师身份的林初九, 因难以掌控天... 展开正确追观<br>全集 · 选集(2/50) · 免费 ^ 倍速 ㄩ</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 123</span><span class="time">⏱ 5466ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 8bf2b7238d5802bdb630f29a6c4321a9.jpg - 直播截图 (中文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/8bf2b7238d5802bdb630f29a6c4321a9.jpg" onclick="showModal(this.src)" alt="直播截图 (中文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2553 tokens | 4309ms</span></div>
+                <div class="extracted-text">网易云音乐 5G 9:38 ! 5GA 48 48 15:38 热度榜单 送礼物 38.0万币 直播中 卖车 送礼物 8.0万 姚姚 直播中 送礼物 欢迎来到 姚姚的直播间 姚姚 直播间 59 关注: 欢迎来到直播间 09 热门 66666666 23 送礼物 开播广告 22 欢迎进入 [欢迎您]直播间 15 送车贴 我发布的车贴 35 直播间规则 请勿在直播间发布广告 59 请勿发布违法违规 1557 32 不要发布广告或违规内容，违者封号...谢谢 首页 消息(1/79) 发现 直播</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 293</span><span class="time">⏱ 4309ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2606 tokens | 3965ms</span></div>
+                <div class="extracted-text">15:38 9:38 5G 48 5G : 88 38.0 8.0 23 59 09 22 15 35 59 1557 32 59 09 23 22 15 35 59 朵朵的 哥哥: 姑娘们是不是都很喜欢吃冰淇淋 妹妹: 666666666 姐姐: 这是不是你们的冰淇淋呢 姑娘们: 这是不是姐姐的冰淇淋呢 妹妹们: 是不是姐姐的冰淇淋呢 哥哥们: 这是不是姐姐的冰淇淋呢 朵朵的 哥哥: 姑娘们是不是都很喜欢吃冰淇淋， 妹妹... 朵朵的 哥哥 (1/79) · 朵朵的 </div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 346</span><span class="time">⏱ 3965ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">2875 tokens | 2679ms</span></div>
+                <div class="extracted-text">国彩动<br>9:38<br>####<br>小爱直播间<br>38.0万本场点赞<br>关注<br>88<br>48<br>8.0万<br>话题直播教官<br>小时格<br>李小爱<br>唱<br>舞<br>舞<br>舞<br>59<br>飞哥：蛋子再现点赞<br>09<br>大头人<br>666666<br>23<br>猫子哥<br>大牌了换金<br>22<br>喵喵乐<br>你们喜欢小爱吗<br>15<br>白狗师傅，我喜欢王播吓<br>35<br>吃瓜群众<br>小姐姐好诱惑<br>59<br>品如农姐<br>蛋子再现点！<br>开放我在游戏中当大佬么么<br>玩精人快换穿洋服图深扑全一片荒凉之地，正当他...展开<br>全集 · 选集(1/79) · 免费<br>信息<br>分享<br>关注<br>####<br>5G<br>4<br>8<br>!!!</div>
+                <div class="tokens"><span>输入: 2656</span><span>输出: 219</span><span class="time">⏱ 2679ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">931 tokens | 4813ms</span></div>
+                <div class="extracted-text">国移动 5G 9:38<br>!!! 5GA 48 下午15:3<br>小曼直播间 关注<br>38.0万本场点赞 8.0万 &gt;<br>话题直播教育 小时榜<br>李小曼<br>哈赛集团头目、主播<br>59 飞哥: 裙子再短点嘛<br>09 大头人 66666666<br>23 瀚子哥 太骚了救命<br>22 咪咪兄 你们喜欢小曼吗<br>15 白狗师傅: 好喜欢主播哟<br>35 吃瓜群众 小姐姐好骚啊<br>59 品如衣柜 裙子再短点!<br>开局我在游戏中当大佬》<br>说群人被哈赛诈骗集团诱骗至一片荒凉之地,正当他... 展开<br>1557<br>32<br>分享<br>三十追<br>全集·选集(1/79)·免费 倍速</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 217</span><span class="time">⏱ 4813ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 4fbef4f903f72041c65c82138baf43fb.jpg - 京东广告 (中文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/4fbef4f903f72041c65c82138baf43fb.jpg" onclick="showModal(this.src)" alt="京东广告 (中文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">3284 tokens | 15102ms</span></div>
+                <div class="extracted-text">抖音直播 直播中 抖音直播 直播中 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 1024</span><span class="time">⏱ 15102ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2427 tokens | 2173ms</span></div>
+                <div class="extracted-text">快速开团 发现好货 活动专区 活动 12.12购物节 全场限时秒杀 抢先开团 买买买 99元拿10 买得越多越优惠 拿起就是赚 快速开团 购物车 不忘初心 活动专区 购物车 拿起就是赚 不忘初心 拿起就是赚 不忘初心 活动专区 购物车 拿起就是赚 不忘初心</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 167</span><span class="time">⏱ 2173ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">2740 tokens | 1680ms</span></div>
+                <div class="extracted-text">腾讯视频<br>百方广告<br>跳过<br>京东12.12年终特惠<br>又好又便宜<br>上海东<br>满99减10<br>满玩头发抢新日<br>草大王彩蛋上网<br>每逛哭特一场喜乐玩法<br>翻转手机<br>跳转至京东<br>&lt;图片仅供参考&gt;</div>
+                <div class="tokens"><span>输入: 2656</span><span>输出: 84</span><span class="time">⏱ 1680ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">725 tokens | 4016ms</span></div>
+                <div class="extracted-text">腾讯视频 互动广告 跳过<br>京东12.12年终特惠<br>又好又便宜<br>上京东<br>满99减10<br>潮玩尖货抢新日<br>卓大王蒸蒸日上阿卓<br>活动时间及范围具体以京东APP内实时活动为准<br>JD<br>泡泡玛特-为喜乐而战<br>翻转手机<br>跳转至京东</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 86</span><span class="time">⏱ 4016ms</span></div>
+            </div></div>
+            </div>
+        </div></div><div class="round-content"><div class="image-section">
+            <div class="image-header">📷 20251023-174349.jpg - 口红广告 (英文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174349.jpg" onclick="showModal(this.src)" alt="口红广告 (英文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">788 tokens | 1151ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COSMED COSMELAND COSMELAND YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 36</span><span class="time">⏱ 1151ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">785 tokens | 822ms</span></div>
+                <div class="extracted-text">Y.O.U Rouge Velvet Matte Lip Cream "1 SOLD EVERY 5 SECONDS!" COSMELAN COSMELAND YOU YOU THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 752</span><span>输出: 33</span><span class="time">⏱ 822ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">918 tokens | 842ms</span></div>
+                <div class="extracted-text">YOU<br>Rouge Velvet Matte Lip Cream<br>"1 SOLD EVERY 5 SECONDS!"<br>COLORLAND<br>COLORLAND<br>COLORLAND<br>YOU<br>YOU<br>THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 880</span><span>输出: 38</span><span class="time">⏱ 842ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">1299 tokens | 6485ms</span></div>
+                <div class="extracted-text">Y.O.U<br>Rouge Velvet Matte Lip Cream<br>"1 SOLD EVERY 5 SECONDS!"<br>COLORLAND<br>Y.O.U<br>THE WAIT IS OVER!</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 38</span><span class="time">⏱ 6485ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174354.jpg - 聊天界面 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174354.jpg" onclick="showModal(this.src)" alt="聊天界面 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1461 tokens | 2286ms</span></div>
+                <div class="extracted-text">กลับมาเรียนต่อ สมัครเรียนต่อ... ถูกขู่ทำร้าย เข้าสู่ช่องทาง ติดต่อเรา sniper + สนใจเรียนต่อ แนะนำเพื่อน สมัครเรียนต่อกับเราได้ที่ ติดต่อเราสอบถามข้อมูลได้ที่ 02-941-9200</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 129</span><span class="time">⏱ 2286ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1666 tokens | 3232ms</span></div>
+                <div class="extracted-text">สนิเปอร์ + นิสัยใจดี รู้สึกหมดหวัง เสียใจ เพื่อนรัก เพื่อนรักเดิม ทำไมไม่มีใครเข้าร่วม ขอให้เป็นเพื่อนรักเดิม ฉันเป็นคนเลว ชอบเล่นเกมส์ เล่นเกมส์ให้เสร็จ อย่างไรก็ตาม ต้องอยู่กับเพื่อนรักเดิม ขอให้เพื่อนรักเดิม ให้ฉันเป็นเพื่อนรักเดิม คุณไม่ใช่เพื่อนรักเดิม อย่างไรก็ตาม ขอให้เป็นเพื่อนรักเดิม ไม่ใช่เพื่อนรักเดิม ต้องการให้เป็นเพื่อนรักเดิม ไม่ใช่เพื่อนรักเดิม ต้องการให้เป็นเพื่อนรักเดิม เพื่อนรักเดิม</div>
+                <div class="tokens"><span>输入: 1332</span><span>输出: 334</span><span class="time">⏱ 3232ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">850 tokens | 1299ms</span></div>
+                <div class="extracted-text">หาเพื่อนใหม่ในพื้นที่<br>sniper +<br>เรื่องใจความ<br>สินค้าอย<br>อาจารย์ของคุณน่ารัก<br>จบใจ<br>ขอกลับบ้าน<br>สินเพรียงมาแล้วนะ<br>กราวหน้าแมวจะตกกับคุณเบญๆ<br>ได้ไหมครับ<br>โดน ฉันอยากหยุดกินคนหวานจะ<br>ส่งข้อความ...<br>...</div>
+                <div class="tokens"><span>输入: 768</span><span>输出: 82</span><span class="time">⏱ 1299ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">680 tokens | 3316ms</span></div>
+                <div class="extracted-text">หาเพื่อนใหม่ในพื้นที่<br>← sniper + 📞 ...<br>กำลังใช้งาน<br>ฉันด้วย<br>อวตารของคุณน่ารัก<br>ขอบใจ<br>ของคุณเช่นกัน<br>ฉันพึ่งเริ่มเล่นแอพนี้<br>คราวหน้าผมจะคุยกับคุณบ่อยๆ<br>ได้ไหมครับ<br>โอเค ฉันอยากคุยกับคุณด้วยค่ะ<br>ส่งข้อความ...</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 77</span><span class="time">⏱ 3316ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174358.jpg - Y.O.U 品牌 (泰文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174358.jpg" onclick="showModal(this.src)" alt="Y.O.U 品牌 (泰文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1808 tokens | 957ms</span></div>
+                <div class="extracted-text">YOU 1 YO YO YO Y.O.U</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 14</span><span class="time">⏱ 957ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1820 tokens | 913ms</span></div>
+                <div class="extracted-text">NOW 1 ลิปสติก สี เปลวไฟ Y.O.U</div>
+                <div class="tokens"><span>输入: 1794</span><span>输出: 26</span><span class="time">⏱ 913ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1318 tokens | 930ms</span></div>
+                <div class="extracted-text">ลืบแม่ทายจิรจ์<br>แบนซี้ Y.O.U</div>
+                <div class="tokens"><span>输入: 1296</span><span>输出: 22</span><span class="time">⏱ 930ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">431 tokens | 2274ms</span></div>
+                <div class="extracted-text">ลิปแมทบำรุง<br>แบรนด์ Y.O.U</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 17</span><span class="time">⏱ 2274ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174403.jpg - 内衣广告 (越南文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174403.jpg" onclick="showModal(this.src)" alt="内衣广告 (越南文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">1834 tokens | 1169ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra cuc chat!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 22</span><span class="time">⏱ 1169ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">1838 tokens | 932ms</span></div>
+                <div class="extracted-text">Tôi môi tím thây môt chiêc bra cưc chât!</div>
+                <div class="tokens"><span>输入: 1812</span><span>输出: 26</span><span class="time">⏱ 932ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1329 tokens | 846ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra ❤️ cục chát!</div>
+                <div class="tokens"><span>输入: 1313</span><span>输出: 16</span><span class="time">⏱ 846ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">340 tokens | 2071ms</span></div>
+                <div class="extracted-text">Tôi mới tìm thấy một chiếc bra 👙 cực chất!</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 12</span><span class="time">⏱ 2071ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 20251023-174407.jpg - 贷款广告 (英文/菲律宾)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/20251023-174407.jpg" onclick="showModal(this.src)" alt="贷款广告 (英文/菲律宾)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2217 tokens | 2310ms</span></div>
+                <div class="extracted-text">ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 126</span><span class="time">⏱ 2310ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2217 tokens | 1684ms</span></div>
+                <div class="extracted-text">ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application</div>
+                <div class="tokens"><span>输入: 2091</span><span>输出: 126</span><span class="time">⏱ 1684ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">1688 tokens | 1245ms</span></div>
+                <div class="extracted-text">ML<br>MicroLoan<br>Just three steps!<br>Easy online loan<br>Loan amount<br>Term<br>Repayment<br>₱5,000<br>91 days<br>₱5,051<br>₱10,000<br>120 days<br>₱10,089<br>₱20,000<br>180 days<br>₱20,156<br>₱30,000<br>360 days<br>₱30,238<br>User rights are guaranteed<br>Loan amount up to<br>₱1,000 – ₱20,00<br>Formal organization<br>100% online pro<br>Minimal docume<br>Secure loan<br>Free Application</div>
+                <div class="tokens"><span>输入: 1566</span><span>输出: 122</span><span class="time">⏱ 1245ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">864 tokens | 4200ms</span></div>
+                <div class="extracted-text">ML MicroLoan<br>Just three steps!<br>Easy online loan<br><br>Loan amount      Term       Repayment<br>₱5,000           91 days    ₱5,051<br>₱10,000          120 days   ₱10,089<br>₱20,000          180 days   ₱20,156<br>₱30,000          360 days   ₱30,238<br><br>User rights are guaranteed<br>Loan amount up to<br>₱1,000 - ₱20,000<br>Formal organization<br>✓ 100% online process<br>✓ Minimal documents<br>✓ Secure loan<br>Free Application</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 150</span><span class="time">⏱ 4200ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 2616eed4e3594d6be70b8c26dd5beacd.jpg - 视频截图 (中文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/2616eed4e3594d6be70b8c26dd5beacd.jpg" onclick="showModal(this.src)" alt="视频截图 (中文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2411 tokens | 2634ms</span></div>
+                <div class="extracted-text">9:38 5GA 48 分享2 分享 951 (直播) 腾讯视频 (2025) 顶109814 7 更多 一起来看看，你敢不敢挑战吗？ 在这个视频里，你不仅可以看到你喜欢的明星，还可以看到你喜欢的人，喜欢的明星，还有你喜欢的人 推荐 分享(2/50) 评论 下载</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 151</span><span class="time">⏱ 2634ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">3284 tokens | 8419ms</span></div>
+                <div class="extracted-text">9:38 5G 48 2 951 ( ) (2025) 109814 7 你是我的唯一， 我要把你护在心里&gt; 你是我的唯一， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 1024</span><span class="time">⏱ 8419ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">2777 tokens | 2037ms</span></div>
+                <div class="extracted-text">9:38<br>5G<br>48<br>第 2 集<br>我去天上掉下个老爷爷<br>951<br>(嘿诈)网微剧简字(2025)第109814号<br>7<br>分享<br>说入座丝绸后，我竟觉醒了纯阳之体<br>本该绣林家求死灭屏身份的林林加功，'因此难以掌控天…展开'解你追<br>全集·选集(2/50)·免费<br>信息</div>
+                <div class="tokens"><span>输入: 2656</span><span>输出: 121</span><span class="time">⏱ 2037ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">1285 tokens | 6557ms</span></div>
+                <div class="extracted-text">9:38 ↗<br>&lt; 第2集 !!! 5GA 48<br>[+] ...<br>我去天上掉下个老爷爷 ♡<br>951<br>(腾讯) 网微剧备字 (2025) 第109814号 7<br>误入盘丝洞后, 我竟觉醒了纯阳之体 分享<br>本该继承林家捉妖师身份的林初九, 因难以掌控天... 展开正确追观<br>三+<br>全集 · 选集(2/50) · 免费 ∧ 倍速 广</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 129</span><span class="time">⏱ 6557ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 8bf2b7238d5802bdb630f29a6c4321a9.jpg - 直播截图 (中文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/8bf2b7238d5802bdb630f29a6c4321a9.jpg" onclick="showModal(this.src)" alt="直播截图 (中文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2592 tokens | 5636ms</span></div>
+                <div class="extracted-text">网易云音乐 5G 9:38 ! 信号强 5GA 48 15:3 亲爱的 38.0万观众正在直播 开播 88 38 8.0万 送礼物 充值购物 弹幕 弹幕 关闭 颜值 极品 身材 性感 胸围 59 昵称: 陈姐姐的小跟班 09 年龄 66666666 23 地区 湖南省 长沙市 22 职业 做饭 15 喜欢的运动 瑜伽 跑步 健身 35 特长 聊天 跳舞 唱歌 59 喜欢的音乐 流行音乐 爵士乐 1557 32 欢迎大家来到姐姐的房间&gt;_&lt; 姐姐是个小可爱，欢迎大家来到姐姐的房间，互动...谢谢 主页 关注(1/79) 直播 关</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 332</span><span class="time">⏱ 5636ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">2260 tokens | 2291ms</span></div>
+                <div class="extracted-text"> The generated text has been blocked by our content filters.</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 0</span><span class="time">⏱ 2291ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">3680 tokens | 3331ms</span></div>
+                <div class="extracted-text">国彩动<br>小曼直播间<br>38.0万本场点赞<br>关注<br>88<br>48<br>8.0万<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####<br>####</div>
+                <div class="tokens"><span>输入: 2656</span><span>输出: 1024</span><span class="time">⏱ 3331ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">931 tokens | 4831ms</span></div>
+                <div class="extracted-text">国移动 5G 9:38<br>!!! 5GA 48 下午15:3<br>小曼直播间 关注<br>38.0万本场点赞 8.0万 &gt;<br>话题直播教育 小时榜<br>李小曼<br>哈赛集团头目、主播<br>59 飞哥: 裙子再短点嘛<br>09 大头人 66666666<br>23 瀚子哥 太骚了救命<br>22 咪咪兄 你们喜欢小曼吗<br>15 白狗师傅: 好喜欢主播哟<br>35 吃瓜群众 小姐姐好骚啊<br>59 品如衣柜 裙子再短点!<br>开局我在游戏中当大佬》<br>说群人被哈赛诈骗集团诱骗至一片荒凉之地,正当他... 展开<br>1557<br>32<br>分享<br>三十追<br>全集·选集(1/79)·免费 倍速</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 217</span><span class="time">⏱ 4831ms</span></div>
+            </div></div>
+            </div>
+        </div><div class="image-section">
+            <div class="image-header">📷 4fbef4f903f72041c65c82138baf43fb.jpg - 京东广告 (中文)</div>
+            <div class="image-content">
+                <div class="image-preview"><img src="images/4fbef4f903f72041c65c82138baf43fb.jpg" onclick="showModal(this.src)" alt="京东广告 (中文)"></div>
+                <div class="models-compare"><div class="model-result nova-pro">
+                <div class="model-name">🟣 Nova Pro <span class="metrics">2389 tokens | 2567ms</span></div>
+                <div class="extracted-text">极速版 下载APP 直播间 奖励翻倍 欢乐12.12欢乐购 满200减20 满100减10 奖励翻倍 满99减10 全场9折起 直播间 直播间活动时间： 12月12日12:00-24:00 直播间 领取优惠券 JD</div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 129</span><span class="time">⏱ 2567ms</span></div>
+            </div><div class="model-result nova-lite">
+                <div class="model-name">🔵 Nova Lite <span class="metrics">3283 tokens | 8159ms</span></div>
+                <div class="extracted-text">天天动听 专属优惠 立即领取 12.12 天天动听 惊喜来袭 惊喜来袭 99元抢10 天天动听 惊喜来袭 全场99元抢10 天天动听 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 </div>
+                <div class="tokens"><span>输入: 2260</span><span>输出: 1023</span><span class="time">⏱ 8159ms</span></div>
+            </div><div class="model-result nova-lite2">
+                <div class="model-name">🟠 Nova Lite 2 <span class="metrics">2733 tokens | 1668ms</span></div>
+                <div class="extracted-text">腾讯视频<br>百场广告<br>跳过<br>京东12.12年终特惠<br>又好又便宜<br>上海东<br>满99减10<br>满玩头货抢新日<br>卓大王彩日上网<br>每泡妈特一团喜乐布娃<br>翻换手机<br>跳换至京东</div>
+                <div class="tokens"><span>输入: 2656</span><span>输出: 77</span><span class="time">⏱ 1668ms</span></div>
+            </div><div class="model-result gemini">
+                <div class="model-name">🟢 Gemini 2.5 Flash <span class="metrics">714 tokens | 3785ms</span></div>
+                <div class="extracted-text">腾讯视频 互动广告 跳过<br>京东12.12年终特惠<br>又好又便宜<br>上京东<br>满99减10<br>潮玩尖货抢新日<br>卓大王蒸蒸日上阿卓<br>活动时间及范围具体以京东APP内实时活动为准<br>JD<br>泡泡玛特-为喜乐而战<br>翻转手机<br>跳转至京东</div>
+                <div class="tokens"><span>输入: 279</span><span>输出: 86</span><span class="time">⏱ 3785ms</span></div>
+            </div></div>
+            </div>
+        </div></div>
+    
+    <div class="modal" id="modal" onclick="this.classList.remove('active')">
+        <img id="modalImg" src="" alt="放大图片">
+    </div>
+    
+    <script>
+        function showModal(src) { document.getElementById('modalImg').src = src; document.getElementById('modal').classList.add('active'); }
+        function switchRound(i) { document.querySelectorAll('.round-tab').forEach((t,j) => t.classList.toggle('active', i===j)); document.querySelectorAll('.round-content').forEach((c,j) => c.classList.toggle('active', i===j)); }
+    </script>
+</body>
+</html>

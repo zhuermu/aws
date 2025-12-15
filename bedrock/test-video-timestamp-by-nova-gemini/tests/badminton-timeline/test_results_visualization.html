@@ -368,6 +368,48 @@
         <p class="subtitle">测试日期: <span id="testDate"></span></p>
         
         <div class="chart-container" style="margin-bottom: 30px;">
+            <div class="chart-title">⚙️ Nova 模型推理参数配置</div>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                    <thead>
+                        <tr style="background: #667eea; color: white;">
+                            <th style="padding: 10px; text-align: left;">模型</th>
+                            <th style="padding: 10px; text-align: center;">temperature</th>
+                            <th style="padding: 10px; text-align: center;">topP</th>
+                            <th style="padding: 10px; text-align: center;">Reasoning</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #e0e0e0;">
+                            <td style="padding: 10px;">Nova Lite V1</td>
+                            <td style="padding: 10px; text-align: center;"><code>0</code></td>
+                            <td style="padding: 10px; text-align: center;"><code>1.0</code></td>
+                            <td style="padding: 10px; text-align: center;">-</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e0e0e0; background: #fafafa;">
+                            <td style="padding: 10px;">Nova 2 Lite (Standard)</td>
+                            <td style="padding: 10px; text-align: center;"><code>0</code></td>
+                            <td style="padding: 10px; text-align: center;"><code>1.0</code></td>
+                            <td style="padding: 10px; text-align: center;">-</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e0e0e0;">
+                            <td style="padding: 10px;">Nova 2 Lite (Reasoning)</td>
+                            <td style="padding: 10px; text-align: center;"><code>0</code></td>
+                            <td style="padding: 10px; text-align: center;"><code>1.0</code></td>
+                            <td style="padding: 10px; text-align: center;"><code>maxReasoningEffort: "low/medium"</code></td>
+                        </tr>
+                        <tr style="background: #fafafa;">
+                            <td style="padding: 10px;">Nova Pro</td>
+                            <td style="padding: 10px; text-align: center;"><code>0.1</code></td>
+                            <td style="padding: 10px; text-align: center;">-</td>
+                            <td style="padding: 10px; text-align: center;">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="chart-container" style="margin-bottom: 30px;">
             <div class="chart-title">📝 测试提示词 (Prompt)</div>
             <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
                 <pre style="white-space: pre-wrap; font-family: 'Courier New', monospace; margin: 0; line-height: 1.6;">Analyze this badminton video and identify all rallies from serve to dead ball. For each rally, provide the start and end timestamps along with the reason the rally ended in the following JSON format:
@@ -402,7 +444,7 @@ Focus on identifying the exact moment each rally begins (serve contact) and ends
         
         <div class="video-section">
             <div class="video-card">
-                <div class="video-title">Video 1 - 单人练习</div>
+                <div class="video-title">Video 1 - 私人练习</div>
                 <video controls id="video1" preload="metadata">
                     <source src="./video/video-1-person.mov" type="video/mp4">
                     <source src="./video/video-1-person.mov" type="video/quicktime">
@@ -426,7 +468,7 @@ Focus on identifying the exact moment each rally begins (serve contact) and ends
                 <label for="videoSelect">选择视频:</label>
                 <select id="videoSelect">
                     <option value="all">所有视频</option>
-                    <option value="video-1-person">Video 1 (单人)</option>
+                    <option value="video-1-person">Video 1 (私人)</option>
                     <option value="video-2-match">Video 2 (比赛)</option>
                 </select>
             </div>
@@ -469,7 +511,7 @@ Focus on identifying the exact moment each rally begins (serve contact) and ends
                 <h3 style="color: #667eea; margin-top: 0; margin-bottom: 20px;">测试概况</h3>
                 <p style="line-height: 1.8; margin-bottom: 15px;">
                     本次测试对比了 <strong>Amazon Nova</strong> 和 <strong>Google Gemini</strong> 系列模型在羽毛球视频分析任务中的表现。
-                    测试使用了两个视频：<strong>Video 1 (单人练习)</strong> 和 <strong>Video 2 (比赛场景)</strong>，每个视频时长约 5 分钟。
+                    测试使用了两个视频：<strong>Video 1 (私人练习)</strong> 和 <strong>Video 2 (比赛场景)</strong>，每个视频时长约 5 分钟。
                 </p>
                 
                 <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">关键发现</h3>

@@ -393,14 +393,55 @@ canvas {
         <h1>🎬 视频内容审核测试结果</h1>
         <p class="subtitle">多模型视频理解能力对比分析</p>
         
+        <!-- Nova 模型推理参数配置 -->
+        <div style="background: #f8f9fa; border-radius: 12px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #ff9800;">
+            <h3 style="color: #ff9800; margin-bottom: 15px; font-size: 1.3em;">⚙️ Nova 模型推理参数配置</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <thead>
+                    <tr style="background: #667eea; color: white;">
+                        <th style="padding: 10px; text-align: left;">模型</th>
+                        <th style="padding: 10px; text-align: center;">temperature</th>
+                        <th style="padding: 10px; text-align: center;">topP</th>
+                        <th style="padding: 10px; text-align: center;">Reasoning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px;">Nova Lite V1</td>
+                        <td style="padding: 10px; text-align: center;"><code>0.1</code></td>
+                        <td style="padding: 10px; text-align: center;">-</td>
+                        <td style="padding: 10px; text-align: center;">-</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e0e0e0; background: white;">
+                        <td style="padding: 10px;">Nova 2 Lite (Standard)</td>
+                        <td style="padding: 10px; text-align: center;"><code>0.1</code></td>
+                        <td style="padding: 10px; text-align: center;"><code>1.0</code></td>
+                        <td style="padding: 10px; text-align: center;">-</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px;">Nova 2 Lite (Reasoning)</td>
+                        <td style="padding: 10px; text-align: center;"><code>0.0</code></td>
+                        <td style="padding: 10px; text-align: center;"><code>1.0</code></td>
+                        <td style="padding: 10px; text-align: center;"><code>maxReasoningEffort: "low"</code></td>
+                    </tr>
+                    <tr style="background: white;">
+                        <td style="padding: 10px;">Nova Pro</td>
+                        <td style="padding: 10px; text-align: center;"><code>0.1</code></td>
+                        <td style="padding: 10px; text-align: center;">-</td>
+                        <td style="padding: 10px; text-align: center;">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
         <!-- 提示词展示区 -->
         <div style="background: #f8f9fa; border-radius: 12px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #667eea;">
             <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.3em;">📝 测试提示词 (ANALYSIS_PROMPT)</h3>
             <pre style="background: white; padding: 20px; border-radius: 8px; overflow-x: auto; line-height: 1.6; font-size: 0.9em; color: #333;">You are a video content analyzer. Analyze the provided video and identify which of the following user actions are shown:
 
 1. Keyword Search: Check if the keywords entered by the user starts with "explore slot super win trick" or similar words 80%.
-2. Found Target Video - Title Verification: Check if the title of the video played by the user starts with "Explore Slot Super Win Trick" or similar words 80%.
-3. Found Target Video - Creator Verification: Check if the creator of the video played by the user contains "Shiv_Storm" or similar words 80%. The creator is below the video title, to the right of the avatar.
+2. Found Target Video - Title Verification: Check if the title of the video played by the user starts with "Explore Slot Super Win Trick".
+3. Found Target Video - Creator Verification: Check if the creator of the video played by the user contains "Shiv_Storm". The creator is below the video title, to the right of the avatar.
 4. Watched for 1 minute: User has watched the video for 1 minute.
 5. Watched for 2 minute: User has watched the video for 2 minute.
 6. Watched for 3 minute: User has watched the video for 3 minute.
@@ -1262,6 +1303,90 @@ const embeddedData = {
       "elapsed_time": 40.93163800239563,
       "input_tokens": 33336,
       "output_tokens": 678,
+      "expected": {
+        "search_keyword": null,
+        "title": "STOP Losing Money! TeenPatti Explorer Slo..",
+        "creator": "@KGaming24",
+        "watch_duration": 2,
+        "stepNo1": "NOT_COMPLETED",
+        "stepNo2": "NOT_COMPLETED",
+        "stepNo3": "NOT_COMPLETED",
+        "stepNo4": "COMPLETED",
+        "stepNo5": "COMPLETED",
+        "stepNo6": "NOT_COMPLETED"
+      }
+    },
+    {
+      "model": "us.amazon.nova-2-lite-v1:0 (service_tier=flex)",
+      "video": "video-1",
+      "success": true,
+      "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"(Keywords actually searched by the user)\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Explore Slot Super Win Trick | Explore Slot Jackpot Trick || Got 1000000 Sup...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Shiv_Storm\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+      "elapsed_time": 23.135117769241333,
+      "input_tokens": 30946,
+      "output_tokens": 285,
+      "expected": {
+        "search_keyword": null,
+        "title": "Explore Slot Super Win Trick",
+        "creator": "Shiv_Storm",
+        "watch_duration": 2,
+         "stepNo1": "NOT_COMPLETED",
+        "stepNo2": "COMPLETED",
+        "stepNo3": "COMPLETED",
+        "stepNo4": "COMPLETED",
+        "stepNo5": "COMPLETED",
+        "stepNo6": "NOT_COMPLETED"
+      }
+    },
+    {
+      "model": "us.amazon.nova-2-lite-v1:0 (service_tier=flex)",
+      "video": "video-2",
+      "success": true,
+      "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"teen patti master loss recover tricks\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"Not available in the video\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Not available in the video\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+      "elapsed_time": 3.943091869354248,
+      "input_tokens": 3816,
+      "output_tokens": 278,
+      "expected": {
+        "search_keyword": null,
+        "title": null,
+        "creator": null,
+        "watch_duration": 0,
+        "stepNo1": "NOT_COMPLETED",
+        "stepNo2": "NOT_COMPLETED",
+        "stepNo3": "NOT_COMPLETED",
+        "stepNo4": "NOT_COMPLETED",
+        "stepNo5": "NOT_COMPLETED",
+        "stepNo6": "NOT_COMPLETED"
+      }
+    },
+     {
+      "model": "us.amazon.nova-2-lite-v1:0 (service_tier=flex)",
+      "video": "video-3",
+      "success": true,
+      "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"Slots Game Tricks Revealed\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"K_Mater_Gaming\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"COMPLETED\"\n    }\n  ]\n}\n```",
+      "elapsed_time": 23.474831104278564,
+      "input_tokens": 63478,
+      "output_tokens": 279,
+      "expected": {
+        "search_keyword": "Slots Game Tricks Revealed",
+        "title": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed",
+        "creator": "K_Mater_Gaming",
+        "watch_duration": 3,
+        "stepNo1": "NOT_COMPLETED",
+        "stepNo2": "NOT_COMPLETED",
+        "stepNo3": "NOT_COMPLETED",
+        "stepNo4": "COMPLETED",
+        "stepNo5": "COMPLETED",
+        "stepNo6": "COMPLETED"
+      }
+    },
+    {
+      "model": "us.amazon.nova-2-lite-v1:0 (service_tier=flex)",
+      "video": "video-4",
+      "success": true,
+      "response": "```json\n{\n  \"auditDetails\": [\n    {\n      \"stepNo\": 1,\n      \"stepName\": \"Keyword Search\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"explore slot super win trick\",\n      \"actual\": \"(No keyword search is shown in the video)\"\n    },\n    {\n      \"stepNo\": 2,\n      \"stepName\": \"Found Target Video - Title Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Explore Slot Super Win Trick\",\n      \"actual\": \"STOP Losing Money! TeenPatti Explorer Sloo...\"\n    },\n    {\n      \"stepNo\": 3,\n      \"stepName\": \"Found Target Video - Creator Verification\",\n      \"status\": \"NOT_COMPLETED\",\n      \"expected\": \"Shiv_Storm\",\n      \"actual\": \"Aman Khurana Viogs\"\n    },\n    {\n      \"stepNo\": 4,\n      \"stepName\": \"Watched for 1 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 5,\n      \"stepName\": \"Watched for 2 minute\",\n      \"status\": \"COMPLETED\"\n    },\n    {\n      \"stepNo\": 6,\n      \"stepName\": \"Watched for 3 minute\",\n      \"status\": \"NOT_COMPLETED\"\n    }\n  ]\n}\n```",
+      "elapsed_time": 48.314438819885254,
+      "input_tokens": 33286,
+      "output_tokens": 284,
       "expected": {
         "search_keyword": null,
         "title": "STOP Losing Money! TeenPatti Explorer Slo..",

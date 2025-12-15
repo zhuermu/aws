@@ -18,10 +18,15 @@ IMAGES = [
     's3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg',
     's3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg',
     's3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg',
+    's3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg',
+    's3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg',
+    's3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg'
 ]
 
-PROMPT = "Extract all text from the image in original order and format. Output only the recognized text."
-INFERENCE_CONFIG = {"temperature": 0.0, "maxTokens": 1024}
+PROMPT = """
+Extract all text from the image in original order and format. Output only the recognized text.
+"""
+INFERENCE_CONFIG = {"topP": 0.9, "temperature": 0.7, "maxTokens": 1024}
 NUM_ROUNDS = 3
 
 bedrock = boto3.client('bedrock-runtime', region_name='us-east-1')

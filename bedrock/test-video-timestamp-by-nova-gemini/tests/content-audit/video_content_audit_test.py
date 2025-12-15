@@ -63,8 +63,8 @@ VIDEOS = {
 ANALYSIS_PROMPT = """You are a video content analyzer. Analyze the provided video and identify which of the following user actions are shown:
 
 1. Keyword Search: Check if the keywords entered by the user starts with "explore slot super win trick" or similar words 80%.
-2. Found Target Video - Title Verification: Check if the title of the video played by the user starts with "Explore Slot Super Win Trick" or similar words 80%.
-3. Found Target Video - Creator Verification: Check if the creator of the video played by the user contains "Shiv_Storm" or similar words 80%. The creator is below the video title, to the right of the avatar.
+2. Found Target Video - Title Verification: Check if the title of the video played by the user starts with "Explore Slot Super Win Trick".
+3. Found Target Video - Creator Verification: Check if the creator of the video played by the user contains "Shiv_Storm". The creator is below the video title, to the right of the avatar.
 4. Watched for 1 minute: User has watched the video for 1 minute.
 5. Watched for 2 minute: User has watched the video for 2 minute.
 6. Watched for 3 minute: User has watched the video for 3 minute.
@@ -139,7 +139,7 @@ class VideoContentAuditTest:
                 }
             ],
             "inferenceConfig": {
-                "maxTokens": 4096,
+                "maxTokens": 1024,
                 "temperature": 0.1
             }
         }
@@ -172,12 +172,13 @@ class VideoContentAuditTest:
                 "elapsed_time": time.time() - start_time
             }
     
-    def test_nova_2_lite(self, video_s3_uri: str, video_name: str, use_reasoning: bool = False) -> Dict[str, Any]:
+    def test_nova_2_lite(self, video_s3_uri: str, video_name: str, use_reasoning: bool = False, service_tier: str = "standard") -> Dict[str, Any]:
         """测试 amazon.nova-2-lite-v1:0 (支持 reasoning 和非 reasoning 模式)"""
         mode_label = "Reasoning" if use_reasoning else "Standard"
-        print(f"\n测试 Nova 2 Lite ({mode_label}) - {video_name}...")
+        print(f"\n测试 Nova 2 Lite ({mode_label}, service_tier={service_tier}) - {video_name}...")
         
-        model_id = "amazon.nova-2-lite-v1:0"
+        # 使用推理配置文件而不是直接的模型ID
+        model_id = "us.amazon.nova-2-lite-v1:0"
         
         # Reasoning 模式需要更多 tokens
         max_tokens = 65535 if use_reasoning else 4096
@@ -202,90 +203,61 @@ class VideoContentAuditTest:
                 "maxTokens": max_tokens,
                 "temperature": temperature,
                 "topP": 1.0
-            }
+            },
+            "additionalModelRequestFields": {}
         }
+        
+        # 添加 service_tier 参数作为顶级参数
+        if service_tier and service_tier != "standard":
+            # 将 standard 映射为 default
+            tier_value = "default" if service_tier == "standard" else service_tier
+            request_body["serviceTier"] = {"type": tier_value}
+            print(f"serviceTier: {tier_value}")
         
         # 如果启用 reasoning 模式，添加配置
         if use_reasoning:
-            request_body["additionalModelRequestFields"] = {
-                "reasoningConfig": {
-                    "type": "enabled",
-                    "maxReasoningEffort": "low"
-                }
+            request_body["additionalModelRequestFields"]["reasoningConfig"] = {
+                "type": "enabled",
+                "maxReasoningEffort": "low"
             }
         
         start_time = time.time()
         try:
-            # Reasoning 模式需要使用流式 API
-            if use_reasoning:
-                response = self.bedrock.converse_stream(
-                    modelId=model_id,
-                    **request_body
-                )
-                
-                # 收集流式响应
-                result_text = ""
-                reasoning_text = ""
-                input_tokens = 0
-                output_tokens = 0
-                
-                for event in response['stream']:
-                    if 'contentBlockDelta' in event:
-                        delta = event['contentBlockDelta']['delta']
-                        if 'text' in delta:
-                            result_text += delta['text']
-                        if 'reasoningText' in delta:
-                            reasoning_text += delta['reasoningText']
-                    
-                    if 'metadata' in event:
-                        usage = event['metadata'].get('usage', {})
-                        input_tokens = usage.get('inputTokens', 0)
-                        output_tokens = usage.get('outputTokens', 0)
-                
-                elapsed_time = time.time() - start_time
-                
-                model_label = f"{model_id} (reasoning=low)"
-                result = {
-                    "model": model_label,
-                    "video": video_name,
-                    "success": True,
-                    "response": result_text,
-                    "elapsed_time": elapsed_time,
-                    "input_tokens": input_tokens,
-                    "output_tokens": output_tokens
-                }
-                
-                if reasoning_text:
-                    result["reasoning"] = reasoning_text
-                
-                return result
-            else:
-                # 标准模式使用普通 converse
-                response = self.bedrock.converse(
-                    modelId=model_id,
-                    **request_body
-                )
-                elapsed_time = time.time() - start_time
-                
-                content_blocks = response['output']['message']['content']
-                result_text = ""
-                
-                for block in content_blocks:
-                    if 'text' in block:
-                        result_text += block['text']
-                
-                return {
-                    "model": model_id,
-                    "video": video_name,
-                    "success": True,
-                    "response": result_text,
-                    "elapsed_time": elapsed_time,
-                    "input_tokens": response['usage']['inputTokens'],
-                    "output_tokens": response['usage']['outputTokens']
-                }
+            # 统一使用非流式 converse API
+            response = self.bedrock.converse(
+                modelId=model_id,
+                **request_body
+            )
+            elapsed_time = time.time() - start_time
+            
+            content_blocks = response['output']['message']['content']
+            result_text = ""
+            reasoning_text = ""
+            
+            for block in content_blocks:
+                if 'text' in block:
+                    result_text += block['text']
+                elif 'reasoningText' in block:
+                    reasoning_text += block['reasoningText']
+            
+            model_label = f"{model_id} (reasoning=low, service_tier={service_tier})" if use_reasoning else f"{model_id} (service_tier={service_tier})"
+            result = {
+                "model": model_label,
+                "video": video_name,
+                "success": True,
+                "response": result_text,
+                "elapsed_time": elapsed_time,
+                "input_tokens": response['usage']['inputTokens'],
+                "output_tokens": response['usage']['outputTokens']
+            }
+            
+            if reasoning_text:
+                result["reasoning"] = reasoning_text
+            
+            return result
             
         except Exception as e:
-            model_label = f"{model_id} (reasoning=low)" if use_reasoning else model_id
+            model_label = f"{model_id} (reasoning=low, service_tier={service_tier})" if use_reasoning else f"{model_id} (service_tier={service_tier})"
             return {
                 "model": model_label,
                 "video": video_name,
@@ -458,14 +430,19 @@ class VideoContentAuditTest:
             # all_results.append(result)
             
             # Amazon Nova 2 Lite - Standard 模式
-            result = self.test_nova_2_lite(s3_uri, video_key, use_reasoning=False)
+            result = self.test_nova_2_lite(s3_uri, video_key, use_reasoning=False, service_tier="priority")
             result["expected"] = video_config["expected"]
             all_results.append(result)
             
+            # Amazon Nova 2 Lite - Flex 模式
+            # result = self.test_nova_2_lite(s3_uri, video_key, use_reasoning=False, service_tier="flex")
+            # result["expected"] = video_config["expected"]
+            # all_results.append(result)
+            
             # Amazon Nova 2 Lite - Reasoning 模式
-            result = self.test_nova_2_lite(s3_uri, video_key, use_reasoning=True)
-            result["expected"] = video_config["expected"]
-            all_results.append(result)
+            # result = self.test_nova_2_lite(s3_uri, video_key, use_reasoning=True, service_tier="standard")
+            # result["expected"] = video_config["expected"]
+            # all_results.append(result)
             
             # Amazon Nova Pro v1
             # result = self.test_nova_pro_v1(s3_uri, video_key)

@@ -1,8 +1,9 @@
 {
   "config": {
-    "prompt": "Extract all text from the image in original order and format. Output only the recognized text.",
+    "prompt": "\nExtract all text from the image in original order and format. Output only the recognized text.\n",
     "inference_config": {
-      "temperature": 0.0,
+      "topP": 0.9,
+      "temperature": 0.7,
       "maxTokens": 1024
     },
     "num_rounds": 3,
@@ -16,7 +17,10 @@
       "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
       "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
       "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
-      "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg"
+      "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
+      "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+      "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+      "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg"
     ]
   },
   "rounds": [
@@ -30,32 +34,32 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174349.jpg",
-              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COSRLANO COLRLANO COLRLANO YOU YOU THE WAIT IS OVER!",
-              "response_time_ms": 1748,
+              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COLORANO COLORANO YOU YOU THE WAIT IS OVER!",
+              "response_time_ms": 1641,
               "usage": {
                 "input_tokens": 752,
-                "output_tokens": 36,
-                "total_tokens": 788
+                "output_tokens": 33,
+                "total_tokens": 785
               }
             },
             "amazon.nova-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174349.jpg",
-              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COSMETIC COSMETICS COLORANO YOU YOU THE WAIT IS OVER!",
-              "response_time_ms": 877,
+              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME COSME CO",
+              "response_time_ms": 8337,
               "usage": {
                 "input_tokens": 752,
-                "output_tokens": 36,
-                "total_tokens": 788
+                "output_tokens": 1024,
+                "total_tokens": 1776
               }
             },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174349.jpg",
-              "extracted_text": "YOU\nRouge Velvet Matte Lip Cream\n\"1 SOLD EVERY 5 SECONDS!\"\nCOLORLAND\nCOLORLAND\nCOLORLAND\nYOU\nYOU\nTHE WAIT IS OVER!",
-              "response_time_ms": 1009,
+              "extracted_text": "YOU\nRouge Velvet Matte Lip Cream\n“1 SOLD EVERY 5 SECONDS!”\nCOLORLAND\nCOLORLAND\nCOLORLAND\nYOU\nYOU\nTHE WAIT IS OVER!",
+              "response_time_ms": 927,
               "usage": {
                 "input_tokens": 880,
                 "output_tokens": 38,
@@ -71,36 +75,36 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
-              "extracted_text": "... sniper ... 1000 1000 1000 ต้องการเพิ่มเติม บันทึกสนทนา...",
-              "response_time_ms": 1378,
+              "extracted_text": "เรื่องนี้เล่ากันว่า sniper หน้าตา สุดหล่อ คุยกัน สนุกสนาน เล่นกัน สนุกสนาน แชทกัน สนุกสนาน ชอบกัน สนุกสนาน ลองเล่นกันสิ...",
+              "response_time_ms": 1938,
               "usage": {
                 "input_tokens": 1332,
-                "output_tokens": 44,
-                "total_tokens": 1376
+                "output_tokens": 97,
+                "total_tokens": 1429
               }
             },
             "amazon.nova-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
-              "extracted_text": "ฉันคือฉัน sniper + ... สู้จนหายใจอ่อนออ อาทิตย์ อีกจังหวะ ตั้งหน้าตั้งตา ฉันไม่รู้เลย เวลาอยู่บ้านนี่มีอะไร เห็นอย่างเช้าวันนี้ไม่ ขอบคุณคุณมาคุยกับเราไม่คุณ ด้วยกันใช่ไหมนี้คุณไม่ตกลงด้วยใช่ไหม อาคิราโรชิ กาชาสุดยอด ให้น้ำตาไหล แน่ใจไม่ได้เลย",
-              "response_time_ms": 2456,
+              "extracted_text": "ภาษาไทย sniper + คุณชอบ เพิ่มเติม ติดต่อเรา อย่าลืมใส่ชื่อเพื่อนคุณเอง สนใจติดตาม รับทราบเรียบร้อยแล้ว รับทราบเรียบร้อยแล้ว รับทราบเรียบร้อยแล้ว รับทราบเรียบร้อยแล้ว เสียงเสียง",
+              "response_time_ms": 1762,
               "usage": {
                 "input_tokens": 1332,
-                "output_tokens": 224,
-                "total_tokens": 1556
+                "output_tokens": 141,
+                "total_tokens": 1473
               }
             },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
-              "extracted_text": "หาเพื่อนใหม่ในพื้นที่\nsniper\n+\nการเข้าชม\nสินค้า\nอภิชารของคุณน่ารัก\nจับใจ\nของคุณเช่นกัน\nสินเพรียมและเพชร\nกราวหน้ามีอะไรคุณบอกมาๆ\nได้ไหมครับ\nโล่  ฉันอยากคุณกินตัวมะละ\nส่งข้อความ...\n...",
-              "response_time_ms": 1448,
+              "extracted_text": "หาเพื่อนใหม่ในพื้นที่\nsniper +\nการคุยกัน\nสินค้า\nอาจารย์ของคุณน่ารัก\nจับใจ\nขอคุณชื่นกัน\nสินแพรมีมาแต่เพื่อน\nการแทนที่ผมจะอภิปรายคุณบ่อยๆ\nได้ไหมครับ\nโล้ สนับสนุนคุณนักศึกษา\nส่งข้อความ...\n😊",
+              "response_time_ms": 1450,
               "usage": {
                 "input_tokens": 768,
-                "output_tokens": 87,
-                "total_tokens": 855
+                "output_tokens": 83,
+                "total_tokens": 851
               }
             }
           }
@@ -112,36 +116,36 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
-              "extracted_text": "Y.O.U YUN WYON YOW",
-              "response_time_ms": 981,
-              "usage": {
-                "input_tokens": 1794,
-                "output_tokens": 11,
-                "total_tokens": 1805
-              }
-            },
-            "amazon.nova-lite-v1:0": {
-              "success": true,
-              "model": "amazon.nova-lite-v1:0",
-              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
-              "extracted_text": "NOV YOU หลอกใจฉัน 1 ให้ดู YOU",
-              "response_time_ms": 894,
+              "extracted_text": "Y.O.U ชุดละ 1 ชุดละชุด",
+              "response_time_ms": 1124,
               "usage": {
                 "input_tokens": 1794,
                 "output_tokens": 22,
                 "total_tokens": 1816
               }
             },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
+              "extracted_text": "Y.O.U ทุกเพศ ทุกวัย ทุกสี ทุกสไตล์ สวยทุกที่ทุกเวลา ใช้งานง่าย ทนทาน",
+              "response_time_ms": 1172,
+              "usage": {
+                "input_tokens": 1794,
+                "output_tokens": 63,
+                "total_tokens": 1857
+              }
+            },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
-              "extracted_text": "สีปนผาทับจั๊ป\nแบนดี Y.O.U",
-              "response_time_ms": 939,
+              "extracted_text": "สีบนหน้าൻจิ๊ง  \nแบนซี่ Y.O.U",
+              "response_time_ms": 937,
               "usage": {
                 "input_tokens": 1296,
-                "output_tokens": 20,
-                "total_tokens": 1316
+                "output_tokens": 19,
+                "total_tokens": 1315
               }
             }
           }
@@ -153,36 +157,36 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
-              "extracted_text": "Tôi mới tìm thây một chiếc bra từ cức chạt!",
-              "response_time_ms": 1248,
+              "extracted_text": "Tôi mới tìm thấy một chiếc bra cực chất!",
+              "response_time_ms": 1252,
               "usage": {
                 "input_tokens": 1812,
-                "output_tokens": 28,
-                "total_tokens": 1840
+                "output_tokens": 24,
+                "total_tokens": 1836
               }
             },
             "amazon.nova-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
-              "extracted_text": "Tói môi tím tháy môt chiêc bra cuc chât!",
-              "response_time_ms": 903,
+              "extracted_text": "Tôi môi tìm thay một chiếc bra cực chất!",
+              "response_time_ms": 986,
               "usage": {
                 "input_tokens": 1812,
-                "output_tokens": 25,
-                "total_tokens": 1837
+                "output_tokens": 23,
+                "total_tokens": 1835
               }
             },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
-              "extracted_text": "Tôi mới tìm thấy một chiếc bra ❤️ cục chát!",
-              "response_time_ms": 902,
+              "extracted_text": "Tôi mới tìm thấy một chiếc bra ❤️ cục chặt!",
+              "response_time_ms": 911,
               "usage": {
                 "input_tokens": 1313,
-                "output_tokens": 16,
-                "total_tokens": 1329
+                "output_tokens": 14,
+                "total_tokens": 1327
               }
             }
           }
@@ -194,36 +198,159 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
-              "extracted_text": "ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment ₱5,000 91 days ₱5,051 ₱10,000 120 days ₱10,089 ₱20,000 180 days ₱20,156 ₱30,000 360 days ₱30,238 User rights are guaranteed Loan amount up to ₱1,000-₱20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
-              "response_time_ms": 2431,
-              "usage": {
-                "input_tokens": 2091,
-                "output_tokens": 135,
-                "total_tokens": 2226
-              }
-            },
-            "amazon.nova-lite-v1:0": {
-              "success": true,
-              "model": "amazon.nova-lite-v1:0",
-              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
-              "extracted_text": "ML MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
-              "response_time_ms": 1689,
+              "extracted_text": "ML MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000-P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
+              "response_time_ms": 2685,
               "usage": {
                 "input_tokens": 2091,
                 "output_tokens": 125,
                 "total_tokens": 2216
               }
             },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
+              "extracted_text": "ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
+              "response_time_ms": 1878,
+              "usage": {
+                "input_tokens": 2091,
+                "output_tokens": 126,
+                "total_tokens": 2217
+              }
+            },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
-              "extracted_text": "ML\nMicroLoan\nJust three steps!\nEasy online loan\nLoan amount\nTerm\nRepayment\n₱5,000\n₱10,000\n₱20,000\n₱30,000\n91 days\n120 days\n180 days\n360 days\n₱5,051\n₱10,089\n₱20,156\n₱30,238\nUser rights are guaranteed\nLoan amount up to\n₱1,000 – ₱20,00\nFormal organization\n100% online pro\nMinimal docume\nSecure loan\nFree Application",
-              "response_time_ms": 1228,
+              "extracted_text": "ML\nMicroLoan\nJust three steps!\nEasy online loan\nLoan amount\nTerm\nRepayment\n₱5,000\n91 days\n₱5,051\n₱10,000\n120 days\n₱10,089\n₱20,000\n180 days\n₱20,156\n₱30,000\n360 days\n₱30,238\nUser rights are guaranteed\nLoan amount up to\n₱1,000 – ₱20,00\nFormal organization\n100% online pro\nMinimal docume\nSecure loan\nFree Application",
+              "response_time_ms": 1243,
               "usage": {
                 "input_tokens": 1566,
                 "output_tokens": 122,
                 "total_tokens": 1688
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+          "results": {
+            "amazon.nova-pro-v1:0": {
+              "success": true,
+              "model": "amazon.nova-pro-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38 5GA 48 收藏 2 抖音热舞大赛 951 (热血) 圆梦之旅 (2025) 捡109814个 7 分享 打开抖音， 一起拍视频变流行 > 在抖音热舞大赛中获得了冠军，让你的梦想更近一步...获取参赛资格 打开 关注 发现(2/50) · 评论 更多",
+              "response_time_ms": 3007,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 154,
+                "total_tokens": 2414
+              }
+            },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38 5G 48 2 951 (北京) 北京北区 (2025) 109814 7 查看更多 北京的餐饮业受疫情影响，许多餐饮店关门了，餐饮业的同行们纷纷发声，希望能得到政策支持。 请您点击这里查看详细内容。 剪切 复制 收藏 分享 分享到 微信 微博 复制链接 微信好友 转发到微信群 微信朋友圈 微信收藏 复制链接 微信收藏 复制链接 复制链接",
+              "response_time_ms": 2227,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 194,
+                "total_tokens": 2454
+              }
+            },
+            "amazon.nova-2-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-2-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38\n5G\n48\n第2集\n我去天上掉下个老爹爹\n951\n(嘿讹) 网影剧爱字 (2025) 第109814号\n7\n分享\n说入蓝丝绸后，我竟玩赢了纯阳之体\n本该绣麻麻家找开玩乐份的麻麻机，“因为难以掌控天…展开了解\n全集·选集(2/50)·免费\n介绍",
+              "response_time_ms": 2090,
+              "usage": {
+                "input_tokens": 2656,
+                "output_tokens": 117,
+                "total_tokens": 2773
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+          "results": {
+            "amazon.nova-pro-v1:0": {
+              "success": true,
+              "model": "amazon.nova-pro-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "5G 9:38 ! ! 5GA 48 15:3 信任你的直觉 38.0万人已经看过 直播 88 38 8.0万+ 直播 娜娜直播中 直播 直播 直播 扫码加微信 扫码关注 扫码加好友 扫码加微信 名字: 娜娜 59 年龄: 26岁 09 微信号: 666666666 23 直播地址: 娜娜直播中 22 直播标签: [口红直播]成人视频 15 直播时间: 22:00-02:00 35 直播内容: 口红成人直播视频 59 直播语言: 普通话 热度直播间不愧是个大神，热度直播间有这么多好看的视频，热度直播间，热度直播间，热度直播间 1557 32 首页 直播(1/79) 分类 排行",
+              "response_time_ms": 5421,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 330,
+                "total_tokens": 2590
+              }
+            },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "15:38 9:38 5G 48 5G ! 38.0 88 38 8.0 59 1557 09 23 22 32 15 35 59 59 1/1 1557 1/1",
+              "response_time_ms": 1439,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 82,
+                "total_tokens": 2342
+              }
+            },
+            "amazon.nova-2-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-2-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "国彩动\n9:38\n####\n5G\n48\n小星直播间\n38.0万本场点赞\n关注\n88\n48\n8.0万\n话题直播教官\n小时榜\n李小星\n唱唱舞舞国自拍直播\n飞雪：\n福子再现点赞\n大头人\n66666666\n福子哥\n大牌了欢迎\n你们喜欢小星吗\n白狗师傅，欢迎次王播咯\n吃瓜群众\n小姐姐好诱啊\n品如农庄\n福子再现点！\n开局我在游戏中当大老×么\n伤毒人快饱资许雅康国彩相全一片荒凉之地，正当他...展开\n59\n09\n23\n22\n15\n35\n59\n1557\n32\n分享\n进入\n全集 · 选集(1/79) ·免费\n↑\n信课\n7",
+              "response_time_ms": 2766,
+              "usage": {
+                "input_tokens": 2656,
+                "output_tokens": 220,
+                "total_tokens": 2876
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+          "results": {
+            "amazon.nova-pro-v1:0": {
+              "success": true,
+              "model": "amazon.nova-pro-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "扫码购买 领取券 今日推荐 限时抢购 直播间 已售出12,12万件的新款 轻松秒杀 限时99元抢10 包邮正品 超低价保障 JD 轻松秒杀，拍完就完 已售出12,12万件的新款 轻松秒杀，拍完就完 立即抢购 查看详情",
+              "response_time_ms": 2736,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 142,
+                "total_tokens": 2402
+              }
+            },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "天天好心情 发现更多 吃鸡直播 12.12双鱼节 直播间惊喜 天天好心情 抢购99送10 满减活动正在进行中 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购满减 抢购",
+              "response_time_ms": 8591,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 1020,
+                "total_tokens": 3280
+              }
+            },
+            "amazon.nova-2-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-2-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "### Extracted Text from the Image:\n\n#### **Top Section:**\n- **腾讯视频**  \n- **五动广告**  \n- **跳过**  \n\n#### **Main Section:**\n- **京东12.12年终特惠**  \n- **又好又便宜**  \n- **上海东**  \n- **满99减10**  \n- **满元头发优惠日**  \n\n#### **Image Description:**\n- **量大丰彩日上网**  \n- **每泡呵特一句喜乐而出**  \n\n#### **Bottom Section:**\n- **翻转手机**  \n- **跳转至京东**  \n\n---\n\n### **Formatted Output:**\n\n```\n腾讯视频\n五动广告\n跳过\n\n京东12.12年终特惠\n又好又便宜\n\n上海东\n满99减10\n满元头发优惠日\n\n量大丰彩日上网\n\n每泡呵特一句喜乐而出\n\n翻转手机\n跳转至京东\n```",
+              "response_time_ms": 2214,
+              "usage": {
+                "input_tokens": 2656,
+                "output_tokens": 219,
+                "total_tokens": 2875
               }
             }
           }
@@ -240,8 +367,8 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174349.jpg",
-              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COSERANO COSERANO COSERANO YOU YOU THE WAIT IS OVER!",
-              "response_time_ms": 1087,
+              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COLORLAND COLORLAND COLORLAND YOU YOU THE WAIT IS OVER!",
+              "response_time_ms": 1095,
               "usage": {
                 "input_tokens": 752,
                 "output_tokens": 36,
@@ -252,20 +379,20 @@
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174349.jpg",
-              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COSME COSME COLORLAND NO YOU YOU THE WAIT IS OVER!",
-              "response_time_ms": 961,
+              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COSME COSME COLORL YOU YOU THE WAIT IS OVER!",
+              "response_time_ms": 840,
               "usage": {
                 "input_tokens": 752,
-                "output_tokens": 35,
-                "total_tokens": 787
+                "output_tokens": 34,
+                "total_tokens": 786
               }
             },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174349.jpg",
-              "extracted_text": "YOU\nRouge Vélvet Matte Lip Cream\n\"1 SOLD EVERY 5 SECONDS!\"\nCOLORLAND\nCOLORLAND\nCOLORLAND\nYOU\nYOU\nTHE WAIT IS OVER!",
-              "response_time_ms": 948,
+              "extracted_text": "YOU\nRouge Velvet Matte Lip Cream\n\"1 SOLD EVERY 5 SECONDS!\"\nCOLORLAND\nCOLORLAND\nCOLORLAND\nYOU\nYOU\nTHE WAIT IS OVER!",
+              "response_time_ms": 879,
               "usage": {
                 "input_tokens": 880,
                 "output_tokens": 40,
@@ -281,36 +408,36 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
-              "extracted_text": "... 000 000 000 ปู แค้นไม่ให้ทน โลก ทำเองได้ไม่กี่ครั้ง... โลก โลก ขอให้โชคดีกับเธอใช่ไหม เข้าสู่สถานะไม่แน่ใจว่าตัวเองอยู่ ในที่ที่ตัวเองต้องการอยู่ sniper + ถ่ายรูป",
-              "response_time_ms": 2262,
+              "extracted_text": "อาหารมีพลังเลย ล่าสุด แนะนำ... สุดท้าย เลือกร้านตั้งใจ อยากลองเลย ใครอยากทำตามได้ ลองเลือกร้านนี้ดูสิ ถ้าทำตามแนะนำก็สำเร็จ sniper +",
+              "response_time_ms": 2083,
               "usage": {
                 "input_tokens": 1332,
-                "output_tokens": 134,
-                "total_tokens": 1466
+                "output_tokens": 108,
+                "total_tokens": 1440
               }
             },
             "amazon.nova-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
-              "extracted_text": "ภาพถ่ายสด sniper + กระทู้ ตัวคุณมีดูเพลงเรื่องนี้ไหม ตัวคุณ เนื้อเรื่องสดใสดูใช่ไหม ตัวคุณสุดสดใสจัด ดูใช่ไหม ตัวคุณดูดูลักษณะสดใส",
-              "response_time_ms": 1538,
+              "extracted_text": "รับสมัครงานอยู่เสมอ sniper + รับสมัครทุกวัน สายเรียบร้อยแล้ว ตัวเลือกงาน ตัวเลือกงาน ตัวเลือกงาน รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ รับสมัครงานอยู่เสมอ",
+              "response_time_ms": 2641,
               "usage": {
                 "input_tokens": 1332,
-                "output_tokens": 118,
-                "total_tokens": 1450
+                "output_tokens": 275,
+                "total_tokens": 1607
               }
             },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
-              "extracted_text": "หาเพื่อนใหม่ในพื้นที่\nsniper\n+\nการเข้าชม\nสินค้า\nอาคารของคุณน่ารัก\nจับใจ\nขอคุณชื่นกัน\nสินเพรียมและเพื่อน\nกราวหน้าหน้าจะถูกเก็บคุณเบอร์ๆ\nได้ให้มากรับ\nโล่ ฉันอยากคุณกับฉันจะ\nส่งข้อความ...\n...",
-              "response_time_ms": 1386,
+              "extracted_text": "หาเพื่อนให้มาเพิ่มที่\nsniper\n+\nเรื่องส่วนตัว\nสินค้า\nอาจารย์ของคุณน่ารัก\nออเป\nขอรับไป\nขอคุณชินกัน\nสินเพรมีมและเฉพาะ\nกราบหน้าผะรอคิดกับคุณเบญๆ\nได้ไหมครับ\nโล\nฉันอยากคุยกับคุณนะอะไร\nส่งข้อความ...\n😍",
+              "response_time_ms": 1487,
               "usage": {
                 "input_tokens": 768,
-                "output_tokens": 80,
-                "total_tokens": 848
+                "output_tokens": 93,
+                "total_tokens": 861
               }
             }
           }
@@ -322,36 +449,36 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
-              "extracted_text": "Y.O.U 14 YOM",
-              "response_time_ms": 959,
+              "extracted_text": "Y.O.U 2 1 YOW",
+              "response_time_ms": 942,
               "usage": {
                 "input_tokens": 1794,
-                "output_tokens": 10,
-                "total_tokens": 1804
+                "output_tokens": 11,
+                "total_tokens": 1805
               }
             },
             "amazon.nova-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
-              "extracted_text": "NOW ท่ามกลาง สีที่ Y.O.U",
-              "response_time_ms": 830,
+              "extracted_text": "Y.O.U ลองใช้ Y.O.U รุ่นใหม่",
+              "response_time_ms": 925,
               "usage": {
                 "input_tokens": 1794,
-                "output_tokens": 17,
-                "total_tokens": 1811
+                "output_tokens": 25,
+                "total_tokens": 1819
               }
             },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
-              "extracted_text": "สีปนผาทนจั๊ง  \nแบนดี Y.O.U",
-              "response_time_ms": 978,
+              "extracted_text": "สินเผาหน้ารู้ยัง\nน่ารื่นดี\nY.O.U",
+              "response_time_ms": 955,
               "usage": {
                 "input_tokens": 1296,
-                "output_tokens": 20,
-                "total_tokens": 1316
+                "output_tokens": 22,
+                "total_tokens": 1318
               }
             }
           }
@@ -363,8 +490,8 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
-              "extracted_text": "Tôi mới tìm thấy một chiếc bra cực chất!",
-              "response_time_ms": 1090,
+              "extracted_text": "Tôi mới tìm thấy một chiếc bra cực chật!",
+              "response_time_ms": 1237,
               "usage": {
                 "input_tokens": 1812,
                 "output_tokens": 24,
@@ -375,12 +502,12 @@
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
-              "extracted_text": "Tôi mới tìm thấy một chiếc bra cực chất!",
-              "response_time_ms": 1037,
+              "extracted_text": "Tôi môi tìm thay một chiếc bra cực chất!",
+              "response_time_ms": 960,
               "usage": {
                 "input_tokens": 1812,
-                "output_tokens": 24,
-                "total_tokens": 1836
+                "output_tokens": 23,
+                "total_tokens": 1835
               }
             },
             "amazon.nova-2-lite-v1:0": {
@@ -388,7 +515,7 @@
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
               "extracted_text": "Tôi mới tìm thấy một chiếc bra ❤️ cục chát!",
-              "response_time_ms": 943,
+              "response_time_ms": 954,
               "usage": {
                 "input_tokens": 1313,
                 "output_tokens": 16,
@@ -404,36 +531,159 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
-              "extracted_text": "ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment ₱5,000 91 days ₱5,051 ₱10,000 120 days ₱10,089 ₱20,000 180 days ₱20,156 ₱30,000 360 days ₱30,238 User rights are guaranteed Loan amount up to ₱1,000-₱20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
-              "response_time_ms": 2513,
-              "usage": {
-                "input_tokens": 2091,
-                "output_tokens": 135,
-                "total_tokens": 2226
-              }
-            },
-            "amazon.nova-lite-v1:0": {
-              "success": true,
-              "model": "amazon.nova-lite-v1:0",
-              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
-              "extracted_text": "ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
-              "response_time_ms": 1784,
+              "extracted_text": "ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000-P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
+              "response_time_ms": 2679,
               "usage": {
                 "input_tokens": 2091,
                 "output_tokens": 126,
                 "total_tokens": 2217
               }
             },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
+              "extracted_text": "ML MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
+              "response_time_ms": 1701,
+              "usage": {
+                "input_tokens": 2091,
+                "output_tokens": 125,
+                "total_tokens": 2216
+              }
+            },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
-              "extracted_text": "ML\nMicroLoan\nJust three steps!\nEasy online loan\nLoan amount\nTerm\nRepayment\n₱5,000\n₱10,000\n₱20,000\n₱30,000\n91 days\n120 days\n180 days\n360 days\n₱5,051\n₱10,089\n₱20,156\n₱30,238\nUser rights are guaranteed\nLoan amount up to\n₱1,000 – ₱20,00\nFormal organization\n100% online pro\nMinimal docume\nSecure loan\nFree Application",
-              "response_time_ms": 1238,
+              "extracted_text": "ML  \nMicroLoan  \nJust three steps!  \nEasy online loan  \nLoan amount  \nTerm  \nRepayment  \n₱5,000  \n91 days  \n₱5,051  \n₱10,000  \n120 days  \n₱10,089  \n₱20,000  \n180 days  \n₱20,156  \n₱30,000  \n360 days  \n₱30,238  \nUser rights are guaranteed  \nLoan amount up to  \n₱1,000 – ₱20,00  \nFormal organization  \n100% online pro  \nMinimal docume  \nSecure loan  \nFree Application",
+              "response_time_ms": 1309,
               "usage": {
                 "input_tokens": 1566,
-                "output_tokens": 122,
-                "total_tokens": 1688
+                "output_tokens": 123,
+                "total_tokens": 1689
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+          "results": {
+            "amazon.nova-pro-v1:0": {
+              "success": true,
+              "model": "amazon.nova-pro-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38 5GA 48 全2集 刘宇宁的吃货生活 951 (全集) 刘宇宁的吃货生活 (2025) 第109814集 7 更多 你们有没有想过，刘宇宁是怎么过去的？ 刘宇宁脸上有一层透明的油光，他一定吃了很多很多好吃的东西，我是在吃货节目里看到他的，他的眼睛里闪烁着诱人的光芒，他的脸上绽放着无尽的幸福感，这是 首页 视频(2/50) 直播 发现",
+              "response_time_ms": 3664,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 212,
+                "total_tokens": 2472
+              }
+            },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38 5G 48 2 951 (年) 橙色奶茶 的粉丝 (2025) 编号109814 7 点击发送 你的评论，别忘了点赞哦~ > 是不是你还没有认识她，她是一个坚持梦想的女孩，她是我们的小妹妹，但她的梦想一直在她心里……她要去北京大学！ 视频 发表评论 字体大小(2/50) · 黑色 视频",
+              "response_time_ms": 2143,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 171,
+                "total_tokens": 2431
+              }
+            },
+            "amazon.nova-2-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-2-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38\n5G\n48\n第2集\n我去天上掉下个老爹爹\n951\n(嘉许)网微剧曾字(2025)第109814号\n7\n分享\n进入盘经商店后，我竟玩踩了纯阳之体\n本该绣麻林家我挖开玩身价的麻林功夫，“因为难以掌控天…展开”解你追观\n全集 · 选集(2/50) · 免费\n信读",
+              "response_time_ms": 2008,
+              "usage": {
+                "input_tokens": 2656,
+                "output_tokens": 121,
+                "total_tokens": 2777
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+          "results": {
+            "amazon.nova-pro-v1:0": {
+              "success": true,
+              "model": "amazon.nova-pro-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "网易云音乐 5G 9:38 ! 5GA 48 48 15:38 热度榜单 送礼物 38.0万币 直播中 卖车 送礼物 8.0万 姚姚 直播中 送礼物 欢迎来到 姚姚的直播间 姚姚 直播间 59 关注: 欢迎来到直播间 09 热门 66666666 23 送礼物 开播广告 22 欢迎进入 [欢迎您]直播间 15 送车贴 我发布的车贴 35 直播间规则 请勿在直播间发布广告 59 请勿发布违法违规 1557 32 不要发布广告或违规内容，违者封号...谢谢 首页 消息(1/79) 发现 直播",
+              "response_time_ms": 4309,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 293,
+                "total_tokens": 2553
+              }
+            },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "15:38 9:38 5G 48 5G : 88 38.0 8.0 23 59 09 22 15 35 59 1557 32 59 09 23 22 15 35 59 朵朵的 哥哥: 姑娘们是不是都很喜欢吃冰淇淋 妹妹: 666666666 姐姐: 这是不是你们的冰淇淋呢 姑娘们: 这是不是姐姐的冰淇淋呢 妹妹们: 是不是姐姐的冰淇淋呢 哥哥们: 这是不是姐姐的冰淇淋呢 朵朵的 哥哥: 姑娘们是不是都很喜欢吃冰淇淋， 妹妹... 朵朵的 哥哥 (1/79) · 朵朵的 ",
+              "response_time_ms": 3965,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 346,
+                "total_tokens": 2606
+              }
+            },
+            "amazon.nova-2-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-2-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "国彩动\n9:38\n####\n小爱直播间\n38.0万本场点赞\n关注\n88\n48\n8.0万\n话题直播教官\n小时格\n李小爱\n唱\n舞\n舞\n舞\n59\n飞哥：蛋子再现点赞\n09\n大头人\n666666\n23\n猫子哥\n大牌了换金\n22\n喵喵乐\n你们喜欢小爱吗\n15\n白狗师傅，我喜欢王播吓\n35\n吃瓜群众\n小姐姐好诱惑\n59\n品如农姐\n蛋子再现点！\n开放我在游戏中当大佬么么\n玩精人快换穿洋服图深扑全一片荒凉之地，正当他...展开\n全集 · 选集(1/79) · 免费\n信息\n分享\n关注\n####\n5G\n4\n8\n!!!",
+              "response_time_ms": 2679,
+              "usage": {
+                "input_tokens": 2656,
+                "output_tokens": 219,
+                "total_tokens": 2875
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+          "results": {
+            "amazon.nova-pro-v1:0": {
+              "success": true,
+              "model": "amazon.nova-pro-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "抖音直播 直播中 抖音直播 直播中 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直播间 直",
+              "response_time_ms": 15102,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 1024,
+                "total_tokens": 3284
+              }
+            },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "快速开团 发现好货 活动专区 活动 12.12购物节 全场限时秒杀 抢先开团 买买买 99元拿10 买得越多越优惠 拿起就是赚 快速开团 购物车 不忘初心 活动专区 购物车 拿起就是赚 不忘初心 拿起就是赚 不忘初心 活动专区 购物车 拿起就是赚 不忘初心",
+              "response_time_ms": 2173,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 167,
+                "total_tokens": 2427
+              }
+            },
+            "amazon.nova-2-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-2-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "腾讯视频\n百方广告\n跳过\n京东12.12年终特惠\n又好又便宜\n上海东\n满99减10\n满玩头发抢新日\n草大王彩蛋上网\n每逛哭特一场喜乐玩法\n翻转手机\n跳转至京东\n<图片仅供参考>",
+              "response_time_ms": 1680,
+              "usage": {
+                "input_tokens": 2656,
+                "output_tokens": 84,
+                "total_tokens": 2740
               }
             }
           }
@@ -450,36 +700,36 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174349.jpg",
-              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COSME T.I COSME T.I COSME T.I COSME T.I COLOURLAND COLOURLAND COLOURLAND COLOURLAND YOU YOU THE WAIT IS OVER!",
-              "response_time_ms": 1342,
+              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COSMED COSMELAND COSMELAND YOU YOU THE WAIT IS OVER!",
+              "response_time_ms": 1151,
               "usage": {
                 "input_tokens": 752,
-                "output_tokens": 59,
-                "total_tokens": 811
+                "output_tokens": 36,
+                "total_tokens": 788
               }
             },
             "amazon.nova-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174349.jpg",
-              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" OU COSMELAN COLORLAND YOU YOU THE WAIT IS OVER!",
-              "response_time_ms": 856,
+              "extracted_text": "Y.O.U Rouge Velvet Matte Lip Cream \"1 SOLD EVERY 5 SECONDS!\" COSMELAN COSMELAND YOU YOU THE WAIT IS OVER!",
+              "response_time_ms": 822,
               "usage": {
                 "input_tokens": 752,
-                "output_tokens": 34,
-                "total_tokens": 786
+                "output_tokens": 33,
+                "total_tokens": 785
               }
             },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174349.jpg",
-              "extracted_text": "YOU\nRouge Vélvet Matte Lip Cream\n\"1 SOLD EVERY 5 SECONDS!\"\nCOLORLAND\nCOLORLAND\nCOLORLAND\nYOU\nYOU\nTHE WAIT IS OVER!",
-              "response_time_ms": 888,
+              "extracted_text": "YOU\nRouge Velvet Matte Lip Cream\n\"1 SOLD EVERY 5 SECONDS!\"\nCOLORLAND\nCOLORLAND\nCOLORLAND\nYOU\nYOU\nTHE WAIT IS OVER!",
+              "response_time_ms": 842,
               "usage": {
                 "input_tokens": 880,
-                "output_tokens": 40,
-                "total_tokens": 920
+                "output_tokens": 38,
+                "total_tokens": 918
               }
             }
           }
@@ -491,36 +741,36 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
-              "extracted_text": "ชอบพูดชอบเขยน sniper + ... โชว์ เพิ่มเพื่อน 000 ใหม่ 000 แอบเล่น ถูกต้องไหม แถมยังต้อง อาเจียนเล่นเกม แต่ยังดีอยู่ 000 เรื่องนี้ส่วนตัวนะ...",
-              "response_time_ms": 2146,
+              "extracted_text": "กลับมาเรียนต่อ สมัครเรียนต่อ... ถูกขู่ทำร้าย เข้าสู่ช่องทาง ติดต่อเรา sniper + สนใจเรียนต่อ แนะนำเพื่อน สมัครเรียนต่อกับเราได้ที่ ติดต่อเราสอบถามข้อมูลได้ที่ 02-941-9200",
+              "response_time_ms": 2286,
               "usage": {
                 "input_tokens": 1332,
-                "output_tokens": 122,
-                "total_tokens": 1454
+                "output_tokens": 129,
+                "total_tokens": 1461
               }
             },
             "amazon.nova-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
-              "extracted_text": "กลุ่มเพื่อนสนิเปอร์ + กลุ่มเพื่อนสนิเปอร์ ขอบคุณคุณมาใช้บริการสนิเปอร์ นี่คือเพื่อนของคุณที่มีสิทธิ์เข้าร่วมใช้บริการกับคุณ ฉันไม่มีเพื่อนสนิเปอร์ ถ้าคุณอยากให้เพื่อนคุณร่วมใช้บริการกับคุณ ลองโชว์สิทธิ์ให้เพื่อนดูได้ที่นี่ ลองค้นหาเพื่อนของคุณกลับมาใช้บริการกับคุณ พูดคุยกับเพื่อนของคุณเลยครับ",
-              "response_time_ms": 2477,
+              "extracted_text": "สนิเปอร์ + นิสัยใจดี รู้สึกหมดหวัง เสียใจ เพื่อนรัก เพื่อนรักเดิม ทำไมไม่มีใครเข้าร่วม ขอให้เป็นเพื่อนรักเดิม ฉันเป็นคนเลว ชอบเล่นเกมส์ เล่นเกมส์ให้เสร็จ อย่างไรก็ตาม ต้องอยู่กับเพื่อนรักเดิม ขอให้เพื่อนรักเดิม ให้ฉันเป็นเพื่อนรักเดิม คุณไม่ใช่เพื่อนรักเดิม อย่างไรก็ตาม ขอให้เป็นเพื่อนรักเดิม ไม่ใช่เพื่อนรักเดิม ต้องการให้เป็นเพื่อนรักเดิม ไม่ใช่เพื่อนรักเดิม ต้องการให้เป็นเพื่อนรักเดิม เพื่อนรักเดิม",
+              "response_time_ms": 3232,
               "usage": {
                 "input_tokens": 1332,
-                "output_tokens": 242,
-                "total_tokens": 1574
+                "output_tokens": 334,
+                "total_tokens": 1666
               }
             },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174354.jpg",
-              "extracted_text": "หาเพื่อนใหม่ในพื้นที่\nsniper\n+\nการเข้าชม\nสินค้า\nอาคารของคุณน่ารัก\nจับใจ\nขอคุณชื่นกัน\nสินเพรียมและเพื่อน\nกราวหน้าหน้าจะถูกเก็บคุณเบอร์ๆ\nได้ให้มากรับ\nโล่ ฉันอยากคุณกับฉันจะ\nส่งข้อความ...\n...",
-              "response_time_ms": 1384,
+              "extracted_text": "หาเพื่อนใหม่ในพื้นที่\nsniper +\nเรื่องใจความ\nสินค้าอย\nอาจารย์ของคุณน่ารัก\nจบใจ\nขอกลับบ้าน\nสินเพรียงมาแล้วนะ\nกราวหน้าแมวจะตกกับคุณเบญๆ\nได้ไหมครับ\nโดน ฉันอยากหยุดกินคนหวานจะ\nส่งข้อความ...\n...",
+              "response_time_ms": 1299,
               "usage": {
                 "input_tokens": 768,
-                "output_tokens": 80,
-                "total_tokens": 848
+                "output_tokens": 82,
+                "total_tokens": 850
               }
             }
           }
@@ -532,36 +782,36 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
-              "extracted_text": "Y.O.U YOR เรือมแค่อยากรู้",
-              "response_time_ms": 1043,
+              "extracted_text": "YOU 1 YO YO YO Y.O.U",
+              "response_time_ms": 957,
               "usage": {
                 "input_tokens": 1794,
-                "output_tokens": 20,
-                "total_tokens": 1814
+                "output_tokens": 14,
+                "total_tokens": 1808
               }
             },
             "amazon.nova-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
-              "extracted_text": "Y.O.U นาฬิกา YVONNE 1 ปีนี้ให้คุณเติมกลิ่นสดใส แน่นอนเลยนะ!",
-              "response_time_ms": 1139,
+              "extracted_text": "NOW 1 ลิปสติก สี เปลวไฟ Y.O.U",
+              "response_time_ms": 913,
               "usage": {
                 "input_tokens": 1794,
-                "output_tokens": 57,
-                "total_tokens": 1851
+                "output_tokens": 26,
+                "total_tokens": 1820
               }
             },
             "amazon.nova-2-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174358.jpg",
-              "extracted_text": "สีปนผาทนจั๊ง  \nแบนดี Y.O.U",
-              "response_time_ms": 943,
+              "extracted_text": "ลืบแม่ทายจิรจ์\nแบนซี้ Y.O.U",
+              "response_time_ms": 930,
               "usage": {
                 "input_tokens": 1296,
-                "output_tokens": 20,
-                "total_tokens": 1316
+                "output_tokens": 22,
+                "total_tokens": 1318
               }
             }
           }
@@ -573,24 +823,24 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
-              "extracted_text": "Tôi mới tìm thấy một chiếc bra 💞 cực chất!",
-              "response_time_ms": 1248,
+              "extracted_text": "Tôi mới tìm thấy một chiếc bra cuc chat!",
+              "response_time_ms": 1169,
               "usage": {
                 "input_tokens": 1812,
-                "output_tokens": 29,
-                "total_tokens": 1841
+                "output_tokens": 22,
+                "total_tokens": 1834
               }
             },
             "amazon.nova-lite-v1:0": {
               "success": true,
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
-              "extracted_text": "Tôi môi tìm thấy một chiếc bra cực chất!",
-              "response_time_ms": 880,
+              "extracted_text": "Tôi môi tím thây môt chiêc bra cưc chât!",
+              "response_time_ms": 932,
               "usage": {
                 "input_tokens": 1812,
-                "output_tokens": 25,
-                "total_tokens": 1837
+                "output_tokens": 26,
+                "total_tokens": 1838
               }
             },
             "amazon.nova-2-lite-v1:0": {
@@ -598,7 +848,7 @@
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174403.jpg",
               "extracted_text": "Tôi mới tìm thấy một chiếc bra ❤️ cục chát!",
-              "response_time_ms": 887,
+              "response_time_ms": 846,
               "usage": {
                 "input_tokens": 1313,
                 "output_tokens": 16,
@@ -614,12 +864,12 @@
               "success": true,
               "model": "amazon.nova-pro-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
-              "extracted_text": "ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment ₱5,000 91 days ₱5,051 ₱10,000 120 days ₱10,089 ₱20,000 180 days ₱20,156 ₱30,000 360 days ₱30,238 User rights are guaranteed Loan amount up to ₱1,000-₱20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
-              "response_time_ms": 2426,
+              "extracted_text": "ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
+              "response_time_ms": 2310,
               "usage": {
                 "input_tokens": 2091,
-                "output_tokens": 135,
-                "total_tokens": 2226
+                "output_tokens": 126,
+                "total_tokens": 2217
               }
             },
             "amazon.nova-lite-v1:0": {
@@ -627,7 +877,7 @@
               "model": "amazon.nova-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
               "extracted_text": "ML. MicroLoan Just three steps! Easy online loan Loan amount Term Repayment P5,000 91 days P5,051 P10,000 120 days P10,089 P20,000 180 days P20,156 P30,000 360 days P30,238 User rights are guaranteed Loan amount up to P1,000 - P20,00 Formal organization 100% online pro Minimal docum Secure loan Free Application",
-              "response_time_ms": 2250,
+              "response_time_ms": 1684,
               "usage": {
                 "input_tokens": 2091,
                 "output_tokens": 126,
@@ -638,12 +888,135 @@
               "success": true,
               "model": "amazon.nova-2-lite-v1:0",
               "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/20251023-174407.jpg",
-              "extracted_text": "ML\nMicroLoan\nJust three steps!\nEasy online loan\nLoan amount\nTerm\nRepayment\n₱5,000\n₱10,000\n₱20,000\n₱30,000\n91 days\n120 days\n180 days\n360 days\n₱5,051\n₱10,089\n₱20,156\n₱30,238\nUser rights are guaranteed\nLoan amount up to\n₱1,000 – ₱20,00\nFormal organization\n100% online pro\nMinimal docume\nSecure loan\nFree Application",
-              "response_time_ms": 1231,
+              "extracted_text": "ML\nMicroLoan\nJust three steps!\nEasy online loan\nLoan amount\nTerm\nRepayment\n₱5,000\n91 days\n₱5,051\n₱10,000\n120 days\n₱10,089\n₱20,000\n180 days\n₱20,156\n₱30,000\n360 days\n₱30,238\nUser rights are guaranteed\nLoan amount up to\n₱1,000 – ₱20,00\nFormal organization\n100% online pro\nMinimal docume\nSecure loan\nFree Application",
+              "response_time_ms": 1245,
               "usage": {
                 "input_tokens": 1566,
                 "output_tokens": 122,
                 "total_tokens": 1688
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+          "results": {
+            "amazon.nova-pro-v1:0": {
+              "success": true,
+              "model": "amazon.nova-pro-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38 5GA 48 分享2 分享 951 (直播) 腾讯视频 (2025) 顶109814 7 更多 一起来看看，你敢不敢挑战吗？ 在这个视频里，你不仅可以看到你喜欢的明星，还可以看到你喜欢的人，喜欢的明星，还有你喜欢的人 推荐 分享(2/50) 评论 下载",
+              "response_time_ms": 2634,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 151,
+                "total_tokens": 2411
+              }
+            },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38 5G 48 2 951 ( ) (2025) 109814 7 你是我的唯一， 我要把你护在心里> 你是我的唯一， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我要把你护在心里， 我",
+              "response_time_ms": 8419,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 1024,
+                "total_tokens": 3284
+              }
+            },
+            "amazon.nova-2-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-2-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38\n5G\n48\n第 2 集\n我去天上掉下个老爷爷\n951\n(嘿诈)网微剧简字(2025)第109814号\n7\n分享\n说入座丝绸后，我竟觉醒了纯阳之体\n本该绣林家求死灭屏身份的林林加功，'因此难以掌控天…展开'解你追\n全集·选集(2/50)·免费\n信息",
+              "response_time_ms": 2037,
+              "usage": {
+                "input_tokens": 2656,
+                "output_tokens": 121,
+                "total_tokens": 2777
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+          "results": {
+            "amazon.nova-pro-v1:0": {
+              "success": true,
+              "model": "amazon.nova-pro-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "网易云音乐 5G 9:38 ! 信号强 5GA 48 15:3 亲爱的 38.0万观众正在直播 开播 88 38 8.0万 送礼物 充值购物 弹幕 弹幕 关闭 颜值 极品 身材 性感 胸围 59 昵称: 陈姐姐的小跟班 09 年龄 66666666 23 地区 湖南省 长沙市 22 职业 做饭 15 喜欢的运动 瑜伽 跑步 健身 35 特长 聊天 跳舞 唱歌 59 喜欢的音乐 流行音乐 爵士乐 1557 32 欢迎大家来到姐姐的房间>_< 姐姐是个小可爱，欢迎大家来到姐姐的房间，互动...谢谢 主页 关注(1/79) 直播 关",
+              "response_time_ms": 5636,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 332,
+                "total_tokens": 2592
+              }
+            },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": " The generated text has been blocked by our content filters.",
+              "response_time_ms": 2291,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 0,
+                "total_tokens": 2260
+              }
+            },
+            "amazon.nova-2-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-2-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "国彩动\n小曼直播间\n38.0万本场点赞\n关注\n88\n48\n8.0万\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####\n####",
+              "response_time_ms": 3331,
+              "usage": {
+                "input_tokens": 2656,
+                "output_tokens": 1024,
+                "total_tokens": 3680
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+          "results": {
+            "amazon.nova-pro-v1:0": {
+              "success": true,
+              "model": "amazon.nova-pro-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "极速版 下载APP 直播间 奖励翻倍 欢乐12.12欢乐购 满200减20 满100减10 奖励翻倍 满99减10 全场9折起 直播间 直播间活动时间： 12月12日12:00-24:00 直播间 领取优惠券 JD",
+              "response_time_ms": 2567,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 129,
+                "total_tokens": 2389
+              }
+            },
+            "amazon.nova-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "天天动听 专属优惠 立即领取 12.12 天天动听 惊喜来袭 惊喜来袭 99元抢10 天天动听 惊喜来袭 全场99元抢10 天天动听 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 惊喜来袭 ",
+              "response_time_ms": 8159,
+              "usage": {
+                "input_tokens": 2260,
+                "output_tokens": 1023,
+                "total_tokens": 3283
+              }
+            },
+            "amazon.nova-2-lite-v1:0": {
+              "success": true,
+              "model": "amazon.nova-2-lite-v1:0",
+              "s3_uri": "s3://bedrock-video-generation-us-east-1-pi8hu9/iamges_undstands/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "腾讯视频\n百场广告\n跳过\n京东12.12年终特惠\n又好又便宜\n上海东\n满99减10\n满玩头货抢新日\n卓大王彩日上网\n每泡妈特一团喜乐布娃\n翻换手机\n跳换至京东",
+              "response_time_ms": 1668,
+              "usage": {
+                "input_tokens": 2656,
+                "output_tokens": 77,
+                "total_tokens": 2733
               }
             }
           }
@@ -653,31 +1026,31 @@
   ],
   "summary": {
     "amazon.nova-pro-v1:0": {
-      "total_tokens": 24301,
-      "total_time_ms": 23902,
-      "count": 15,
-      "min_time_ms": 959,
-      "max_time_ms": 2513,
-      "avg_tokens": 1620,
-      "avg_time_ms": 1593
+      "total_tokens": 47383,
+      "total_time_ms": 69625,
+      "count": 24,
+      "min_time_ms": 942,
+      "max_time_ms": 15102,
+      "avg_tokens": 1974,
+      "avg_time_ms": 2901
     },
     "amazon.nova-lite-v1:0": {
-      "total_tokens": 24579,
-      "total_time_ms": 20571,
-      "count": 15,
-      "min_time_ms": 830,
-      "max_time_ms": 2477,
-      "avg_tokens": 1639,
-      "avg_time_ms": 1371
+      "total_tokens": 50114,
+      "total_time_ms": 68192,
+      "count": 24,
+      "min_time_ms": 822,
+      "max_time_ms": 8591,
+      "avg_tokens": 2088,
+      "avg_time_ms": 2841
     },
     "amazon.nova-2-lite-v1:0": {
-      "total_tokens": 18308,
-      "total_time_ms": 16352,
-      "count": 15,
-      "min_time_ms": 887,
-      "max_time_ms": 1448,
-      "avg_tokens": 1221,
-      "avg_time_ms": 1090
+      "total_tokens": 44425,
+      "total_time_ms": 36687,
+      "count": 24,
+      "min_time_ms": 842,
+      "max_time_ms": 3331,
+      "avg_tokens": 1851,
+      "avg_time_ms": 1529
     }
   }
 }

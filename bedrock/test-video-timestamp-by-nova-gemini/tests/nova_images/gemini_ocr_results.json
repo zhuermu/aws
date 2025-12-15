@@ -1,0 +1,460 @@
+{
+  "config": {
+    "prompt": "\nExtract all text from the image in original order and format. Output only the recognized text.\n",
+    "inference_config": {
+      "topP": 0.9,
+      "temperature": 0,
+      "maxTokens": 1024
+    },
+    "num_rounds": 3,
+    "models": [
+      "gemini-2.5-flash"
+    ],
+    "images": [
+      "images/20251023-174349.jpg",
+      "images/20251023-174354.jpg",
+      "images/20251023-174358.jpg",
+      "images/20251023-174403.jpg",
+      "images/20251023-174407.jpg",
+      "images/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+      "images/4fbef4f903f72041c65c82138baf43fb.jpg",
+      "images/8bf2b7238d5802bdb630f29a6c4321a9.jpg"
+    ]
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "images": [
+        {
+          "s3_uri": "images/20251023-174349.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174349.jpg",
+              "extracted_text": "Y.O.U\nRouge Velvet Matte Lip Cream\n\"1 SOLD EVERY 5 SECONDS!\"\nCOLORLAND\nY.O.U\nTHE WAIT IS OVER!",
+              "response_time_ms": 8338,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 38,
+                "total_tokens": 1299
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174354.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174354.jpg",
+              "extracted_text": "หาเพื่อนใหม่ในพื้นที่\n← sniper + 📞 ...\nกำลังใช้งาน\nฉันด้วย\nอวตารของคุณน่ารัก\nขอบใจ\nของคุณเช่นกัน\nฉันพึ่งเริ่มเล่นแอพนี้\nคราวหน้าผมจะคุยกับคุณบ่อยๆ\nได้ไหมครับ\nโอเค ฉันอยากคุยกับคุณด้วยค่ะ\nส่งข้อความ...",
+              "response_time_ms": 3383,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 77,
+                "total_tokens": 680
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174358.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174358.jpg",
+              "extracted_text": "ลิปแมทบำรุง\nแบรนด์ Y.O.U",
+              "response_time_ms": 2506,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 17,
+                "total_tokens": 431
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174403.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174403.jpg",
+              "extracted_text": "Tôi mới tìm thấy một\nchiếc bra 👙 cực chất!",
+              "response_time_ms": 2039,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 14,
+                "total_tokens": 342
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174407.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174407.jpg",
+              "extracted_text": "ML MicroLoan\nJust three steps!\nEasy online loan\n\nLoan amount      Term       Repayment\n₱5,000           91 days    ₱5,051\n₱10,000          120 days   ₱10,089\n₱20,000          180 days   ₱20,156\n₱30,000          360 days   ₱30,238\n\nUser rights are guaranteed\nLoan amount up to\n₱1,000 - ₱20,000\nFormal organization\n✓ 100% online process\n✓ Minimal documents\n✓ Secure loan\nFree Application",
+              "response_time_ms": 4221,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 150,
+                "total_tokens": 880
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38 ↑\n< 第2集 !!! 5GA 48\n我去天上掉下个老爷爷 ♡\n951\n(腾讯) 网微剧备字 (2025) 第109814号\n7\n分享\n三+\n误入盘丝洞后, 我竟觉醒了纯阳之体\n本该继承林家捉妖师身份的林初九, 因难以掌控天... 展开正确追观\n全集 · 选集(2/50) · 免费 ^ 倍速 ㄩ",
+              "response_time_ms": 5722,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 123,
+                "total_tokens": 995
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/4fbef4f903f72041c65c82138baf43fb.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "腾讯视频 互动广告 跳过\n京东12.12年终特惠\n又好又便宜\n上京东\n满99减10\n潮玩尖货抢新日\n卓大王蒸蒸日上阿卓\n活动时间及范围具体以京东APP内实时活动为准\nJD\n泡泡玛特-为喜乐而战\n翻转手机\n跳转至京东",
+              "response_time_ms": 4066,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 86,
+                "total_tokens": 714
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "国移动 5G 9:38\n!!! 5GA 48 下午15:3\n小曼直播间 关注\n38.0万本场点赞 8.0万 >\n话题直播教育 小时榜\n李小曼\n哈赛集团头目、主播\n59 飞哥: 裙子再短点嘛\n09 大头人 66666666\n23 瀚子哥 太骚了救命\n22 咪咪兄 你们喜欢小曼吗\n15 白狗师傅: 好喜欢主播哟\n35 吃瓜群众 小姐姐好骚啊\n59 品如衣柜 裙子再短点!\n开局我在游戏中当大佬》\n说群人被哈赛诈骗集团诱骗至一片荒凉之地,正当他... 展开\n1557\n32\n分享\n三十追\n全集·选集(1/79)·免费 倍速",
+              "response_time_ms": 4815,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 217,
+                "total_tokens": 931
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "images": [
+        {
+          "s3_uri": "images/20251023-174349.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174349.jpg",
+              "extracted_text": "Y.O.U\nRouge Velvet Matte Lip Cream\n\"1 SOLD EVERY 5 SECONDS!\"\nCOLORLAND\nY.O.U\nTHE WAIT IS OVER!",
+              "response_time_ms": 6956,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 38,
+                "total_tokens": 1299
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174354.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174354.jpg",
+              "extracted_text": "หาเพื่อนใหม่ในพื้นที่\n← sniper + 📞 ...\nกำลังใช้งาน\nฉันด้วย\nอวตารของคุณน่ารัก\nขอบใจ\nของคุณเช่นกัน\nฉันพึ่งเริ่มเล่นแอพนี้\nคราวหน้าผมจะคุยกับคุณบ่อยๆ\nได้ไหมครับ\nโอเค ฉันอยากคุยกับคุณด้วยค่ะ\nส่งข้อความ...",
+              "response_time_ms": 3145,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 77,
+                "total_tokens": 680
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174358.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174358.jpg",
+              "extracted_text": "ลิปแมทบำรุง\nแบรนด์ Y.O.U",
+              "response_time_ms": 2108,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 17,
+                "total_tokens": 398
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174403.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174403.jpg",
+              "extracted_text": "Tôi mới tìm thấy một chiếc bra 👙 cực chất!",
+              "response_time_ms": 2081,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 12,
+                "total_tokens": 340
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174407.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174407.jpg",
+              "extracted_text": "ML MicroLoan\nJust three steps!\nEasy online loan\n\nLoan amount      Term       Repayment\n₱5,000           91 days    ₱5,051\n₱10,000          120 days   ₱10,089\n₱20,000          180 days   ₱20,156\n₱30,000          360 days   ₱30,238\n\nUser rights are guaranteed\nLoan amount up to\n₱1,000 - ₱20,000\nFormal organization\n✓ 100% online process\n✓ Minimal documents\n✓ Secure loan\nFree Application",
+              "response_time_ms": 4722,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 150,
+                "total_tokens": 864
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38 ↑\n< 第2集 !!! 5GA 48\n我去天上掉下个老爷爷 ♡\n951\n(腾讯) 网微剧备字 (2025) 第109814号\n7\n分享\n三+\n误入盘丝洞后, 我竟觉醒了纯阳之体\n本该继承林家捉妖师身份的林初九, 因难以掌控天... 展开正确追观\n全集 · 选集(2/50) · 免费 ^ 倍速 ㄩ",
+              "response_time_ms": 5466,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 123,
+                "total_tokens": 995
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/4fbef4f903f72041c65c82138baf43fb.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "腾讯视频 互动广告 跳过\n京东12.12年终特惠\n又好又便宜\n上京东\n满99减10\n潮玩尖货抢新日\n卓大王蒸蒸日上阿卓\n活动时间及范围具体以京东APP内实时活动为准\nJD\n泡泡玛特-为喜乐而战\n翻转手机\n跳转至京东",
+              "response_time_ms": 4016,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 86,
+                "total_tokens": 725
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "国移动 5G 9:38\n!!! 5GA 48 下午15:3\n小曼直播间 关注\n38.0万本场点赞 8.0万 >\n话题直播教育 小时榜\n李小曼\n哈赛集团头目、主播\n59 飞哥: 裙子再短点嘛\n09 大头人 66666666\n23 瀚子哥 太骚了救命\n22 咪咪兄 你们喜欢小曼吗\n15 白狗师傅: 好喜欢主播哟\n35 吃瓜群众 小姐姐好骚啊\n59 品如衣柜 裙子再短点!\n开局我在游戏中当大佬》\n说群人被哈赛诈骗集团诱骗至一片荒凉之地,正当他... 展开\n1557\n32\n分享\n三十追\n全集·选集(1/79)·免费 倍速",
+              "response_time_ms": 4813,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 217,
+                "total_tokens": 931
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "images": [
+        {
+          "s3_uri": "images/20251023-174349.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174349.jpg",
+              "extracted_text": "Y.O.U\nRouge Velvet Matte Lip Cream\n\"1 SOLD EVERY 5 SECONDS!\"\nCOLORLAND\nY.O.U\nTHE WAIT IS OVER!",
+              "response_time_ms": 6485,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 38,
+                "total_tokens": 1299
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174354.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174354.jpg",
+              "extracted_text": "หาเพื่อนใหม่ในพื้นที่\n← sniper + 📞 ...\nกำลังใช้งาน\nฉันด้วย\nอวตารของคุณน่ารัก\nขอบใจ\nของคุณเช่นกัน\nฉันพึ่งเริ่มเล่นแอพนี้\nคราวหน้าผมจะคุยกับคุณบ่อยๆ\nได้ไหมครับ\nโอเค ฉันอยากคุยกับคุณด้วยค่ะ\nส่งข้อความ...",
+              "response_time_ms": 3316,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 77,
+                "total_tokens": 680
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174358.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174358.jpg",
+              "extracted_text": "ลิปแมทบำรุง\nแบรนด์ Y.O.U",
+              "response_time_ms": 2274,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 17,
+                "total_tokens": 431
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174403.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174403.jpg",
+              "extracted_text": "Tôi mới tìm thấy một chiếc bra 👙 cực chất!",
+              "response_time_ms": 2071,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 12,
+                "total_tokens": 340
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/20251023-174407.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/20251023-174407.jpg",
+              "extracted_text": "ML MicroLoan\nJust three steps!\nEasy online loan\n\nLoan amount      Term       Repayment\n₱5,000           91 days    ₱5,051\n₱10,000          120 days   ₱10,089\n₱20,000          180 days   ₱20,156\n₱30,000          360 days   ₱30,238\n\nUser rights are guaranteed\nLoan amount up to\n₱1,000 - ₱20,000\nFormal organization\n✓ 100% online process\n✓ Minimal documents\n✓ Secure loan\nFree Application",
+              "response_time_ms": 4200,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 150,
+                "total_tokens": 864
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/2616eed4e3594d6be70b8c26dd5beacd.jpg",
+              "extracted_text": "9:38 ↗\n< 第2集 !!! 5GA 48\n[+] ...\n我去天上掉下个老爷爷 ♡\n951\n(腾讯) 网微剧备字 (2025) 第109814号 7\n误入盘丝洞后, 我竟觉醒了纯阳之体 分享\n本该继承林家捉妖师身份的林初九, 因难以掌控天... 展开正确追观\n三+\n全集 · 选集(2/50) · 免费 ∧ 倍速 广",
+              "response_time_ms": 6557,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 129,
+                "total_tokens": 1285
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/4fbef4f903f72041c65c82138baf43fb.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/4fbef4f903f72041c65c82138baf43fb.jpg",
+              "extracted_text": "腾讯视频 互动广告 跳过\n京东12.12年终特惠\n又好又便宜\n上京东\n满99减10\n潮玩尖货抢新日\n卓大王蒸蒸日上阿卓\n活动时间及范围具体以京东APP内实时活动为准\nJD\n泡泡玛特-为喜乐而战\n翻转手机\n跳转至京东",
+              "response_time_ms": 3785,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 86,
+                "total_tokens": 714
+              }
+            }
+          }
+        },
+        {
+          "s3_uri": "images/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+          "results": {
+            "gemini-2.5-flash": {
+              "success": true,
+              "model": "gemini-2.5-flash",
+              "s3_uri": "images/8bf2b7238d5802bdb630f29a6c4321a9.jpg",
+              "extracted_text": "国移动 5G 9:38\n!!! 5GA 48 下午15:3\n小曼直播间 关注\n38.0万本场点赞 8.0万 >\n话题直播教育 小时榜\n李小曼\n哈赛集团头目、主播\n59 飞哥: 裙子再短点嘛\n09 大头人 66666666\n23 瀚子哥 太骚了救命\n22 咪咪兄 你们喜欢小曼吗\n15 白狗师傅: 好喜欢主播哟\n35 吃瓜群众 小姐姐好骚啊\n59 品如衣柜 裙子再短点!\n开局我在游戏中当大佬》\n说群人被哈赛诈骗集团诱骗至一片荒凉之地,正当他... 展开\n1557\n32\n分享\n三十追\n全集·选集(1/79)·免费 倍速",
+              "response_time_ms": 4831,
+              "usage": {
+                "input_tokens": 279,
+                "output_tokens": 217,
+                "total_tokens": 931
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "gemini-2.5-flash": {
+      "total_tokens": 19048,
+      "total_time_ms": 101916,
+      "count": 24,
+      "min_time_ms": 2039,
+      "max_time_ms": 8338,
+      "avg_tokens": 794,
+      "avg_time_ms": 4246
+    }
+  }
+}

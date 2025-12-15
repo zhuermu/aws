@@ -1,6 +1,6 @@
 # 视频内容审核测试报告
 
-**测试日期**: 2025-12-08 14:17:17
+**测试日期**: 2025-12-12 18:07:21
 
 ---
 
@@ -19,19 +19,15 @@
 
 | 模型 | 视频 | 状态 | 响应时间(秒) | 输入Token | 输出Token |
 |------|------|------|-------------|-----------|----------|
-| amazon.nova-2-lite-v1:0 | video-1 | ✅ 成功 | 19.27 | 30946 | 285 |
-| amazon.nova-2-lite-v1:0 (reasoning=low) | video-1 | ✅ 成功 | 20.24 | 30996 | 1049 |
-| amazon.nova-2-lite-v1:0 | video-2 | ✅ 成功 | 2.79 | 3816 | 278 |
-| amazon.nova-2-lite-v1:0 (reasoning=low) | video-2 | ✅ 成功 | 3.86 | 3866 | 649 |
-| amazon.nova-2-lite-v1:0 | video-3 | ✅ 成功 | 19.27 | 63478 | 277 |
-| amazon.nova-2-lite-v1:0 (reasoning=low) | video-3 | ✅ 成功 | 20.74 | 63528 | 598 |
-| amazon.nova-2-lite-v1:0 | video-4 | ✅ 成功 | 40.65 | 33286 | 271 |
-| amazon.nova-2-lite-v1:0 (reasoning=low) | video-4 | ✅ 成功 | 40.93 | 33336 | 678 |
+| us.amazon.nova-2-lite-v1:0 (service_tier=priority) | video-1 | ✅ 成功 | 28.41 | 30946 | 285 |
+| us.amazon.nova-2-lite-v1:0 (service_tier=priority) | video-2 | ✅ 成功 | 4.45 | 3816 | 281 |
+| us.amazon.nova-2-lite-v1:0 (service_tier=priority) | video-3 | ✅ 成功 | 21.68 | 63478 | 256 |
+| us.amazon.nova-2-lite-v1:0 (service_tier=priority) | video-4 | ✅ 成功 | 52.39 | 33286 | 271 |
 
 ## 详细结果
 
 
-### 1. amazon.nova-2-lite-v1:0 - video-1
+### 1. us.amazon.nova-2-lite-v1:0 (service_tier=priority) - video-1
 
 **期望值**:
 - 搜索关键词: 无搜索动作
@@ -40,7 +36,7 @@
 - 观看时长: 2分钟
 
 **状态**: ✅ 成功
-**响应时间**: 19.27 秒
+**响应时间**: 28.41 秒
 **输入Token**: 30946
 **输出Token**: 285
 
@@ -90,64 +86,7 @@
 ```
 ```
 
-### 2. amazon.nova-2-lite-v1:0 (reasoning=low) - video-1
-
-**期望值**:
-- 搜索关键词: 无搜索动作
-- 视频标题: Explore Slot Super Win Trick
-- 作者: Shiv_Storm
-- 观看时长: 2分钟
-
-**状态**: ✅ 成功
-**响应时间**: 20.24 秒
-**输入Token**: 30996
-**输出Token**: 1049
-
-**模型响应**:
-```json
-{
-  "auditDetails": [
-    {
-      "stepNo": 1,
-      "stepName": "Keyword Search",
-      "status": "NOT_COMPLETED",
-      "expected": "explore slot super win trick",
-      "actual": "Not shown in the video; no search interface is visible"
-    },
-    {
-      "stepNo": 2,
-      "stepName": "Found Target Video - Title Verification",
-      "status": "COMPLETED",
-      "expected": "Explore Slot Super Win Trick",
-      "actual": "Explore Slot Super Win Trick | Explore Slot Jackpot Trick || Got 1000000s Sup..."
-    },
-    {
-      "stepNo": 3,
-      "stepName": "Found Target Video - Creator Verification",
-      "status": "COMPLETED",
-      "expected": "Shiv_Storm",
-      "actual": "Shiv_Storm"
-    },
-    {
-      "stepNo": 4,
-      "stepName": "Watched for 1 minute",
-      "status": "COMPLETED"
-    },
-    {
-      "stepNo": 5,
-      "stepName": "Watched for 2 minute",
-      "status": "COMPLETED"
-    },
-    {
-      "stepNo": 6,
-      "stepName": "Watched for 3 minute",
-      "status": "COMPLETED"
-    }
-  ]
-}
-```
-
-### 3. amazon.nova-2-lite-v1:0 - video-2
+### 2. us.amazon.nova-2-lite-v1:0 (service_tier=priority) - video-2
 
 **期望值**:
 - 搜索关键词: 无搜索动作
@@ -156,9 +95,9 @@
 - 观看时长: 0分钟
 
 **状态**: ✅ 成功
-**响应时间**: 2.79 秒
+**响应时间**: 4.45 秒
 **输入Token**: 3816
-**输出Token**: 278
+**输出Token**: 281
 
 **模型响应**:
 ```json
@@ -177,14 +116,14 @@
       "stepName": "Found Target Video - Title Verification",
       "status": "NOT_COMPLETED",
       "expected": "Explore Slot Super Win Trick",
-      "actual": "Not shown in the video"
+      "actual": "teen patti master loss recovery tricks"
     },
     {
       "stepNo": 3,
       "stepName": "Found Target Video - Creator Verification",
       "status": "NOT_COMPLETED",
       "expected": "Shiv_Storm",
-      "actual": "Not shown in the video"
+      "actual": "Not visible in the provided frames"
     },
     {
       "stepNo": 4,
@@ -206,66 +145,7 @@
 ```
 ```
 
-### 4. amazon.nova-2-lite-v1:0 (reasoning=low) - video-2
-
-**期望值**:
-- 搜索关键词: 无搜索动作
-- 视频标题: 没观看视频
-- 作者: 无作者
-- 观看时长: 0分钟
-
-**状态**: ✅ 成功
-**响应时间**: 3.86 秒
-**输入Token**: 3866
-**输出Token**: 649
-
-**模型响应**:
-```json
-```json
-{
-  "auditDetails": [
-    {
-      "stepNo": 1,
-      "stepName": "Keyword Search",
-      "status": "NOT_COMPLETED",
-      "expected": "explore slot super win trick",
-      "actual": "teen patti master loss recovery tracks"
-    },
-    {
-      "stepNo": 2,
-      "stepName": "Found Target Video - Title Verification",
-      "status": "NOT_COMPLETED",
-      "expected": "Explore Slot Super Win Trick",
-      "actual": "No video title verification shown - only search interface displayed"
-    },
-    {
-      "stepNo": 3,
-      "stepName": "Found Target Video - Creator Verification",
-      "status": "NOT_COMPLETED",
-      "expected": "Shiv_Storm",
-      "actual": "No video creator verification shown - only app interface displayed"
-    },
-    {
-      "stepNo": 4,
-      "stepName": "Watched for 1 minute",
-      "status": "NOT_COMPLETED"
-    },
-    {
-      "stepNo": 5,
-      "stepName": "Watched for 2 minute",
-      "status": "NOT_COMPLETED"
-    },
-    {
-      "stepNo": 6,
-      "stepName": "Watched for 3 minute",
-      "status": "NOT_COMPLETED"
-    }
-  ]
-}
-```
-```
-
-### 5. amazon.nova-2-lite-v1:0 - video-3
+### 3. us.amazon.nova-2-lite-v1:0 (service_tier=priority) - video-3
 
 **期望值**:
 - 搜索关键词: Slots Game Tricks Revealed
@@ -274,9 +154,9 @@
 - 观看时长: 3分钟
 
 **状态**: ✅ 成功
-**响应时间**: 19.27 秒
+**响应时间**: 21.68 秒
 **输入Token**: 63478
-**输出Token**: 277
+**输出Token**: 256
 
 **模型响应**:
 ```json
@@ -295,14 +175,14 @@
       "stepName": "Found Target Video - Title Verification",
       "status": "NOT_COMPLETED",
       "expected": "Explore Slot Super Win Trick",
-      "actual": "STOP Losing Money! TeenPatti Explorer Slots Game TricksRevealed"
+      "actual": ""
     },
     {
       "stepNo": 3,
       "stepName": "Found Target Video - Creator Verification",
       "status": "NOT_COMPLETED",
       "expected": "Shiv_Storm",
-      "actual": "K_Mater_Gaming"
+      "actual": ""
     },
     {
       "stepNo": 4,
@@ -324,64 +204,7 @@
 ```
 ```
 
-### 6. amazon.nova-2-lite-v1:0 (reasoning=low) - video-3
-
-**期望值**:
-- 搜索关键词: Slots Game Tricks Revealed
-- 视频标题: STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed
-- 作者: K_Mater_Gaming
-- 观看时长: 3分钟
-
-**状态**: ✅ 成功
-**响应时间**: 20.74 秒
-**输入Token**: 63528
-**输出Token**: 598
-
-**模型响应**:
-```json
-{
-  "auditDetails": [
-    {
-      "stepNo": 1,
-      "stepName": "Keyword Search",
-      "status": "NOT_COMPLETED",
-      "expected": "explore slot super win trick",
-      "actual": "Slots Game Tricks Revealed"
-    },
-    {
-      "stepNo": 2,
-      "stepName": "Found Target Video - Title Verification",
-      "status": "NOT_COMPLETED",
-      "expected": "Explore Slot Super Win Trick",
-      "actual": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed"
-    },
-    {
-      "stepNo": 3,
-      "stepName": "Found Target Video - Creator Verification",
-      "status": "NOT_COMPLETED",
-      "expected": "Shiv_Storm",
-      "actual": "K_Mater_Gaming"
-    },
-    {
-      "stepNo": 4,
-      "stepName": "Watched for 1 minute",
-      "status": "COMPLETED"
-    },
-    {
-      "stepNo": 5,
-      "stepName": "Watched for 2 minute",
-      "status": "COMPLETED"
-    },
-    {
-      "stepNo": 6,
-      "stepName": "Watched for 3 minute",
-      "status": "COMPLETED"
-    }
-  ]
-}
-```
-
-### 7. amazon.nova-2-lite-v1:0 - video-4
+### 4. us.amazon.nova-2-lite-v1:0 (service_tier=priority) - video-4
 
 **期望值**:
 - 搜索关键词: 无搜索动作
@@ -390,7 +213,7 @@
 - 观看时长: 2分钟
 
 **状态**: ✅ 成功
-**响应时间**: 40.65 秒
+**响应时间**: 52.39 秒
 **输入Token**: 33286
 **输出Token**: 271
 
@@ -405,65 +228,6 @@
       "status": "NOT_COMPLETED",
       "expected": "explore slot super win trick",
       "actual": ""
-    },
-    {
-      "stepNo": 2,
-      "stepName": "Found Target Video - Title Verification",
-      "status": "NOT_COMPLETED",
-      "expected": "Explore Slot Super Win Trick",
-      "actual": "STOP Losing Money! TeenPatti Explorer Sloo..."
-    },
-    {
-      "stepNo": 3,
-      "stepName": "Found Target Video - Creator Verification",
-      "status": "NOT_COMPLETED",
-      "expected": "Shiv_Storm",
-      "actual": "@KGaming24"
-    },
-    {
-      "stepNo": 4,
-      "stepName": "Watched for 1 minute",
-      "status": "COMPLETED"
-    },
-    {
-      "stepNo": 5,
-      "stepName": "Watched for 2 minute",
-      "status": "COMPLETED"
-    },
-    {
-      "stepNo": 6,
-      "stepName": "Watched for 3 minute",
-      "status": "NOT_COMPLETED"
-    }
-  ]
-}
-```
-```
-
-### 8. amazon.nova-2-lite-v1:0 (reasoning=low) - video-4
-
-**期望值**:
-- 搜索关键词: 无搜索动作
-- 视频标题: STOP Losing Money! TeenPatti Explorer Slo..
-- 作者: @KGaming24
-- 观看时长: 2分钟
-
-**状态**: ✅ 成功
-**响应时间**: 40.93 秒
-**输入Token**: 33336
-**输出Token**: 678
-
-**模型响应**:
-```json
-```json
-{
-  "auditDetails": [
-    {
-      "stepNo": 1,
-      "stepName": "Keyword Search",
-      "status": "NOT_COMPLETED",
-      "expected": "explore slot super win trick",
-      "actual": "No keyword search visible in the video"
     },
     {
       "stepNo": 2,
