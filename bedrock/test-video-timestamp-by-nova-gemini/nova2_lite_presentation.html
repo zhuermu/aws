@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Nova 2 系列模型介绍</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --aws-orange: #FF9900;
+            --aws-purple: #8B46FF;
+            --aws-pink: #FF4F8B;
+            --aws-dark: #232F3E;
+            --aws-blue: #146EB4;
+            --aws-gray: #545B64;
+            --aws-light-gray: #F2F3F3;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--aws-purple) 0%, var(--aws-pink) 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+        }
+        .slide {
+            position: absolute;
+            width: 100vw;
+            min-height: 100vh;
+            max-height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 40px 60px 80px 60px;
+            left: 0;
+            top: 0;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.6s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+            color: var(--aws-dark);
+        }
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            z-index: 10;
+        }
+        .slide h1 {
+            color: var(--aws-purple);
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 4px solid var(--aws-pink);
+            padding-bottom: 10px;
+        }
+        .slide h2 {
+            color: var(--aws-purple);
+            font-size: 1.4em;
+            margin: 15px 0 10px 0;
+        }
+        .slide h3 {
+            color: var(--aws-pink);
+            font-size: 1.2em;
+            margin: 12px 0 8px 0;
+        }
+        .slide p, .slide li {
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            color: var(--aws-gray);
+        }
+        .slide ul { margin-left: 25px; margin-bottom: 10px; }
+        .highlight {
+            background: rgba(139, 70, 255, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--aws-dark);
+            font-weight: 600;
+        }
+        .emphasis {
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--aws-purple);
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(139, 70, 255, 0.1);
+            border-left: 4px solid var(--aws-purple);
+            border-radius: 4px;
+        }
+        .card {
+            background: var(--aws-light-gray);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 4px solid var(--aws-pink);
+        }
+        .card h4 {
+            color: var(--aws-dark);
+            font-size: 1.1em;
+            margin-bottom: 6px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin: 10px 0;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--aws-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin: 2px;
+            font-weight: 600;
+        }
+        .badge.ga { background: #16a34a; }
+        .badge.preview { background: var(--aws-orange); }
+        .badge.warning { background: #f59e0b; }
+        .badge.danger { background: #dc2626; }
+        .navigation {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+            background: rgba(139, 70, 255, 0.95);
+            padding: 10px 20px;
+            border-radius: 50px;
+        }
+        .nav-btn {
+            background: var(--aws-pink);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: var(--aws-purple);
+            transform: scale(1.1);
+        }
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--aws-purple) 0%, var(--aws-pink) 100%);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            background: rgba(139, 70, 255, 0.95);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1em;
+            font-weight: 600;
+            z-index: 100;
+        }
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 30px;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: white;
+            z-index: 100;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--aws-purple) 0%, var(--aws-pink) 100%);
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .comparison-table tr:nth-child(even) { background: var(--aws-light-gray); }
+        .comparison-table tr.highlight-row { background: rgba(139, 70, 255, 0.15); font-weight: 600; }
+        .metric-box {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--aws-purple) 0%, var(--aws-pink) 100%);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin: 8px 8px 8px 0;
+        }
+        .test-result {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+        }
+        .test-result .status-pass { color: var(--success); }
+        .test-result .status-fail { color: var(--danger); }
+        .test-result .status-partial { color: var(--warning); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide.active > * {
+            animation: slideIn 0.5s ease-out backwards;
+        }
+        .slide.active > *:nth-child(1) { animation-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { animation-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { animation-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { animation-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { animation-delay: 0.5s; }
+        
+        /* 打印样式 - 导出 PDF */
+        @media print {
+            body { background: white; }
+            .slide {
+                position: relative !important;
+                transform: none !important;
+                opacity: 1 !important;
+                page-break-after: always;
+                page-break-inside: avoid;
+                min-height: 100vh;
+                max-height: none;
+                overflow: visible;
+                display: block !important;
+            }
+            .navigation, .progress-bar, .slide-counter, .logo, #iframeOverlay { display: none !important; }
+            .slide h1 { font-size: 1.8em; }
+            .comparison-table { font-size: 0.8em; }
+            .card { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">Amazon Nova 2</div>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 10</div>
+
+    <div class="presentation-container">
+        <!-- Slide 0: 标题页 -->
+        <div class="slide active">
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 80vh; text-align: center;">
+                <h1 style="font-size: 3.5em; margin-bottom: 40px; border: none;">Amazon Nova 2 Lite</h1>
+                <h2 style="font-size: 2em; color: var(--aws-pink); margin-bottom: 60px;">多模态能力评估与应用建议</h2>
+                
+                <div style="margin-top: 80px; font-size: 1.3em; color: var(--aws-gray);">
+                    <p><strong>黎小为 | MEAD | SA</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 1: 封面 -->
+        <div class="slide">
+            <h1>Amazon Nova 2 系列模型</h1>
+            <h2 style="color: var(--aws-blue); margin-top: 10px; margin-bottom: 15px;">新一代多模态推理与生成模型家族</h2>
+            
+            <div style="display: flex; gap: 20px; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <h2>会议目标</h2>
+                    <ul style="font-size: 1.15em; line-height: 1.8; font-weight: 500;">
+                        <li>Nova 2 系列相比 Nova 1 有哪些核心升级？</li>
+                        <li>重点介绍 Nova 2 Lite 的能力、优势与局限</li>
+                        <li>基于 GCR Preview 测试的真实表现分析</li>
+                    </ul>
+                </div>
+                
+                <div style="flex: 1;">
+                    <img src="nova2_extracted/images/image.png" alt="Amazon Nova 2 Models" style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+            
+            <div class="grid" style="margin-top: 15px;">
+                <div class="card">
+                    <h4>🧠 Nova 2 Lite <span class="badge ga">GA</span></h4>
+                    <p>低延迟、高性价比推理模型，支持文本/图像/视频输入</p>
+                </div>
+                <div class="card">
+                    <h4>⚡ Nova 2 Pro <span class="badge preview">Preview</span></h4>
+                    <p>最高智能级别，复杂工作负载，支持音频输入</p>
+                </div>
+                <div class="card">
+                    <h4>🎨 Nova 2 Omni <span class="badge preview">Preview</span></h4>
+                    <p>首个统一多模态模型，支持图像生成与编辑</p>
+                </div>
+                <div class="card">
+                    <h4>🎙️ Nova 2 Sonic <span class="badge ga">GA</span></h4>
+                    <p>实时语音对话，支持10种语言</p>
+                </div>
+            </div>
+            
+            <p class="emphasis" style="margin-top: 20px;">
+                💡 建议策略：<strong>"扬长避短，场景聚焦"</strong> - 赢得优势场景，通过 roadmap 持续补齐短板
+            </p>
+        </div>
+
+        <!-- Slide 2: Nova 2 Lite vs Nova 1 对比 -->
+        <div class="slide">
+            <h1>Nova 2 Lite vs Nova 1 核心升级</h1>
+
+            <h2>🚀 性能飞跃 (vs Nova Premier)</h2>
+            <p style="font-size: 0.95em; color: var(--aws-gray);">根据 <a href="javascript:void(0)" onclick="openInIframe('nova-2-0-technical-report.pdf')" style="color: var(--aws-purple); cursor: pointer;">Nova 2 Technical Report</a>：</p>
+            <div class="grid">
+                <div class="card">
+                    <h4>智能提升</h4>
+                    <p>Nova 2 Lite 在多步问题解决和 Agent 工作流上<strong>超越前代旗舰 Nova Premier</strong></p>
+                </div>
+                <div class="card">
+                    <h4>成本对比 (vs Premier)</h4>
+                    <div class="metric-box">约 1/8 成本</div>
+                    <p style="font-size: 0.85em;">$0.0003 vs $0.0025 (input)</p>
+                </div>
+                <div class="card">
+                    <h4>速度提升 (vs Premier)</h4>
+                    <div class="metric-box">最高 5x</div>
+                    <p style="font-size: 0.85em;">来源: Technical Report</p>
+                </div>
+            </div>
+
+            <h2>⚠️ 价格变化 (vs Nova Lite v1)</h2>
+            <div class="card" style="border-left-color: var(--danger);">
+                <h4>注意：Nova 2 Lite 比 Nova Lite v1 更贵</h4>
+                <table class="comparison-table" style="margin: 10px 0; font-size: 0.95em;">
+                    <tr>
+                        <th>模型</th>
+                        <th>Input (per 1K tokens)</th>
+                        <th>Output (per 1K tokens)</th>
+                    </tr>
+                    <tr>
+                        <td>Nova Lite v1</td>
+                        <td>$0.00006</td>
+                        <td>$0.00024</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Nova 2 Lite</td>
+                        <td>$0.0003 <span class="badge danger">5x</span></td>
+                        <td>$0.0025 <span class="badge danger">10.4x</span></td>
+                    </tr>
+                </table>
+                <p style="font-size: 0.85em; color: var(--aws-gray);">数据来源: <a href="https://aws.amazon.com/bedrock/pricing/" style="color: var(--aws-blue);">AWS Bedrock Pricing</a> (Global Cross-region, US East N. Virginia)</p>
+            </div>
+
+            <h2>🆕 新增能力</h2>
+            <table class="comparison-table" style="font-size: 0.95em;">
+                <tr>
+                    <th>能力</th>
+                    <th>Nova 1</th>
+                    <th>Nova 2 Lite</th>
+                </tr>
+                <tr>
+                    <td>混合推理 (Extended Thinking)</td>
+                    <td>❌ 不支持</td>
+                    <td>✅ 支持低/中/高三档</td>
+                </tr>
+                <tr>
+                    <td>上下文窗口</td>
+                    <td>300K tokens</td>
+                    <td><strong>1M tokens</strong></td>
+                </tr>
+                <tr>
+                    <td>输出长度</td>
+                    <td>5K tokens</td>
+                    <td><strong>65,536 tokens</strong></td>
+                </tr>
+            </table>
+
+            <h2>🧠 推理模式参数 (maxReasoningEffort)</h2>
+            <div class="grid">
+                <div class="card" style="border-left-color: var(--success);">
+                    <h4>Low</h4>
+                    <p>快速推理，适合简单任务</p>
+                </div>
+                <div class="card" style="border-left-color: var(--warning);">
+                    <h4>Medium</h4>
+                    <p>平衡推理深度和速度</p>
+                </div>
+                <div class="card" style="border-left-color: var(--danger);">
+                    <h4>High</h4>
+                    <p>深度推理，适合复杂问题</p>
+                </div>
+            </div>
+            <p style="font-size: 0.9em; color: var(--aws-gray); margin-top: 10px;">
+                ⚠️ <strong>注意</strong>：推理过程是被隐藏的，显示为 "REDACTED"
+            </p>
+        </div>
+
+        <!-- Slide 4: Agent 和工具使用能力 -->
+        <div class="slide">
+            <h1>Agent 和工具使用能力</h1>
+            <p style="font-size: 0.85em; color: var(--aws-gray); margin-bottom: 10px;">数据来源: <a href="javascript:void(0)" onclick="openInIframe('nova-2-0-technical-report.pdf')" style="color: var(--aws-purple); cursor: pointer;">Nova 2 Technical Report</a></p>
+
+            <h2>τ²-bench Verified (真实场景验证)</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>模型</th>
+                    <th>Telecom</th>
+                    <th>Retail</th>
+                    <th>Airline</th>
+                    <th>BFCL v4</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td><strong>Nova 2 Lite</strong></td>
+                    <td><strong style="color: var(--aws-purple);">76.0%</strong></td>
+                    <td><strong style="color: var(--aws-purple);">76.5%</strong></td>
+                    <td>64.8%</td>
+                    <td>60.3%</td>
+                </tr>
+                <tr>
+                    <td>GPT-5 Mini</td>
+                    <td>71.1%</td>
+                    <td>73.7%</td>
+                    <td>68.8%</td>
+                    <td>56.0%</td>
+                </tr>
+                <tr>
+                    <td>Claude Haiku 4.5</td>
+                    <td>54.7%</td>
+                    <td>69.1%</td>
+                    <td>54.0%</td>
+                    <td>61.8%</td>
+                </tr>
+                <tr>
+                    <td>Gemini 2.5 Flash</td>
+                    <td>31.6%</td>
+                    <td>57.7%</td>
+                    <td>44.0%</td>
+                    <td>55.9%</td>
+                </tr>
+            </table>
+
+            <h2>多模态和软件工程</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>模型</th>
+                    <th>OCRBench-v2</th>
+                    <th>RealKIE-FCC</th>
+                    <th>QVHighlights</th>
+                    <th>ScreenSpot</th>
+                    <th>LiveCodeBench</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td><strong>Nova 2 Lite</strong></td>
+                    <td>56.1%</td>
+                    <td><strong style="color: var(--aws-purple);">62.1%</strong></td>
+                    <td><strong style="color: var(--aws-purple);">77.2%</strong></td>
+                    <td><strong style="color: var(--aws-purple);">83.3%</strong></td>
+                    <td>71.0%</td>
+                </tr>
+                <tr>
+                    <td>GPT-5 Mini</td>
+                    <td>55.4%</td>
+                    <td>53.1%</td>
+                    <td>-</td>
+                    <td>24.8%</td>
+                    <td>83.8%</td>
+                </tr>
+                <tr>
+                    <td>Claude Haiku 4.5</td>
+                    <td>48.3%</td>
+                    <td>52.2%</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>61.5%</td>
+                </tr>
+                <tr>
+                    <td>Gemini 2.5 Flash</td>
+                    <td>58.2%</td>
+                    <td>50.1%</td>
+                    <td>52.4%</td>
+                    <td>27.2%</td>
+                    <td>69.5%</td>
+                </tr>
+            </table>
+
+            <h3>关键亮点</h3>
+            <ul>
+                <li><strong>τ²-bench:</strong> Telecom (76.0%) 和 Retail (76.5%) 领先所有 Lite 级别竞品</li>
+                <li><strong>QVHighlights:</strong> 77.2% - 视频亮点提取远超 Gemini 2.5 Flash (52.4%)</li>
+                <li><strong>ScreenSpot:</strong> 83.3% - UI界面理解大幅领先竞品</li>
+                <li><strong>RealKIE-FCC:</strong> 62.1% - 文档信息提取最优</li>
+                <li><strong>LiveCodeBench:</strong> 71.0% - 代码生成超越 Gemini 2.5 Flash，但低于 GPT-5 Mini</li>
+            </ul>
+
+            <p class="emphasis">
+                💡 Agent 能力是 Nova 2 Lite 的核心优势，在电信和零售场景超越所有竞品
+            </p>
+        </div>
+
+        <!-- Slide 6: 定价详情 -->
+        <div class="slide">
+            <h1>Nova 2 Lite 定价详情</h1>
+
+            <h2>Standard Tier 价格 (US East N. Virginia)</h2>
+            <table class="comparison-table" style="font-size: 0.9em;">
+                <tr>
+                    <th>模型</th>
+                    <th>Input (per 1K tokens)</th>
+                    <th>Output (per 1K tokens)</th>
+                </tr>
+                <tr>
+                    <td>Nova Micro</td>
+                    <td>$0.000035</td>
+                    <td>$0.00014</td>
+                </tr>
+                <tr>
+                    <td>Nova Lite v1</td>
+                    <td>$0.00006</td>
+                    <td>$0.00024</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Nova 2 Lite (Global)</td>
+                    <td>$0.0003</td>
+                    <td>$0.0025</td>
+                </tr>
+                <tr>
+                    <td>Nova Pro v1</td>
+                    <td>$0.0008</td>
+                    <td>$0.0032</td>
+                </tr>
+                <tr>
+                    <td>Nova Premier</td>
+                    <td>$0.0025</td>
+                    <td>$0.0125</td>
+                </tr>
+            </table>
+            <p style="font-size: 0.85em; color: var(--aws-gray);">数据来源: <a href="https://aws.amazon.com/bedrock/pricing/" style="color: var(--aws-blue);">AWS Bedrock Pricing</a></p>
+
+            <h2>成本优化选项</h2>
+            <div class="grid">
+                <div class="card" style="border-left-color: var(--success);">
+                    <h4>💾 Cache Read</h4>
+                    <p><strong>2.5 折扣</strong> (输入)</p>
+                    <p style="font-size: 0.85em;">$0.000075 per 1K tokens</p>
+                </div>
+                <div class="card" style="border-left-color: #2563eb;">
+                    <h4>📦 Batch / Flex Tier</h4>
+                    <p><strong>5 折扣</strong></p>
+                    <p style="font-size: 0.85em;">Input: $0.00015, Output: $0.00125</p>
+                </div>
+                <div class="card" style="border-left-color: var(--danger);">
+                    <h4>⚡ Priority Tier</h4>
+                    <p><strong>1.75x 价格</strong></p>
+                    <p style="font-size: 0.85em;">Input: $0.000525, Output: $0.004375</p>
+                </div>
+            </div>
+
+            <p class="emphasis">
+                ⚠️ Nova 2 Lite 单价比 Nova Lite v1 贵 5-10 倍，但能力大幅提升。需根据场景评估性价比。
+            </p>
+        </div>
+
+        <!-- Slide 7: GCR 测试结果 - 视频时间线 -->
+        <div class="slide">
+            <h1>GCR 测试结果：羽毛球时间线识别</h1>
+            <p style="font-size: 0.85em; color: var(--aws-gray); margin-bottom: 10px;">测试详情: <a href="javascript:void(0)" onclick="openInIframe('tests/badminton-timeline/test_results_visualization.html')" style="color: var(--aws-purple); cursor: pointer;">查看完整测试结果</a></p>
+
+            <h2>测试场景</h2>
+            <p>识别羽毛球视频中每个回合的起止时间和结束原因（5分钟长视频）</p>
+
+            <h2>性能对比</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>模型</th>
+                    <th>Video 1 片段数</th>
+                    <th>Video 2 片段数</th>
+                    <th>平均耗时</th>
+                    <th>准确性评级</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Gemini 2.5 Flash</td>
+                    <td>27</td>
+                    <td>8</td>
+                    <td>~25s</td>
+                    <td><span class="badge ga">⭐⭐⭐⭐⭐</span></td>
+                </tr>
+                <tr>
+                    <td>Gemini 2.5 Flash Lite</td>
+                    <td>44</td>
+                    <td>120+</td>
+                    <td>~9s</td>
+                    <td><span class="badge warning">⭐⭐</span></td>
+                </tr>
+                <tr>
+                    <td>Nova 2 Lite (标准)</td>
+                    <td>10</td>
+                    <td>幻觉</td>
+                    <td>~36s</td>
+                    <td><span class="badge warning">⭐⭐</span></td>
+                </tr>
+                <tr>
+                    <td>Nova 2 Lite (reasoning=low)</td>
+                    <td>17</td>
+                    <td>20</td>
+                    <td>~78s</td>
+                    <td><span class="badge ga">⭐⭐⭐</span></td>
+                </tr>
+                <tr>
+                    <td>Nova Pro</td>
+                    <td>27</td>
+                    <td>28</td>
+                    <td>~51s</td>
+                    <td><span class="badge ga">⭐⭐⭐</span></td>
+                </tr>
+                <tr>
+                    <td>Nova Lite V1</td>
+                    <td>幻觉 (80+)</td>
+                    <td>幻觉 (80+)</td>
+                    <td>~57s</td>
+                    <td><span class="badge danger">❌</span></td>
+                </tr>
+            </table>
+
+            <h3>关键发现</h3>
+            <div class="grid">
+                <div class="card" style="border-left-color: var(--success);">
+                    <h4>✅ 适用场景</h4>
+                    <ul>
+                        <li><strong>30-60秒短视频高光时刻</strong>识别较准确</li>
+                        <li>配合优化后的提示词效果更好</li>
+                        <li>输出格式规范 (JSON)</li>
+                    </ul>
+                    <p style="font-size: 0.8em; margin-top: 8px; color: var(--aws-gray);">
+                        来源: <a href="https://aws.amazon.com/cn/blogs/china/automated-video-highlight-clipping-using-amazon-nova-model/" target="_blank" style="color: var(--aws-purple);">AWS Blog - 使用 Amazon Nova 模型实现自动化视频高光剪辑 ↗</a>
+                    </p>
+                </div>
+                <div class="card" style="border-left-color: var(--danger);">
+                    <h4>❌ 不适用场景</h4>
+                    <ul>
+                        <li><strong>5分钟长视频几乎不可用</strong></li>
+                        <li>Nova Lite V1 产生大量幻觉（80+片段）</li>
+                        <li>Nova 2 Lite 标准模式也有幻觉问题</li>
+                        <li>Gemini 2.5 Flash 准确性最优</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="emphasis">
+                ⚠️ <strong>长视频时间线识别：不推荐使用 Nova 2 Lite</strong> | ✅ <strong>短视频高光时刻：可以使用</strong>
+            </p>
+        </div>
+
+        <!-- Slide 8: GCR 测试结果 - 内容审核 -->
+        <div class="slide">
+            <h1>GCR 测试结果：视频内容审核</h1>
+            <p style="font-size: 0.85em; color: var(--aws-gray); margin-bottom: 10px;">测试详情: <a href="javascript:void(0)" onclick="openInIframe('tests/content-audit/audit_results_visualization_v2.html')" style="color: var(--aws-purple); cursor: pointer;">查看完整测试结果</a></p>
+
+            <h2>测试场景</h2>
+            <p>识别视频中用户的操作行为：关键词搜索、视频标题、创作者、观看时长</p>
+
+            <h2>测试结果对比</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>测试项</th>
+                    <th>Nova 2 Lite</th>
+                    <th>Gemini 2.5 Flash</th>
+                    <th>对比结果</th>
+                </tr>
+                <tr>
+                    <td>关键词搜索识别</td>
+                    <td><span class="badge ga">准确 ✅</span></td>
+                    <td><span class="badge ga">准确 ✅</span></td>
+                    <td>效果相当</td>
+                </tr>
+                <tr>
+                    <td>视频标题验证</td>
+                    <td><span class="badge ga">准确 ✅</span></td>
+                    <td><span class="badge ga">准确 ✅</span></td>
+                    <td>效果相当</td>
+                </tr>
+                <tr>
+                    <td>创作者验证</td>
+                    <td><span class="badge ga">准确 ✅</span></td>
+                    <td><span class="badge ga">准确 ✅</span></td>
+                    <td>效果相当</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>观看时长判断</td>
+                    <td><span class="badge ga">更准确 ✅</span></td>
+                    <td><span class="badge ga">准确 ✅</span></td>
+                    <td><strong>Nova 2 Lite 部分结果更好</strong></td>
+                </tr>
+            </table>
+
+            <h3>关键发现</h3>
+            <div class="grid">
+                <div class="card" style="border-left-color: var(--success);">
+                    <h4>✅ 优势</h4>
+                    <ul>
+                        <li><strong>与 Gemini 2.5 Flash 效果相当</strong></li>
+                        <li>部分测试项结果更好</li>
+                        <li>视频内容理解能力强</li>
+                        <li>JSON 输出格式规范</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-left-color: var(--info);">
+                    <h4>💡 适用场景</h4>
+                    <ul>
+                        <li>视频内容合规审核</li>
+                        <li>用户行为分析</li>
+                        <li>内容质量检测</li>
+                        <li>可作为 Gemini 的替代方案</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="emphasis">
+                ✅ 内容审核场景：<strong>Nova 2 Lite 表现优秀，与 Gemini 2.5 Flash 效果相当甚至更好</strong>
+            </p>
+        </div>
+
+        <!-- Slide 9: GCR 测试结果 - OCR -->
+        <div class="slide">
+            <h1>GCR 测试结果：图像 OCR 对比</h1>
+            <p style="font-size: 0.85em; color: var(--aws-gray); margin-bottom: 10px;">测试详情: <a href="javascript:void(0)" onclick="openInIframe('tests/nova_images/combined_comparison.html')" style="color: var(--aws-purple); cursor: pointer;">查看完整测试结果</a></p>
+
+            <h2>测试场景</h2>
+            <p>多语言图像文字识别（拉丁语系 vs 非拉丁语系）</p>
+
+            <h2>性能对比</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>模型</th>
+                    <th>总 Tokens</th>
+                    <th>总耗时</th>
+                    <th>平均</th>
+                    <th>响应范围</th>
+                </tr>
+                <tr>
+                    <td>🟣 Nova Pro</td>
+                    <td>47,383</td>
+                    <td>69.6s</td>
+                    <td>1974 tokens / 2901ms</td>
+                    <td>942ms ~ 15102ms</td>
+                </tr>
+                <tr>
+                    <td>🔵 Nova Lite v1</td>
+                    <td>50,114</td>
+                    <td>68.2s</td>
+                    <td>2088 tokens / 2841ms</td>
+                    <td>822ms ~ 8591ms</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>🟠 Nova 2 Lite</td>
+                    <td>44,425</td>
+                    <td><strong>36.7s</strong></td>
+                    <td><strong>1851 tokens / 1529ms</strong></td>
+                    <td>842ms ~ 3331ms</td>
+                </tr>
+                <tr>
+                    <td>🟢 Gemini 2.5 Flash</td>
+                    <td><strong>19,048</strong></td>
+                    <td>101.9s</td>
+                    <td><strong>794 tokens</strong> / 4246ms</td>
+                    <td>2039ms ~ 8338ms</td>
+                </tr>
+            </table>
+
+            <h2>准确性对比</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>语言类型</th>
+                    <th>Nova Lite/Pro v1</th>
+                    <th>Nova 2 Lite</th>
+                    <th>Gemini 2.5 Flash</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>拉丁语系（英文等）</td>
+                    <td><span class="badge warning">一般</span></td>
+                    <td><span class="badge ga">大幅提升 ✅</span></td>
+                    <td><span class="badge ga">优秀 ✅</span></td>
+                </tr>
+                <tr>
+                    <td>非拉丁语系（中文、泰文等）</td>
+                    <td><span class="badge danger">较差</span></td>
+                    <td><span class="badge warning">质的飞跃，但仍有幻觉 ⚠️</span></td>
+                    <td><span class="badge ga">几乎无幻觉 ✅</span></td>
+                </tr>
+            </table>
+
+            <h3>测试总结</h3>
+            <div class="grid">
+                <div class="card" style="border-left-color: var(--success);">
+                    <h4>🟠 Nova 2 Lite 优势</h4>
+                    <ul>
+                        <li><strong>最快响应：平均 1529ms</strong></li>
+                        <li><strong>速度提升 46%</strong>（36.7s vs 68-70s）</li>
+                        <li>响应更稳定（最大延迟降低 78%）</li>
+                        <li>输出简洁，适合纯文本提取</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-left-color: var(--info);">
+                    <h4>🟢 Gemini 2.5 Flash 特点</h4>
+                    <ul>
+                        <li><strong>最省 Token：平均 794 tokens</strong></li>
+                        <li>输出更详细的场景描述</li>
+                        <li>非拉丁语系几乎无幻觉</li>
+                        <li>响应时间较长（平均 4246ms）</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="emphasis">
+                ✅ <strong>拉丁语系：推荐使用 Nova 2 Lite（速度快）</strong> | ⚠️ <strong>非拉丁语系：Gemini 更优（准确性高）</strong>
+            </p>
+        </div>
+
+        <!-- Slide 10: 总结与建议 -->
+        <div class="slide">
+            <h1>总结与建议</h1>
+
+            <h2>多模态能力测试总结 🎯</h2>
+            
+            <div class="card" style="border-left-color: var(--danger); margin-bottom: 20px;">
+                <h3>❌ 1. 视频时间线识别：需剪辑短视频 + 优化提示词</h3>
+                <ul>
+                    <li><strong>长视频（5分钟）：不推荐使用</strong>，Nova Lite/Pro v1 和 Nova 2 Lite 都几乎不可用</li>
+                    <li><strong>短视频（30-60秒）：可以使用</strong>，配合优化后的提示词</li>
+                    <li><strong>适用场景</strong>：足球高光时刻、精彩片段识别等短视频场景</li>
+                </ul>
+            </div>
+
+            <div class="card" style="border-left-color: var(--success); margin-bottom: 20px;">
+                <h3>✅ 2. 视频内容理解：效果优秀，与 Gemini 相当</h3>
+                <ul>
+                    <li><strong>内容审核、行为分析效果不错</strong></li>
+                    <li>与 Gemini 2.5 Flash 效果相当，部分结果更好</li>
+                    <li><strong>推荐场景</strong>：视频合规审核、用户行为分析、内容质量检测</li>
+                </ul>
+            </div>
+
+            <div class="card" style="border-left-color: var(--warning); margin-bottom: 20px;">
+                <h3>⚠️ 3. OCR 识别：拉丁语系优秀，非拉丁语系需谨慎</h3>
+                <ul>
+                    <li><strong>拉丁语系（英文等）：效果很好</strong>，对比 Nova v1 大幅提升</li>
+                    <li><strong>非拉丁语系（中文、泰文等）：谨慎使用</strong>，有质的飞跃但仍有幻觉</li>
+                    <li>Gemini 2.5 Flash 在非拉丁语系几乎无幻觉，更优</li>
+                </ul>
+            </div>
+
+            <h2>Next Action</h2>
+            <ul>
+                <li>引导客户测试<strong>视频内容理解和拉丁语系 OCR</strong> 优势场景</li>
+                <li>视频时间线场景需<strong>剪辑短视频 + 优化提示词</strong></li>
+                <li>非拉丁语系 OCR 建议先验证再使用</li>
+            </ul>
+        </div>
+
+        <!-- Slide 11: 多模态提示词与参数最佳实践 -->
+        <div class="slide" style="height: auto; min-height: 100vh; padding-bottom: 80px;">
+            <h1>多模态提示词与参数最佳实践</h1>
+            <p style="font-size: 0.85em; color: var(--aws-gray); margin-bottom: 10px;">参考来源: <a href="https://docs.aws.amazon.com/nova/latest/nova2-userguide/prompting-multimodal.html" target="_blank" style="color: var(--aws-purple);">AWS Nova 2 Multimodal Prompting Guide</a></p>
+
+            <h2>📋 通用规则</h2>
+            <div class="card" style="border-left-color: var(--info);">
+                <ul>
+                    <li><strong>内容顺序</strong>：图片/视频/文档 → 用户提示词（文本必须放在最后）</li>
+                    <li><strong>System Prompt</strong>：仅用于定义角色和风格，不要用于任务定义</li>
+                    <li><strong>任务定义</strong>：详细的任务说明和格式要求放在 User Prompt 中</li>
+                </ul>
+            </div>
+
+            <h2>🎬 视频时间线提取（推荐配置）</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>参数</th>
+                    <th>推荐值</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>temperature</td>
+                    <td>0</td>
+                    <td>确保输出一致性</td>
+                </tr>
+                <tr>
+                    <td>topP</td>
+                    <td>1</td>
+                    <td>不限制采样范围</td>
+                </tr>
+                <tr>
+                    <td>reasoning</td>
+                    <td>❌ 不使用</td>
+                    <td>时间线任务不需要推理</td>
+                </tr>
+            </table>
+
+            <h3>提示词模板示例</h3>
+            <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; font-size: 0.85em; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;">
+Please localize the moment that the event "{event_description}" 
+happens in the video. Answer with the starting and ending time 
+of the event in seconds, such as [[72, 82]]. 
+
+If the event happen multiple times, list all of them, 
+such as [[40, 50], [72, 82]].</pre>
+
+            <h2>📄 图像 OCR 提取（推荐配置）</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>参数</th>
+                    <th>推荐值</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>temperature</td>
+                    <td>0.7 (默认)</td>
+                    <td>保持默认值</td>
+                </tr>
+                <tr>
+                    <td>topP</td>
+                    <td>0.9 (默认)</td>
+                    <td>保持默认值</td>
+                </tr>
+                <tr>
+                    <td>reasoning</td>
+                    <td>❌ 不使用</td>
+                    <td>OCR 不需要推理</td>
+                </tr>
+            </table>
+
+            <h3>提示词模板示例</h3>
+            <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; font-size: 0.85em; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;">
+## Instructions
+Extract all information from this page using only Markdown formatting. 
+Retain the original layout and structure including lists, tables, 
+charts and math formulae.
+
+## Rules
+1. For math formulae, always use LaTeX syntax.
+2. Describe images using only text.
+3. NEVER use HTML image tags in the output.
+4. Always wrap the entire output in ``` tags.</pre>
+
+            <h2>🎯 视频分类（推荐配置）</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>参数</th>
+                    <th>推荐值</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>temperature</td>
+                    <td>0</td>
+                    <td>确保输出一致性</td>
+                </tr>
+                <tr>
+                    <td>topP</td>
+                    <td>1</td>
+                    <td>不限制采样范围</td>
+                </tr>
+                <tr>
+                    <td>reasoning</td>
+                    <td>❌ 不使用</td>
+                    <td>分类任务不需要推理</td>
+                </tr>
+            </table>
+
+            <h3>提示词模板示例</h3>
+            <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; font-size: 0.85em; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;">
+What is the most appropriate category for this video? 
+Select your answer from the options provided:
+{class1}
+{class2}
+{...}
+
+Example:
+What is the most appropriate category for this video? 
+Select your answer from the options provided:
+Arts
+Technology
+Sports
+Education</pre>
+        </div>
+
+        <!-- Slide 12: 参考资料 -->
+        <div class="slide">
+            <h1>参考资料</h1>
+
+            <div class="card" style="border-left-color: var(--aws-blue); margin-bottom: 20px;">
+                <h3>📖 官方文档</h3>
+                <ul style="font-size: 0.9em;">
+                    <li>
+                        <strong>Developer Guide for Amazon Nova 2</strong><br>
+                        <a href="https://docs.aws.amazon.com/nova/latest/nova2-userguide/whats-new.html" style="color: var(--aws-blue);">
+                            docs.aws.amazon.com/nova/latest/nova2-userguide/whats-new.html
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card" style="border-left-color: var(--aws-orange); margin-bottom: 20px;">
+                <h3>📋 内部资料</h3>
+                <ul style="font-size: 0.9em;">
+                    <li>
+                        <strong>Nova 2.0 Lite FAQ</strong><br>
+                        <a href="https://quip-amazon.com/qblTAlfbLLxd/Nova-20-Lite-FAQ" style="color: var(--aws-blue);">
+                            quip-amazon.com/qblTAlfbLLxd/Nova-20-Lite-FAQ
+                        </a>
+                    </li>
+                    <li style="margin-top: 15px;">
+                        <strong>Amazon Nova 2.0 Lite 模型内部Preview测试报告</strong><br>
+                        <a href="https://quip-amazon.com/IEF7AC5Y6wrk#QLH9AAlrRCv" style="color: var(--aws-blue);">
+                            quip-amazon.com/IEF7AC5Y6wrk
+                        </a>
+                    </li>
+                    <li style="margin-top: 15px;">
+                        <strong>Nova 2.0 Sonic及Nova Omni reinvent预计发布</strong><br>
+                        <a href="https://quip-amazon.com/WXUGAUaGdMaT/Nova-20-SonicNova-Omni-reinvent" style="color: var(--aws-blue);">
+                            quip-amazon.com/WXUGAUaGdMaT/Nova-20-SonicNova-Omni-reinvent
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 13: Q&A -->
+        <div class="slide">
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center;">
+                <h1 style="font-size: 4em; margin-bottom: 30px; color: var(--aws-pink);">Q & A</h1>
+                <p style="font-size: 1.5em; color: var(--aws-gray); margin-bottom: 50px;">
+                    感谢观看！欢迎提问交流
+                </p>
+                <div style="font-size: 1.2em; color: var(--aws-purple);">
+                    <p>🔗 产品主页：<a href="https://aws.amazon.com/cn/nova/" style="color: var(--aws-purple);">aws.amazon.com/nova</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="prevSlide()">←</button>
+        <button class="nav-btn" onclick="nextSlide()">→</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                    slide.scrollTop = 0;
+                }
+            });
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            document.getElementById('progressBar').style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Home') {
+                currentSlide = 0;
+                updateSlide();
+            } else if (e.key === 'End') {
+                currentSlide = totalSlides - 1;
+                updateSlide();
+            }
+        });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) prevSlide();
+        });
+
+        updateSlide();
+    </script>
+
+    <!-- Iframe Overlay -->
+    <div id="iframeOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000;">
+        <button onclick="closeIframe()" style="position: absolute; top: 20px; right: 20px; background: var(--aws-pink); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; cursor: pointer; z-index: 10001; font-weight: 600;">
+            ← 返回演示
+        </button>
+        <iframe id="contentFrame" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+
+    <script>
+        function openInIframe(url) {
+            document.getElementById('contentFrame').src = url;
+            document.getElementById('iframeOverlay').style.display = 'block';
+        }
+        
+        function closeIframe() {
+            document.getElementById('iframeOverlay').style.display = 'none';
+            document.getElementById('contentFrame').src = '';
+        }
+    </script>
+</body>
+</html>
