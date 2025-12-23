@@ -37,7 +37,7 @@ public class VideoClassifyFromSqsHandlerTest {
      * ensuring that the method continues processing subsequent messages.
      */
     @Test
-    public void test_handleRequest_exceptionDuringProcessing() {
+    public void test_handleRequest_exceptionDuringProcessing() throws Exception {
         VideoClassifyFromSqsHandler handler = spy(new VideoClassifyFromSqsHandler());
         SQSEvent event = new SQSEvent();
         List<SQSMessage> records = new ArrayList<>();
