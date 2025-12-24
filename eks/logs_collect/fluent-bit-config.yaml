@@ -58,11 +58,23 @@ data:
         Buffer_Size         0
 
     [FILTER]
+        Name                lua
+        Match               application.*
+        script              /fluent-bit/etc/extract_path.lua
+        call                extract_log_path
+
+    [FILTER]
         Name                modify
         Match               application.*
         Add                 cluster_name logs-collect-cluster
         Add                 log_source fluent-bit
         Add                 environment production
+        Add                 log_collection_path /var/log/containers/*logs-collect*.log
+        Add                 log_collection_pattern logs-collect
+        Copy                kubernetes.container_name container_name
+        Copy                kubernetes.namespace_name namespace_name
+        Copy                kubernetes.pod_name pod_name
+        Copy                kubernetes.host node_name
 
     [FILTER]
         Name                parser
@@ -93,6 +105,20 @@ data:
         Replace_Dots        On
         Retry_Limit         3
         Suppress_Type_Name  On
+
+  extract_path.lua: |
+    function extract_log_path(tag, timestamp, record)
+        -- Extract log file path from tag
+        if tag then
+            record["log_file_tag"] = tag
+            -- Extract container log file path pattern
+            local container_path = string.match(tag, "application%.var%.log%.containers%.(.+)")
+            if container_path then
+                record["container_log_file"] = "/var/log/containers/" .. container_path
+            end
+        end
+        return 1, timestamp, record
+    end
 
   parsers.conf: |
     [PARSER]

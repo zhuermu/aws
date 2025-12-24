@@ -1,0 +1,228 @@
+# Video Understanding Test Results
+
+**Test Time**: 2025-12-24 01:46:47
+
+**Model**: global.amazon.nova-2-lite-v1:0
+
+---
+
+## Video 1
+
+**URL**: `s3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/ee51c5a7-a44f-4f0b-82d2-772736aa36f3-Screenrecorder20251107140342212.mp4`
+
+**Cost**: 49193ms
+
+**Result**:
+```json
+(N, The video does not match the expected criteria for keyword search, title verification, or creator verification.)
+{
+  "auditDetails": [
+    {
+      "stepNo": 1,
+      "stepName": "Keyword Search",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play",
+      "actual": "No keyword search is shown in the video. The video directly plays content without any search interface being visible."
+    },
+    {
+      "stepNo": 2,
+      "stepName": "Found Target Video - Title Verification",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play | Best Explorer Slots Game 2039",
+      "actual": "The video being played is titled 'STOP Losing Money! TeenPatti Explorer Sloo...' which does not match the expected title."
+    },
+    {
+      "stepNo": 3,
+      "stepName": "Found Target Video - Creator Verification",
+      "state": "N",
+      "expected": "videoCreator: PVgaming00 or channelId: PVgaming00",
+      "actual": "The creator of the video is '@KGaming24' which does not match the expected creator 'PVgaming00'."
+    },
+    {
+      "stepNo": 4,
+      "stepName": "Video Play Duration",
+      "startTime": "00:00",
+      "endTime": "02:20"
+    }
+  ]
+}
+```
+
+---
+
+## Video 2
+
+**URL**: `s3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/youtube-search-aws.mp4`
+
+**Cost**: 10184ms
+
+**Result**:
+```json
+(N, The video content does not match the expected keywords, title, or creator. The video is about AWS SAA-C03 certification, not a Teen Patti slots game.)
+{
+  "auditDetails": [
+    {
+      "stepNo": 1,
+      "stepName": "Keyword Search",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play",
+      "actual": "aws"
+    },
+    {
+      "stepNo": 2,
+      "stepName": "Found Target Video - Title Verification",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play | Best Explorer Slots Game 2039",
+      "actual": "AWS SAA-C03 考试指南"
+    },
+    {
+      "stepNo": 3,
+      "stepName": "Found Target Video - Creator Verification",
+      "expected": "videoCreator: PVgaming00 or channelId: PVgaming00",
+      "actual": "爱上云",
+      "state": "N"
+    },
+    {
+      "stepNo": 4,
+      "stepName": "Video Play Duration",
+      "startTime": "00:15",
+      "endTime": "00:35"
+    }
+  ]
+}
+```
+
+---
+
+## Video 3
+
+**URL**: `s3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/20251111-110712-caijian.mp4`
+
+**Cost**: 24492ms
+
+**Result**:
+```json
+(N, None of the conditions are met.)
+{
+  "auditDetails": [
+    {
+      "stepNo": 1,
+      "stepName": "Keyword Search",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play",
+      "actual": "Slots Game Tricks Revealed"
+    },
+    {
+      "stepNo": 2,
+      "stepName": "Found Target Video - Title Verification",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play | Best Explorer Slots Game 2039",
+      "actual": "STOP Losing Money! TeenPatti Explorer Slots Game Tricks Revealed"
+    },
+    {
+      "stepNo": 3,
+      "stepName": "Found Target Video - Creator Verification",
+      "expected": "videoCreator: PVgaming00 or channelId: PVgaming00",
+      "actual": "K_Mater_Gaming",
+      "state": "N",
+    },
+    {
+      "stepNo": 4,
+      "stepName": "Video Play Duration",
+      "startTime": "00:00",
+      "endTime": "04:17"
+    }
+  ]
+}
+```
+
+---
+
+## Video 4
+
+**URL**: `s3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/09211f8f-8d39-4038-ae0b-568b4e25bb26-FunPlay1.mp4`
+
+**Cost**: 4304ms
+
+**Result**:
+```json
+(N, The video does not show the user performing a keyword search, playing a target video, or verifying the creator. The steps shown are instructions for a task within an app, not actual gameplay or search actions.)
+{
+  "auditDetails": [
+    {
+      "stepNo": 1,
+      "stepName": "Keyword Search",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play",
+      "actual": "No keyword search is shown in the video. The user is shown instructions for a task within an app."
+    },
+    {
+      "stepNo": 2,
+      "stepName": "Found Target Video - Title Verification",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play | Best Explorer Slots Game 2039",
+      "actual": "No video is being played in the video. The user is shown instructions for a task within an app."
+    },
+    {
+      "stepNo": 3,
+      "stepName": "Found Target Video - Creator Verification",
+      "expected": "videoCreator: PVgaming00 or channelId: PVgaming00",
+      "actual": "No video is being played, so creator verification is not applicable.",
+      "state": "N"
+    },
+    {
+      "stepNo": 4,
+      "stepName": "Video Play Duration",
+      "startTime": "Not applicable",
+      "endTime": "Not applicable"
+    }
+  ]
+}
+```
+
+---
+
+## Video 5
+
+**URL**: `s3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/6b80e970-67e6-4ee4-a51e-8ceb660e9c54-1000012057.mp4`
+
+**Cost**: 19526ms
+
+**Result**:
+```json
+(N, The video does not match the expected criteria for keyword search, title verification, or creator verification.)
+{
+  "auditDetails": [
+    {
+      "stepNo": 1,
+      "stepName": "Keyword Search",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play",
+      "actual": "No keyword search is shown in the video. The video displays a slot machine game interface and a YouTube video page, but there is no visible keyword search input by the user."
+    },
+    {
+      "stepNo": 2,
+      "stepName": "Found Target Video - Title Verification",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play | Best Explorer Slots Game 2039",
+      "actual": "Explore Slot Super Win Trick | Explore Slot Jackpot Trick || Got 1000000 Sup..."
+    },
+    {
+      "stepNo": 3,
+      "stepName": "Found Target Video - Creator Verification",
+      "state": "N",
+      "expected": "videoCreator: PVgaming00 or channelId: PVgaming00",
+      "actual": "Shiv_Storm"
+    },
+    {
+      "stepNo": 4,
+      "stepName": "Video Play Duration",
+      "startTime": "00:00",
+      "endTime": "02:11"
+    }
+  ]
+}
+```
+
+---
+

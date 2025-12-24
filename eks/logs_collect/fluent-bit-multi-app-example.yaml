@@ -1,0 +1,245 @@
+# 🚀 Fluent-bit 多应用日志采集配置示例
+# 展示如何为不同应用和命名空间配置日志采集
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-multi-app-config
+  namespace: amazon-cloudwatch
+data:
+  application-log.conf: |
+    # ========================================
+    # 📥 INPUT 配置 - 不同应用的日志采集
+    # ========================================
+    
+    # 1. logs-collect 命名空间 (当前配置)
+    [INPUT]
+        Name                tail
+        Tag                 logs-collect.*
+        Path                /var/log/containers/*logs-collect*.log
+        multiline.parser    docker, cri
+        DB                  /var/fluent-bit/state/logs-collect.db
+        Mem_Buf_Limit       50MB
+        Skip_Long_Lines     On
+        Refresh_Interval    10
+
+    # 2. web-app 命名空间示例
+    [INPUT]
+        Name                tail
+        Tag                 web-app.*
+        Path                /var/log/containers/*web-app*.log
+        multiline.parser    docker, cri
+        DB                  /var/fluent-bit/state/web-app.db
+        Mem_Buf_Limit       50MB
+        Skip_Long_Lines     On
+        Refresh_Interval    10
+
+    # 3. database 命名空间示例
+    [INPUT]
+        Name                tail
+        Tag                 database.*
+        Path                /var/log/containers/*database*.log
+        multiline.parser    docker, cri
+        DB                  /var/fluent-bit/state/database.db
+        Mem_Buf_Limit       50MB
+        Skip_Long_Lines     On
+        Refresh_Interval    10
+
+    # 4. 采集所有命名空间 (可选)
+    # [INPUT]
+    #     Name                tail
+    #     Tag                 all-apps.*
+    #     Path                /var/log/containers/*.log
+    #     Exclude_Path        /var/log/containers/*kube-system*,/var/log/containers/*amazon-cloudwatch*
+    #     multiline.parser    docker, cri
+    #     DB                  /var/fluent-bit/state/all-apps.db
+
+    # ========================================
+    # 🔧 FILTER 配置 - Kubernetes 元数据
+    # ========================================
+    
+    [FILTER]
+        Name                kubernetes
+        Match               *
+        Kube_URL            https://kubernetes.default.svc:443
+        Kube_Tag_Prefix     logs-collect.var.log.containers.,web-app.var.log.containers.,database.var.log.containers.
+        Merge_Log           On
+        Merge_Log_Key       log_processed
+        K8S-Logging.Parser  On
+        K8S-Logging.Exclude Off
+        Labels              On
+        Annotations         Off
+        Use_Kubelet         On
+        Kubelet_Port        10250
+
+    # ========================================
+    # 📝 FILTER 配置 - 路径信息提取
+    # ========================================
+    
+    [FILTER]
+        Name                lua
+        Match               *
+        script              /fluent-bit/etc/extract_path.lua
+        call                extract_log_path
+
+    # ========================================
+    # 🏷️ FILTER 配置 - logs-collect 应用
+    # ========================================
+    
+    [FILTER]
+        Name                modify
+        Match               logs-collect.*
+        Add                 cluster_name logs-collect-cluster
+        Add                 log_source fluent-bit
+        Add                 environment production
+        Add                 app_category log-testing
+        Add                 log_collection_path /var/log/containers/*logs-collect*.log
+        Copy                kubernetes.container_name container_name
+        Copy                kubernetes.namespace_name namespace_name
+        Copy                kubernetes.pod_name pod_name
+        Copy                kubernetes.host node_name
+
+    # ========================================
+    # 🌐 FILTER 配置 - web-app 应用
+    # ========================================
+    
+    [FILTER]
+        Name                modify
+        Match               web-app.*
+        Add                 cluster_name logs-collect-cluster
+        Add                 log_source fluent-bit
+        Add                 environment production
+        Add                 app_category web-frontend
+        Add                 log_collection_path /var/log/containers/*web-app*.log
+        Copy                kubernetes.container_name container_name
+        Copy                kubernetes.namespace_name namespace_name
+        Copy                kubernetes.pod_name pod_name
+        Copy                kubernetes.host node_name
+
+    # ========================================
+    # 🗄️ FILTER 配置 - database 应用
+    # ========================================
+    
+    [FILTER]
+        Name                modify
+        Match               database.*
+        Add                 cluster_name logs-collect-cluster
+        Add                 log_source fluent-bit
+        Add                 environment production
+        Add                 app_category database-backend
+        Add                 log_collection_path /var/log/containers/*database*.log
+        Copy                kubernetes.container_name container_name
+        Copy                kubernetes.namespace_name namespace_name
+        Copy                kubernetes.pod_name pod_name
+        Copy                kubernetes.host node_name
+
+    # ========================================
+    # 📤 OUTPUT 配置 - 发送到不同索引
+    # ========================================
+    
+    # logs-collect 应用日志
+    [OUTPUT]
+        Name                es
+        Match               logs-collect.*
+        Host                ${OPENSEARCH_ENDPOINT}
+        Port                443
+        Index               logs-collect
+        Type                _doc
+        tls                 On
+        tls.verify          Off
+        HTTP_User           admin
+        HTTP_Passwd         ${OPENSEARCH_PASSWORD}
+        Logstash_Format     On
+        Logstash_Prefix     logs-collect
+        Logstash_DateFormat %Y.%m.%d
+
+    # web-app 应用日志
+    [OUTPUT]
+        Name                es
+        Match               web-app.*
+        Host                ${OPENSEARCH_ENDPOINT}
+        Port                443
+        Index               web-app-logs
+        Type                _doc
+        tls                 On
+        tls.verify          Off
+        HTTP_User           admin
+        HTTP_Passwd         ${OPENSEARCH_PASSWORD}
+        Logstash_Format     On
+        Logstash_Prefix     web-app
+        Logstash_DateFormat %Y.%m.%d
+
+    # database 应用日志
+    [OUTPUT]
+        Name                es
+        Match               database.*
+        Host                ${OPENSEARCH_ENDPOINT}
+        Port                443
+        Index               database-logs
+        Type                _doc
+        tls                 On
+        tls.verify          Off
+        HTTP_User           admin
+        HTTP_Passwd         ${OPENSEARCH_PASSWORD}
+        Logstash_Format     On
+        Logstash_Prefix     database
+        Logstash_DateFormat %Y.%m.%d
+
+  # ========================================
+  # 🔧 Lua 脚本 - 路径信息提取
+  # ========================================
+  
+  extract_path.lua: |
+    function extract_log_path(tag, timestamp, record)
+        -- 提取日志文件路径信息
+        if tag then
+            record["log_file_tag"] = tag
+            
+            -- 解析不同命名空间的路径
+            local patterns = {
+                "logs%-collect%.var%.log%.containers%.(.+)",
+                "web%-app%.var%.log%.containers%.(.+)", 
+                "database%.var%.log%.containers%.(.+)"
+            }
+            
+            for _, pattern in ipairs(patterns) do
+                local container_path = string.match(tag, pattern)
+                if container_path then
+                    record["container_log_file"] = "/var/log/containers/" .. container_path
+                    
+                    -- 解析文件名组件
+                    local pod_name, namespace, container_name = string.match(container_path, "([^_]+)_([^_]+)_([^%-]+)")
+                    if pod_name and namespace and container_name then
+                        record["parsed_pod_name"] = pod_name
+                        record["parsed_namespace"] = namespace
+                        record["parsed_container_name"] = container_name
+                    end
+                    break
+                end
+            end
+        end
+        return 1, timestamp, record
+    end
+
+# ========================================
+# 📋 使用说明
+# ========================================
+
+# 1. 替换当前配置:
+#    kubectl apply -f fluent-bit-multi-app-example.yaml
+
+# 2. 为新应用创建命名空间:
+#    kubectl create namespace web-app
+#    kubectl create namespace database
+
+# 3. 部署应用到对应命名空间:
+#    kubectl apply -f your-web-app.yaml -n web-app
+#    kubectl apply -f your-database.yaml -n database
+
+# 4. 验证日志采集:
+#    kubectl logs -n amazon-cloudwatch daemonset/fluent-bit
+
+# 5. 在 OpenSearch 中查看不同索引:
+#    - logs-collect-*
+#    - web-app-*  
+#    - database-*

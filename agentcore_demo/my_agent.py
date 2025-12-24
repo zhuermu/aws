@@ -68,7 +68,7 @@ def get_knowledge_base_info(topic: str) -> str:
 app = BedrockAgentCoreApp()
 
 agent = Agent(
-    model="us.amazon.nova-lite-v1:0",
+    model="openai.gpt-oss-120b-1:0",
     system_prompt=SYSTEM_PROMPT,
     tools=[calculator, current_time, get_customer_id, get_orders, get_knowledge_base_info]
 )

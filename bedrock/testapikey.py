@@ -12,11 +12,11 @@ os.environ['AWS_BEARER_TOKEN_BEDROCK'] = bearer_token
 # Create an Amazon Bedrock client
 client = boto3.client(
     service_name="bedrock-runtime",
-    region_name="us-east-1" # If you've configured a default region, you can omit this line
+    region_name="us-west-2" # If you've configured a default region, you can omit this line
 )
 
 # Define the model and message
-model_id = "us.anthropic.claude-3-5-haiku-20241022-v1:0"
+model_id = "openai.gpt-oss-120b-1:0"
 messages = [{"role": "user", "content": [{"text": "Hello"}]}]
 
 response = client.converse(

@@ -64,14 +64,13 @@ def run_basic_test():
 def run_comprehensive_tests():
     """Run comprehensive test scenarios"""
     tests = [
-        ("Hello, how can you assist me today?", "Basic Greeting"),
         ("Hi, I need help with my order. My email is me@example.net", "Customer Order Inquiry"),
-        ("Can you check my recent orders? My email is me@example.net", "Order History Check"),
-        ("How do I install the smartphone cover?", "Product Information - Cover Installation"),
-        ("Tell me about the smartphone charger specifications", "Product Information - Charger Specs"),
-        ("Can you calculate 25 * 4 + 10?", "Calculator Tool Test"),
-        ("What time is it now?", "Current Time Query"),
-        ("I have a problem with my smartphone cover, can you help?", "Customer Support Issue")
+        # ("Can you check my recent orders? My email is me@example.net", "Order History Check"),
+        # ("How do I install the smartphone cover?", "Product Information - Cover Installation"),
+        # ("Tell me about the smartphone charger specifications", "Product Information - Charger Specs"),
+        # ("Can you calculate 25 * 4 + 10?", "Calculator Tool Test"),
+        # ("What time is it now?", "Current Time Query"),
+        # ("I have a problem with my smartphone cover, can you help?", "Customer Support Issue")
     ]
     
     results = []

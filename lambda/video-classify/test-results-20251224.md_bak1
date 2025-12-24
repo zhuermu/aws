@@ -1,0 +1,96 @@
+# Video Understanding Test Results
+
+**Test Time**: 2025-12-24 02:01:34
+
+**Model**: global.amazon.nova-2-lite-v1:0
+
+---
+
+## Video 1
+
+**URL**: `s3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/youtube-search-aws.mp4`
+
+**Cost**: 11008ms
+
+**Result**:
+```json
+(N, The video content does not match the expected keywords, title, or creator for the target video. The actual content is about AWS SAA-C03 certification, not a slots game.)
+{
+  "auditDetails": [
+    {
+      "stepNo": 1,
+      "stepName": "Keyword Search",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play",
+      "actual": "aws"
+    },
+    {
+      "stepNo": 2,
+      "stepName": "Found Target Video - Title Verification",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play | Best Explorer Slots Game 2039",
+      "actual": "AWS SAA-C03 考试指南"
+    },
+    {
+      "stepNo": 3,
+      "stepName": "Found Target Video - Creator Verification",
+      "state": "N",
+      "expected": "videoCreator: PVgaming00 or channelId: PVgaming00",
+      "actual": "爱上云"
+    },
+    {
+      "stepNo": 4,
+      "stepName": "Video Play Duration",
+      "startTime": "00:15",
+      "endTime": "00:35"
+    }
+  ]
+}
+```
+
+---
+
+## Video 2
+
+**URL**: `s3://bedrock-video-generation-us-east-1-pi8hu9/audit-video/20251111-110712-caijian.mp4`
+
+**Cost**: 25168ms
+
+**Result**:
+```json
+(N, The video does not show the user searching for keywords or playing a specific target video. The content primarily focuses on a slot machine game and a MrBeast video.)
+{
+  "auditDetails": [
+    {
+      "stepNo": 1,
+      "stepName": "Keyword Search",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play",
+      "actual": "No keyword search is shown in the video."
+    },
+    {
+      "stepNo": 2,
+      "stepName": "Found Target Video - Title Verification",
+      "state": "N",
+      "expected": "Teen Patti master Explorer slots game play | Best Explorer Slots Game 2039",
+      "actual": "The video does not play any video with this title."
+    },
+    {
+      "stepNo": 3,
+      "stepName": "Found Target Video - Creator Verification",
+      "state": "N",
+      "expected": "videoCreator: PVgaming00 or channelId: PVgaming00",
+      "actual": "The video does not play any video created by PVgaming00."
+    },
+    {
+      "stepNo": 4,
+      "stepName": "Video Play Duration",
+      "startTime": "Not applicable",
+      "endTime": "Not applicable"
+    }
+  ]
+}
+```
+
+---
+
